@@ -11,6 +11,9 @@ standard file structure should be:
 
 of course, you can set the anorrl root directory to where ever but the folders HAVE to be next to where you put the site in.
 
+also the other folders NEED to be set to the same permissions as the webserver or be owned by the webserver you want to use. every subfolder too.
+^^ site is fine you can set it to whatever, the code only reads images from the images directory at MOST.
+
 what needs to be in the root...
 
 settings.env
