@@ -188,6 +188,7 @@
 						]);
 
 						$ch = curl_init("http://$arbiter_ip/api/v1/gameserver");
+						error_log("http://$arbiter_ip/api/v1/gameserver $arbiter_token");
 
 						curl_setopt($ch, CURLOPT_HTTPHEADER, [
 							"Authorization: Bearer $arbiter_token",
@@ -309,6 +310,7 @@
 						]);
 
 						$ch = curl_init("http://$arbiter_ip/api/v1/gameserver");
+						error_log("http://$arbiter_ip/api/v1/gameserver $arbiter_token");
 
 						curl_setopt($ch, CURLOPT_HTTPHEADER, [
 							"Authorization: Bearer $arbiter_token",
@@ -446,6 +448,7 @@
 						]);
 
 						$ch = curl_init("http://$arbiter_ip/api/v1/gameserver");
+						error_log("http://$arbiter_ip/api/v1/gameserver $arbiter_token");
 
 						curl_setopt($ch, CURLOPT_HTTPHEADER, [
 							"Authorization: Bearer $arbiter_token",
