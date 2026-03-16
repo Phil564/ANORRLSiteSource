@@ -37,7 +37,8 @@
 			"sanfordthumbsup",
 			"weeeeh",
 			"neuroangel",
-			"iscream"
+			"iscream",
+			"neuroqueen"
 		];
 		shuffle($array);
 
@@ -82,6 +83,16 @@
 		return $splashes[array_rand($splashes)];
 	}
 	$randomsignsplash = $signsplashes[array_rand($signsplashes)];
+
+    //this is so that if the user ever sets 'background:' on the profile css it'll not apply the night background
+    //because the night background can override the user's background
+	$hasBackground = false;
+	if (isset($get_user)) {
+   		$userCss = $header_data->GetUserCSS();
+    	if (!empty($userCss) && preg_match('/background\s*:/i', $userCss)) {
+        	$hasBackground = true;
+    	}
+	}
 ?>
 <?php if($badAppled): ?>
 <style>
@@ -90,7 +101,7 @@
 	}
 </style>
 <?php endif ?>
-<?php if($header_user_settings->nightbg_enabled): ?>
+<?php if($header_user_settings->nightbg_enabled && !$hasBackground): ?>
 <style>
 	body {
 		background: url('/images/bkg_night.png') !important;
