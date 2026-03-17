@@ -57,7 +57,7 @@
 
 	$comments = Comment::GetCommentsOn($get_user);
 	$comments_count = count($comments);
-
+    $bgm = htmlspecialchars($user->profilebgm);
 ?>
 <!DOCTYPE html>
 <html>
@@ -75,6 +75,20 @@
 		<script src="/js/main.js?t=1771413807"></script>
 		<script src="/js/placelauncher.js?t=1771413807"></script>
 		<script src="/js/user.js?t=1771413807"></script>
+		<?php if ($bgm): ?>
+		<audio id="bgm" autoplay loop muted>
+		    <source src="/asset/?id=<?= htmlspecialchars($bgm) ?>" type="audio/mpeg">
+		</audio>
+		<script>
+	    //fuck modern browsers for ruining AutoPlay :sob: -skylerclock
+		const bgm = document.getElementById("bgm");
+		bgm.play();
+		document.body.addEventListener("click", () => {
+ 		   bgm.muted = false;
+		    bgm.play();
+		}, { once: true });
+		</script>
+		<?php endif; ?>
 		<script>
 			$(function(){
 				//ANORRL.User.GrabFeed(<?= $get_user->id ?>);
@@ -156,6 +170,11 @@
 									<div id="OnlineStatusArea" style="padding-top:0px; margin-top:-5px;">
 										<span><b>Joined</b>: <?= $get_user->join_date->format('F dS, Y') ?></span>
 									</div>
+									<?php if ($bgm): ?>
+									<div id="OnlineStatusArea" style="padding-top:0px; margin-top:-5px;">
+										<span><b>This user has a custom profile music, If it dosen't play then click anywhere to play it!</b></span>
+									</div>
+									<?php endif; ?>
 									<div id="Blurb">
 										<?php 
 											if(strlen($get_user->blurb) == 0) {

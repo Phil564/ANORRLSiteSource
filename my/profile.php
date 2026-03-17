@@ -24,6 +24,20 @@
 		}
 	}
 
+	if(isset($_POST['ANORRL$Update$Profile$BGM']) &&
+	   isset($_POST['ANORRL$Update$Profile$BGM$Submit'])) {
+		
+		$result = $user->UpdateBGM(trim($_POST['ANORRL$Update$Profile$BGM']));
+
+		if($result['error']) {
+			$_SESSION['ANORRL$Update$ProfileError'] = true;
+			$_SESSION['ANORRL$Update$ProfileResult'] = $result['reason'];
+			die(header("Location: /my/profile"));
+		} else {
+			die(header("Location: /users/".$user->id."/profile"));
+		}
+	}
+
 	if(isset($_POST['ANORRL$Update$Profile$CSS']) &&
 	   isset($_POST['ANORRL$Update$Profile$CSS$Submit'])) {
 		
@@ -124,6 +138,16 @@
 								<span>Ok so this is where you can change your profile stuff... have a go i guess?</span>
 								<textarea name="ANORRL$Update$Profile$CSS"><?= $user->GetUserCSS() ?></textarea>
 								<input type="submit" value="Update" name="ANORRL$Update$Profile$CSS$Submit">
+							</div>
+						</div>
+					</form>
+					<form method="POST" class="FormBox">
+						<div id="DetailsBox">
+							<h3>Profile Music</h3>
+							<div id="FormStuff">
+								<span>Here you can input the id of a sound asset and it'll just play when someone views your profile ig</span>
+								<textarea name="ANORRL$Update$Profile$BGM" style="height:16px;resize:none;"><?= $user->profilebgm ?></textarea>
+								<input type="submit" value="Update" name="ANORRL$Update$Profile$BGM$Submit">
 							</div>
 						</div>
 					</form>

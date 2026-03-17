@@ -69,6 +69,7 @@
 		public bool $setprofilepicture;
 		public string $currentoutfitmd5;
 		public string $usercss;
+		public string $profilebgm;
 		public DateTime $join_date;
 		
 		/**
@@ -149,7 +150,7 @@
 			$this->currentoutfitmd5 = strval($rowdata['user_currentappearancemd5']);
 			$this->usercss = strval($rowdata['user_css']);
 			$this->join_date = DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['user_joindate']);
-			
+			$this->profilebgm = $rowdata['user_profilebgm'] ?? '';
 			$this->password = strval($rowdata['user_password']);
 			$this->security_key = strval($rowdata['user_security']);
 		}
@@ -1022,6 +1023,70 @@ EOT;
 				return ["error" => false];
 			} else {
 				return ["error"=> true, "reason" => "Unauthorized."];
+			}
+		}
+
+		//updatebgm coded by skylerclock
+		public function UpdateBGM(string $bgm): array {
+			if(!$this->IsBanned()) {
+				if ($bgm === null || trim($bgm) === '') {
+            	 	include $_SERVER["DOCUMENT_ROOT"]."/core/connection.php";
+            	 	$stmt = $con->prepare('UPDATE `users` SET `user_profilebgm` = NULL, `user_lastbgmupdate` = NOW() WHERE `user_id` = ?;');
+            	    $stmt->bind_param('i', $this->id);
+            	 	$stmt->execute();
+            	 	return ["error" => false];
+        	 	}
+				//$offset = 3600; // windows blehh
+				$offset = -3600; // prod
+				$difference = (time() - ($this->last_update->getTimestamp() + $this->last_update->getOffset() + $offset));
+				$calculated_time = 30 - $difference;
+				if($difference < 30) {
+					return [
+						"error" => true,
+						"reason" => "You need to wait $calculated_time seconds before updating again."
+					];
+				}
+				
+				$blockedchars = array('𒐫', '‮', '﷽', '𒈙', '⸻ ', '꧅');
+				$bgm_content = str_replace($blockedchars, '', trim($bgm));
+				if(strlen($bgm_content) > 255) {
+					return [
+						"error" => true,
+						"reason" => "ID value too long!"
+					];
+				}
+
+				include $_SERVER["DOCUMENT_ROOT"]."/core/connection.php";
+				$checktype = $con->prepare("SELECT `asset_type` FROM `assets` WHERE `asset_id` = ? LIMIT 1");
+    			$checktype->bind_param('i', $bgm_content);
+    			$checktype->execute();
+    			$resultcheck = $checktype->get_result();
+				
+				if ($resultcheck->num_rows === 0) {
+        			return [
+            			"error" => true,
+            			"reason" => "Asset does not exist."
+        			];
+    			}
+
+    			$asset = $resultcheck->fetch_assoc();
+    			if (intval($asset['asset_type']) !== 3) {
+        			return [
+            			"error" => true,
+            			"reason" => "This is not an audio asset."
+        			];
+    			}
+
+				$stmt = $con->prepare('UPDATE `users` SET `user_profilebgm` = ?, `user_lastbgmupdate` = NOW() WHERE `user_id` = ?;');
+				$stmt->bind_param('si', $bgm_content, $this->id);
+				$stmt->execute();
+				return ["error" => false];
+
+			} else {
+				return [
+					"error" => true,
+					"reason" => "Unauthorized."
+				];
 			}
 		}
 

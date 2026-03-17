@@ -16,7 +16,7 @@
 		<link rel="stylesheet" href="/css/new/main.css">
 		<link rel="stylesheet" href="/css/new/stuff.css?v=1">
 		<link rel="stylesheet" href="/css/new/my/character.css">
-		
+		<link rel="stylesheet" href="/css/new/forms.css">
 		<script src="/js/core/jquery.js"></script>
 		<script src="/js/core/jquery-modal.js"></script>
 		<script src="/js/main.js?t=1771413807"></script>
@@ -65,6 +65,10 @@
 									</div>
 								</div>
 								<div id="AssetsContainer">
+								    <div id="FormPanel" style="margin: 5px auto;">
+									    <input id="SearchBox" name="query" type="text" placeholder="Look for teh stuff u own!!!" style="width: 400px;">
+									    <input id="Submit" type="submit" value="Search" onclick="ANORRL.Character.Search(); return false;">
+								    </div>
 									<div id="StatusText">
 										<b id="Loading" style="">Loading assets...</b>
 										<b id="NoAssets" style="display: none"><img src="/images/noassets.png" style="width: 110px;display: block;margin: 0 auto;margin-bottom: -92px;margin-top: 23px;">Seems barren, try buying some stuff!</b>

@@ -36,7 +36,7 @@
 			<div id="Body">
 				<div id="BodyContainer">
 					<div id="StuffContainer">
-						<h1>Your Stuff</h1>
+						<h1><marquee behavior="alternate" scrollamount="15">Your Stuff</marquee></h1>
 						<div id="StuffNavigation">
 							<div id="CreateArea">
 								<a href="/create/">Create</a>
