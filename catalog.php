@@ -8,12 +8,16 @@
 		die(header("Location: /login"));
 	}
 	// very unfortunate skid situation, sorry skylerclock
+    //lmfao -skyler
 	$randomcatalogsplashes = [
 		"Teh Catalog",
 		"Buy Somethin' Will Ya!", // earthbound reference
 		"smoke shop",
 		"Everything is free here somehow",
-		"BUY MY MERCH"
+		"BUY MY MERCH",
+		"shirts pants pants shirts pants shirts shirts",
+		"Item Shop", //4night
+		"Los Santos Fashions" //gta????
 	];
 
 	$randomcatalogsplash = $randomcatalogsplashes[array_rand($randomcatalogsplashes)];
