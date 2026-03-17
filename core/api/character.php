@@ -222,7 +222,7 @@
 			} else if($request == "search") {
 					//coded by skylerclock
 				    $query = isset($_GET['q']) ? trim($_GET['q']) : "";
-				    $category = $_GET['c'] ?? null;
+				    $category = $_GET['c'] ?? AssetType::HAT;
 				    $page = isset($_GET['p']) ? intval($_GET['p']) : 1;
 				    if($page < 1) $page = 1;
  				    $wearing_array = $user->GetWearingArray();
@@ -236,7 +236,7 @@
             				 if($asset->type->ordinal() != intval($category)) continue;
         				 }
         				 if($query !== "" && strpos(strtolower($asset->name), $query) === false) continue;
-        				 $matched_assets[] = $asset;
+        				 array_push($matched_assets,$asset);
     				 }
     				 $per_page = 8;
     				 $total_pages = max(1, ceil(count($matched_assets) / $per_page));
@@ -245,21 +245,21 @@
     				 $paged_assets = array_slice($matched_assets, $offset, $per_page);
     				 $assets_raw = [];
     				 foreach($paged_assets as $asset) {
-        				 $assets_raw[] = [
-            				 "id" => $asset->id,
-            				 "name" => $asset->name,
-            				 "creator" => [
-                				 "id" => $asset->creator->id,
-                				 "name" => $asset->creator->name
-            				 ],
-        				 ];
+					array_push($assets_raw, [
+						"id" => $asset->id,
+						"name" => $asset->name,
+						"creator" => [
+							"id" => $asset->creator->id,
+							"name" => $asset->creator->name
+						]
+					]);
     				 }
     				 die(json_encode([
         				 "assets" => $assets_raw,
         				 "page" => $page,
         				 "total_pages" => $total_pages
     				 ]));
-				 }
+				 
 			} else if($request == "wear" && isset($_POST['assetid'])) {
 				$asset = Asset::FromID(intval($_POST['assetid']));
 
