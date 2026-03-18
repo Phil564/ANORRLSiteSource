@@ -104,16 +104,18 @@
 		}
 		
 		var once = false;
-		$("body").on("click", function() {
-			if(once || !shouldplay) {
-				return;
-			}
-			once = true;
-			$("#bgm")[0].muted = false;
-			$("#bgm")[0].play();
-		})
+		
 
 		$(function() {
+			$("body").on("click", function() {
+				if(once || !shouldplay) {
+					return;
+				}
+				once = true;
+				$("#bgm")[0].muted = false;
+				$("#bgm")[0].play();
+			})
+
 			$("#bgm")[0].volume = 0.25;
 			$("#MusicPlayer #VolumeBar").val($("#bgm")[0].volume);
 
