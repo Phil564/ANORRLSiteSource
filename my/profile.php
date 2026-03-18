@@ -87,6 +87,8 @@
 
 		die(header("Location: /my/profile"));
 	}
+
+	$bgm = Asset::FromID($user->profilebgm);
 ?>
 <!DOCTYPE html>
 <html>
@@ -146,8 +148,13 @@
 							<h3>Profile Music</h3>
 							<div id="FormStuff">
 								<span>Here you can input the id of a sound asset and it'll just play when someone views your profile ig</span>
-								<?php if($user->profilebgm > 0): ?>
-								<img src="/thumbs/?id=<?= $user->profilebgm ?>&sxy=320" style="border: 2px solid black; margin: 10px auto; display: block;">
+								<?php if($bgm != null): ?>
+								<div style="border: 2px solid black; margin: 10px auto; width: 320px; text-align: center;">
+									<img src="/thumbs/?id=<?= $bgm->id ?>&sxy=320">
+									<div style="padding: 5px; background: #333;">
+										<a href="/<?= $bgm->GetURLTitle() ?>-item?id=<?= $bgm->id ?>"><?= $bgm->name ?></a>
+									</div>
+								</div>
 								<?php endif ?>
 								<textarea name="ANORRL$Update$Profile$BGM" style="height:16px;resize:none;margin-top: 0px;text-align: center"><?= $user->profilebgm ?></textarea>
 								<input type="submit" value="Update" name="ANORRL$Update$Profile$BGM$Submit">
