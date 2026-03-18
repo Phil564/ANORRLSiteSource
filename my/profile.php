@@ -73,14 +73,12 @@
 	if(isset($_POST['ANORRL$Update$Settings$Submit'])) {
 		$randoms_enabled = isset($_POST['ANORRL$Update$Settings$RandomsEnabled']);
 		$teto_enabled = isset($_POST['ANORRL$Update$Settings$TetoEnabled']);
-		$emotesounds_enabled = isset($_POST['ANORRL$Update$Settings$EmoteSoundsEnabled']);
 		$accessibility_enabled = isset($_POST['ANORRL$Update$Settings$AccessibilityEnabled']);
 		$headshots_enabled = isset($_POST['ANORRL$Update$Settings$HeadshotsEnabled']);
 		$nightbg_enabled = isset($_POST['ANORRL$Update$Settings$NightBGEnabled']);
 
 		$settings->SetRandomsEnabled($randoms_enabled);
 		$settings->SetTetoEnabled($teto_enabled);
-		$settings->SetEmoteSoundsEnabled($emotesounds_enabled);
 		$settings->SetAccessibilityEnabled($accessibility_enabled);
 		$settings->SetHeadshotsEnabled($headshots_enabled);
 		$settings->SetNightBGEnabled($nightbg_enabled);
@@ -176,12 +174,6 @@
 										<td>Fatass Teto</td>
 										<td>
 											<input name="ANORRL$Update$Settings$TetoEnabled" type="checkbox" <?php if($settings->teto_enabled): ?>checked<?php endif ?>>
-										</td>
-									</tr>
-									<tr>
-										<td>Emote Sounds (W.I.P/T.B.A)</td>
-										<td>
-											<input name="ANORRL$Update$Settings$EmoteSoundsEnabled" type="checkbox" <?php if($settings->emotesounds_enabled): ?>checked<?php endif ?>>
 										</td>
 									</tr>
 									<tr>
