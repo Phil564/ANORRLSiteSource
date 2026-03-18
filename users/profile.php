@@ -98,17 +98,20 @@
 				shouldplay = true;
 			}
 
-			var once = false;
+			
 
-			$("body").on("click", function() {
-				if(once) {
-					return;
-				}
-				once = true;
-				$("#bgm")[0].muted = false;
-				$("#bgm")[0].play();
-			})
+			
 		});
+		
+		var once = false;
+		$("body").on("click", function() {
+			if(once) {
+				return;
+			}
+			once = true;
+			$("#bgm")[0].muted = false;
+			$("#bgm")[0].play();
+		})
 
 		</script>
 		<?php endif; ?>

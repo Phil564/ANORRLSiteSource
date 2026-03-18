@@ -146,7 +146,10 @@
 							<h3>Profile Music</h3>
 							<div id="FormStuff">
 								<span>Here you can input the id of a sound asset and it'll just play when someone views your profile ig</span>
-								<textarea name="ANORRL$Update$Profile$BGM" style="height:16px;resize:none;"><?= $user->profilebgm ?></textarea>
+								<?php if($user->profilebgm > 0): ?>
+								<img src="/thumbs/?id=<?= $user->profilebgm ?>&sxy=320" style="border: 2px solid black; margin: 10px auto; display: block;">
+								<?php endif ?>
+								<textarea name="ANORRL$Update$Profile$BGM" style="height:16px;resize:none;margin-top: 0px;text-align: center"><?= $user->profilebgm ?></textarea>
 								<input type="submit" value="Update" name="ANORRL$Update$Profile$BGM$Submit">
 							</div>
 						</div>
