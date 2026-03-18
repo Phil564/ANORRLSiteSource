@@ -92,10 +92,22 @@
 		
 		// rewrite of skylers autoplay thing
 		$(function() {
+			var shouldplay = false;
 			if (confirm("This profile uses music... Play it?")) {
 				$("#bgm")[0].muted = false;
-				$("#bgm")[0].play();
+				shouldplay = true;
 			}
+
+			var once = false;
+
+			$("body").on("click", function() {
+				if(once) {
+					return;
+				}
+				once = true;
+				$("#bgm")[0].muted = false;
+				$("#bgm")[0].play();
+			})
 		});
 
 		</script>
