@@ -405,7 +405,7 @@
 			}
 
 			if($creator_only) {
-				$sql_extra .= " AND `ta_creator` = ?";
+				$sql_extra .= " AND `asset_creator` = ?";
 			}
 
 			if(!$show_all) {
@@ -483,7 +483,7 @@
 			}
 
 			if($creator_only) {
-				$sql_extra .= " AND `ta_creator` = ?";
+				$sql_extra .= " AND `asset_creator` = ?";
 			}
 
 			if(!$show_all) {
