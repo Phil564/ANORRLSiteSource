@@ -76,7 +76,7 @@
 		<script src="/js/placelauncher.js?t=1771413807"></script>
 		<script src="/js/user.js?t=1771413807"></script>
 		<?php if ($bgm != null): ?>
-		<audio id="bgm" preload="auto" loop muted> <!-- autoplay m.i.a -->
+		<audio id="bgm" loop muted volume="0.25"> <!-- autoplay m.i.a -->
 		    <source src="/asset/?id=<?= $bgm->GetAssetIDSafe() ?>">
 		</audio>
 		<script>
@@ -91,26 +91,39 @@
 		*/
 		
 		// rewrite of skylers autoplay thing
-		$(function() {
-			var shouldplay = false;
-			if (confirm("This profile uses music... Play it?")) {
-				$("#bgm")[0].muted = false;
-				shouldplay = true;
-			}
-
+		var shouldplay = false;
+		if (confirm("This profile uses music... Play it?")) {
+			$("#bgm")[0].muted = false;
+			shouldplay = true;
+		} else {
+			$(function() {
+				$("#MusicPlayer").remove();
+				$("#bgm").remove();
+			})
 			
-
-			
-		});
+		}
 		
 		var once = false;
 		$("body").on("click", function() {
-			if(once) {
+			if(once || !$("#bgm")[0].muted || !shouldplay) {
 				return;
 			}
 			once = true;
 			$("#bgm")[0].muted = false;
 			$("#bgm")[0].play();
+		})
+
+		$(function() {
+			$("#bgm")[0].volume = 0.25;
+			$("#MusicPlayer #VolumeBar").val($("#bgm")[0].volume);
+
+			$("#bgm").on("play", function() {
+				$("#MusicPlayer #VolumeBar").val($(this)[0].volume);
+			})
+
+			$("#MusicPlayer #VolumeBar").on("change input", function() {
+				$("#bgm")[0].volume = $(this).val();
+			})
 		})
 
 		</script>
@@ -132,6 +145,58 @@
 		</script>
 	</head>
 	<body>
+		<?php if($bgm != null): ?>
+		<style>
+			#MusicPlayer {
+				background: #333;
+				color: white;
+				border: 4px solid black;
+				position: fixed;
+				top: 10px;
+				left: 10px;
+				width: 165px;
+				padding: 15px;
+				z-index: 5;
+				text-align: center;
+				
+			}
+
+			#MusicPlayer #PlayingLink a {
+				width: 100%;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				display: inline-block;
+				white-space: nowrap;
+			}
+
+			#MusicPlayer #VolumeBar {
+				width: 100%;
+			}
+
+			#MusicPlayer #Thumbs {
+				margin: 0 auto;
+			}
+
+			#MusicPlayer #Thumbs img {
+				border: 2px solid black;
+			}
+		</style>
+		<div id="MusicPlayer">
+			<div jd="Thumbs">
+				<img src="/thumbs/?id=<?= $bgm->id ?>&sxy=128">
+			</div>
+			<div>Playing: </div>
+			<div id="PlayingLink"><a href="/<?= $bgm->GetURLTitle() ?>-item?id=<?= $bgm->id ?>"><?= $bgm->name ?></a></div>
+			<!--<div id="ProgressBarContainer">
+				<input id="ProgressBar" type="range" min="0" max="0" step="0">
+			</div>-->
+			<br>
+			<div id="VolumeBarContainer">
+				<div>Volume:</div>
+				<input id="VolumeBar" type="range" min="0" max="1.0" step="0.00001">
+			</div>
+		</div>
+		<?php endif ?>
 		<div class="Badge" template><a href=""><img src=""><span></span></a></div>
 		<div id="Container">
 			<?php include $_SERVER['DOCUMENT_ROOT'].'/core/ui/header.php'; ?>
