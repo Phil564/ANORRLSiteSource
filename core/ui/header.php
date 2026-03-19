@@ -129,7 +129,7 @@
 	}
 </style>
 <?php endif ?>
-<?php if($header_check_user != null): ?>
+<?php if($header_check_user != null && $_SERVER['SCRIPT_NAME'] != "/users/profile.php"): ?>
 <link rel="stylesheet" href="/users/<?= $header_check_user->id ?>/css?t=<?= time() ?>">
 <?php endif ?>
 <div id="Header">
