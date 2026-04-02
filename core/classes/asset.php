@@ -226,15 +226,6 @@
 			};
 		}
 
-		public static function IsYearable(AssetType $type) {
-			return match($type) {
-				AssetType::IMAGE => false,
-				AssetType::DECAL => false,
-				AssetType::AUDIO => false,
-				default => true,
-			};
-		}
-
 		private static function GetTemplate(string $filename): string {
 			return file_get_contents($_SERVER['DOCUMENT_ROOT']."/core/templates/$filename.rbxm");
 		}
@@ -323,46 +314,6 @@
 		}
 	}
 
-	enum AssetYear {
-		case All;
-		case Y2013;
-		case Y2016;
-
-		public static function index(string|int $ordinal): AssetYear {
-			if(is_int($ordinal)) {
-				return match($ordinal) {
-					0 => AssetYear::All,
-					1 => AssetYear::Y2013,
-					2 => AssetYear::Y2016,
-					default => AssetYear::Y2016
-				};
-			} else {
-				return match($ordinal) {
-					"2013" => AssetYear::Y2013,
-					"2016" => AssetYear::Y2016,
-					default => AssetYear::Y2016
-				};
-			}
-			
-		}
-
-		public function ordinal(): int {
-			return match($this) {
-				AssetYear::All 	    => 0,
-				AssetYear::Y2013 	=> 1,
-				AssetYear::Y2016	=> 2,
-			};
-		}
-
-		public function label(): string {
-			return match($this) {
-				AssetYear::All   	=> "All",
-				AssetYear::Y2013 	=> "2013",
-				AssetYear::Y2016	=> "2016",
-			};
-		}
-	}
-
 	/**
 	 * Abstract class for assets
 	*/
@@ -373,8 +324,6 @@
 		public string      $name;
 		public string      $description;
 		public bool        $public;
-
-		public AssetYear   $year;
 
 		public int         $favourites_count;
 		public bool        $comments_enabled;
@@ -419,8 +368,6 @@
 				$this->description = str_replace("<", "&lt;", str_replace(">", "&gt;", $rowdata['asset_description']));
 				$this->public = boolval($rowdata['asset_public']);
 
-				$this->year = AssetYear::index($rowdata['asset_year']);
-
 				$this->favourites_count = intval( $rowdata['asset_favourites_count']);
 				$this->comments_enabled = boolval($rowdata['asset_comments_enabled']);
 	
@@ -443,8 +390,6 @@
 				$this->name = $asset_data->name;
 				$this->description = $asset_data->description;
 				$this->public = $asset_data->public;
-
-				$this->year = $asset_data->year;
 
 				$this->favourites_count = $asset_data->favourites_count;
 				$this->comments_enabled = $asset_data->comments_enabled;
@@ -513,7 +458,7 @@
 
 		function GetAllVersions(): array {
 			include $_SERVER["DOCUMENT_ROOT"]."/core/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `assetversions` WHERE `version_assetid` = ? ORDER BY `version_id` DESC");
+			$stmt_getuser = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_assetid` = ? ORDER BY `version_id` DESC");
 			$stmt_getuser->bind_param('i', $this->id);
 			$stmt_getuser->execute();
 
@@ -536,7 +481,7 @@
 
 		function GetVersionID(): int {
 			include $_SERVER['DOCUMENT_ROOT']."/core/connection.php";
-			$stmt = $con->prepare("SELECT * FROM `assetversions` WHERE `version_assetid` = ? ORDER BY `version_id`");
+			$stmt = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_assetid` = ? ORDER BY `version_id`");
 			$stmt->bind_param("i", $this->id);
 			$stmt->execute();
 
@@ -551,7 +496,7 @@
 
 		function GetMD5Hash(int $version): string {
 			include $_SERVER['DOCUMENT_ROOT']."/core/connection.php";
-			$stmt = $con->prepare("SELECT * FROM `assetversions` WHERE `version_id` = ?");
+			$stmt = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_id` = ?");
 			$stmt->bind_param("i", $version);
 			$stmt->execute();
 
@@ -982,7 +927,7 @@
 
 		public static function GetVersionFromID(int $versionid) {
 			include $_SERVER["DOCUMENT_ROOT"]."/core/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `assetversions` WHERE `version_id` = ?");
+			$stmt_getuser = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_id` = ?");
 			$stmt_getuser->bind_param('i', $versionid);
 			$stmt_getuser->execute();
 			$result = $stmt_getuser->get_result();
@@ -1009,7 +954,7 @@
 				$id = $asset->id;
 			}
 			include $_SERVER["DOCUMENT_ROOT"]."/core/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `assetversions` WHERE `version_assetid` = ? AND `version_subid` = ?");
+			$stmt_getuser = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_assetid` = ? AND `version_subid` = ?");
 			$stmt_getuser->bind_param('ii', $id, $version);
 			$stmt_getuser->execute();
 			$result = $stmt_getuser->get_result();
@@ -1046,7 +991,7 @@
 			}
 
 			include $_SERVER["DOCUMENT_ROOT"]."/core/connection.php";
-			$stmt_getuser = $con->prepare("UPDATE `assetversions` SET `version_md5thumb` = ? WHERE `version_id` = ?");
+			$stmt_getuser = $con->prepare("UPDATE `asset_versions` SET `version_md5thumb` = ? WHERE `version_id` = ?");
 			$stmt_getuser->bind_param('si', $md5hash, $this->id);
 			$stmt_getuser->execute();
 
@@ -1069,7 +1014,7 @@
 			}
 
 			include $_SERVER["DOCUMENT_ROOT"]."/core/connection.php";
-			$stmt_getuser = $con->prepare("UPDATE `assetversions` SET `version_md5thumb` = ? WHERE `version_id` = ?");
+			$stmt_getuser = $con->prepare("UPDATE `asset_versions` SET `version_md5thumb` = ? WHERE `version_id` = ?");
 			if($asset->id == $this->asset->id) {
 				$stmt_getuser->bind_param('si', $this->md5sig, $this->id);
 			} else {

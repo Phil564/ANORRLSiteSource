@@ -4,6 +4,7 @@
 	 */
 	class SlurUtils {
 
+		// TODO: just return [Content Deleted]
 		public static function ProcessText(string $input) {
 			$profanity = file($_SERVER['DOCUMENT_ROOT']."/core/badwords.txt", FILE_IGNORE_NEW_LINES);
 

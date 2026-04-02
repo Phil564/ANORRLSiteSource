@@ -30,20 +30,10 @@
 		$name = ReturnNotUnicodedString($_POST['ANORRL$IDE$Publish$Place$Name']);
 		$description = ReturnNotUnicodedString($_POST['ANORRL$IDE$Publish$Place$Description']);
 		
-		$client = ClientDetector::DetectClient();
+		$isclient = ClientDetector::IsAClient();
 
-		$year = AssetYear::Y2016;
-
-		switch($client) {
-			case Client::C2013:
-				$year = AssetYear::Y2013;
-				break;
-			case Client::C2016:
-				$year = AssetYear::Y2016;
-				break;
-			case Client::Unknown:
-				die("Hey something isn't right here... You sure you're using the right studio?");
-		}
+		if(!$isclient)
+			die("Hey something isn't right here... You sure you're using the right studio?");
 
 		$server_size = intval($_POST['ANORRL$IDE$Publish$Place$ServerSize']) <= 0 ? 12 : intval($_POST['ANORRL$IDE$Publish$Place$ServerSize']);
 
@@ -64,7 +54,7 @@
 			die("Name must not be less than 4 characters!");
 		}
 	
-		$result = AssetUploader::CreatePlace($name, $description, $isPublic, $commentsEnabled, $year, $server_size, $isCopylocked, $gears, $original, $user);
+		$result = AssetUploader::CreatePlace($name, $description, $isPublic, $commentsEnabled, $server_size, $isCopylocked, $gears, $original, $user);
 		
 		if(!$result['error']) {
 			$place_verified_id = $result['id'];
@@ -198,7 +188,7 @@
 				{
 					try
 					{
-						window.external.SaveUrl('http://<?= $_SERVER['SERVER_NAME'] ?>/Data/Upload.ashx?assetid=<?= $place_verified_id ?>&type=Place&name=<?= urlencode($name) ?>&description=<?= urlencode($description) ?>&ispublic=<?= FunnyBoolToStr($isPublic) ?>&commentsenabled=<?= FunnyBoolToStr($commentsEnabled) ?>&serversize=<?= $server_size ?>&iscopylocked=<?= FunnyBoolToStr($isCopylocked) ?>&year=<?= $year->ordinal() ?>');
+						window.external.SaveUrl('http://<?= $_SERVER['SERVER_NAME'] ?>/Data/Upload.ashx?assetid=<?= $place_verified_id ?>&type=Place&name=<?= urlencode($name) ?>&description=<?= urlencode($description) ?>&ispublic=<?= FunnyBoolToStr($isPublic) ?>&commentsenabled=<?= FunnyBoolToStr($commentsEnabled) ?>&serversize=<?= $server_size ?>&iscopylocked=<?= FunnyBoolToStr($isCopylocked) ?>');
 						document.getElementById("Uploading").style.display='none';
 						document.getElementById("Confirmation").style.display='block';
 					}
@@ -206,7 +196,7 @@
 					{
 						try
 						{
-							window.external.SaveUrl('http://<?= $_SERVER['SERVER_NAME'] ?>/Data/Upload.ashx?assetid=<?= $place_verified_id ?>&type=Place&name=<?= urlencode($name) ?>&description=<?= urlencode($description) ?>&ispublic=<?= FunnyBoolToStr($isPublic) ?>&commentsenabled=<?= FunnyBoolToStr($commentsEnabled) ?>&serversize=<?= $server_size ?>&iscopylocked=<?= FunnyBoolToStr($isCopylocked) ?>&year=<?= $year->ordinal() ?>');
+							window.external.SaveUrl('http://<?= $_SERVER['SERVER_NAME'] ?>/Data/Upload.ashx?assetid=<?= $place_verified_id ?>&type=Place&name=<?= urlencode($name) ?>&description=<?= urlencode($description) ?>&ispublic=<?= FunnyBoolToStr($isPublic) ?>&commentsenabled=<?= FunnyBoolToStr($commentsEnabled) ?>&serversize=<?= $server_size ?>&iscopylocked=<?= FunnyBoolToStr($isCopylocked) ?>');
 							document.getElementById("Uploading").style.display='none';
 							document.getElementById("Confirmation").style.display='block';
 						}

@@ -89,8 +89,7 @@
 	}
 
 	if(isset($_POST['ANORRL$EditItem$Name']) &&
-	   isset($_POST['ANORRL$EditItem$Description']) &&
-	   isset($_POST['ANORRL$EditItem$Year'])
+	   isset($_POST['ANORRL$EditItem$Description'])
 	) {
 
 		include $_SERVER['DOCUMENT_ROOT']."/core/connection.php";
@@ -100,9 +99,8 @@
 		$public = isset($_POST['ANORRL$EditItem$PublicBox']);
 		$comments_enabled = isset($_POST['ANORRL$EditItem$CommentsBox']);
 		$on_sale = isset($_POST['ANORRL$EditItem$OnSaleBox']);
-		$year = AssetYear::index(intval($_POST['ANORRL$EditItem$Year']));
 
-		$result = AssetUploader::EditAsset($asset, $name, $description, $public, $on_sale, $comments_enabled, $year);
+		$result = AssetUploader::EditAsset($asset, $name, $description, $public, $on_sale, $comments_enabled);
 		
 		if($result['error']) {
 			$_SESSION['ANORRL$EditItem$Error'] = $result['reason'];
@@ -261,18 +259,6 @@
 											<tr>
 												<td>Enable Comments</td>
 												<td><input type="checkbox" name="ANORRL$EditItem$CommentsBox" <?php if($asset->comments_enabled): ?>checked<?php endif ?>></td>
-											</tr>
-											<tr id="PlaceYear">
-												<td style="vertical-align: middle;">Year</td>
-												<td>
-													<select name="ANORRL$EditItem$Year">
-														<?php if($asset->type != AssetType::PLACE && AssetTypeUtils::IsYearable($asset->type)): ?>
-														<option value="0" <?php if($asset->year == AssetYear::All): ?>selected<?php endif ?>>Any</option>
-														<?php endif ?>
-														<option value="2" <?php if($asset->year == AssetYear::Y2016): ?>selected<?php endif ?>>ANORRL (2016)</option>
-														<option value="1" <?php if($asset->year == AssetYear::Y2013): ?>selected<?php endif ?>>2013</option>
-													</select>
-												</td>
 											</tr>
 										</table>
 									</div>

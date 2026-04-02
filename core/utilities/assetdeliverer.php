@@ -43,7 +43,6 @@
 	$access = $settings['asset']['ACCESSKEY'];
 	$roblosec = $settings['asset']['ROBLOSEC'];
 
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/clientdetect.php";
 	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/core/utilities/assetutils.php";
 	require_once $_SERVER["DOCUMENT_ROOT"] . "/core/utilities/imageutils.php";
@@ -87,36 +86,6 @@
 						die("Bad Request");
 					}
 
-					$attachments = [
-						"FaceCenterAttachment",
-						"FaceFrontAttachment",
-						"HairAttachment",
-						"HatAttachment",
-						"RootAttachment",
-						"LeftGripAttachment",
-						"LeftShoulderAttachment",
-						"LeftFootAttachment",
-						"RightGripAttachment",
-						"RightShoulderAttachment",
-						"RightFootAttachment",
-						"BodyBackAttachment",
-						"BodyFrontAttachment",
-						"LeftCollarAttachment",
-						"NeckAttachment",
-						"RightCollarAttachment",
-						"WaistBackAttachment",
-						"WaistFrontAttachment",
-						"WaistCenterAttachment",
-					];
-					
-					$client = ClientDetector::DetectClient();
-
-					if($serverplace->year == AssetYear::Y2013 || $client == Client::C2013) {
-						if(str_contains($contents, "Accoutrement") || str_contains($contents, "Accessory")) {
-							die(file_get_contents($_SERVER['DOCUMENT_ROOT']."/core/templates/nothing.rbxm"));
-						}
-					}
-					
 					if(!$serverplace->gears_enabled && $asset->type == AssetType::GEAR && intval($_GET['serverplaceid']) != 0) {
 						die(file_get_contents($_SERVER['DOCUMENT_ROOT']."/core/templates/nothing.rbxm"));
 					}

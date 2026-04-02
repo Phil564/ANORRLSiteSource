@@ -27,7 +27,7 @@
 			$md5s = [];
 
 			foreach($ids as $key => $value) {
-				$stmt = $con->prepare("SELECT * FROM `assetversions` WHERE `version_assetid` = ? ORDER BY `version_id` DESC;");
+				$stmt = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_assetid` = ? ORDER BY `version_id` DESC;");
 				$stmt->bind_param("i", $value);
 				$stmt->execute();
 
@@ -40,7 +40,7 @@
 			}
 
 			foreach($md5s as $key => $value) {
-				$stmt = $con->prepare("SELECT * FROM `assetversions` WHERE `version_md5sig` = ? AND `version_assetid` != ? ORDER BY `version_id` DESC;");
+				$stmt = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_md5sig` = ? AND `version_assetid` != ? ORDER BY `version_id` DESC;");
 				$stmt->bind_param("si", $value, $key);
 				$stmt->execute();
 
@@ -68,6 +68,8 @@
 				if($_POST['type'] == "delete") {
 					echo "deleting";
 					$id = $asset->id;
+
+					// move all of this shit to a delete function
 
 					$stmt = $con->prepare('DELETE FROM `inventory` WHERE `inv_assetid` = ?');
 					$stmt -> bind_param("i", $id);
@@ -125,7 +127,7 @@
 						if(file_exists($_SERVER['DOCUMENT_ROOT']."/../assets/thumbs/".AssetVersion::GetLatestVersionOf($asset)->md5thumb)) {
 
 						} else {
-							$stmt = $con->prepare("UPDATE `assetversions` SET `version_md5thumb` = 'placeholder' WHERE `version_id` = ?");
+							$stmt = $con->prepare("UPDATE `asset_versions` SET `version_md5thumb` = 'placeholder' WHERE `version_id` = ?");
 							$stmt->bind_param('i', AssetVersion::GetLatestVersionOf($asset)->id);
 							$stmt->execute();
 						}

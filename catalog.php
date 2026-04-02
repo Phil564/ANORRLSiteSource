@@ -2,25 +2,14 @@
 	session_start();
 
 	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/userutils.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/splasher.php';
 	$user = UserUtils::RetrieveUser();
 
 	if($user == null) {
 		die(header("Location: /login"));
 	}
-	// very unfortunate skid situation, sorry skylerclock
-    //lmfao -skyler
-	$randomcatalogsplashes = [
-		"Teh Catalog",
-		"Buy Somethin' Will Ya!", // earthbound reference
-		"smoke shop",
-		"Everything is free here somehow",
-		"BUY MY MERCH",
-		"shirts pants pants shirts pants shirts shirts",
-		"Item Shop", //4night
-		"Los Santos Fashions" //gta????
-	];
 
-	$randomcatalogsplash = $randomcatalogsplashes[array_rand($randomcatalogsplashes)];
+	$randomsplash = new Splasher("catalog")->getRandomSplash();
 ?>
 <!DOCTYPE html>
 <html>
@@ -61,7 +50,7 @@
 		<?php include $_SERVER['DOCUMENT_ROOT'].'/core/ui/header.php'; ?>
 			<div id="Body">
 				<div id="BodyContainer">
-					<h2 style="margin: 0px"><?= $randomcatalogsplash ?></h2>
+					<h2 style="margin: 0px"><?= $randomsplash ?></h2>
 					<div id="CatalogContainer">
 						<div id="OptionsPanel">
 							<div id="CategoriesChooser">

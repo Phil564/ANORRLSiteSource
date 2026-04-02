@@ -2,6 +2,8 @@
 
 	require_once $_SERVER["DOCUMENT_ROOT"]."/core/utilities/userutils.php";
 
+	// this could also be moved to a function like Buy() or something idk
+
 	enum TransactionType {
 		case CONES;
 		case LIGHTS;
@@ -53,9 +55,8 @@
 						$ta_id = self::GenerateID();
 						$ta_userid = $get_user->id;
 						$ta_asset = $asset->id;
-						$ordinal = $asset->type->ordinal();
-						$stmt_processtransaction = $con->prepare("INSERT INTO `transactions`(`ta_id`, `ta_userid`, `ta_asset`, `ta_assettype`, `ta_assetcreator`) VALUES (?, ?, ?, ?, ?)");
-						$stmt_processtransaction->bind_param('siiii', $ta_id, $ta_userid, $ta_asset, $ordinal, $asset->creator->id);
+						$stmt_processtransaction = $con->prepare("INSERT INTO `transactions`(`ta_id`, `ta_userid`, `ta_asset`, `ta_assetcreator`) VALUES (?, ?, ?, ?)");
+						$stmt_processtransaction->bind_param('siii', $ta_id, $ta_userid, $ta_asset, $asset->creator->id);
 						if($stmt_processtransaction->execute()) {
 							$stmt_get_sale_count = $con->prepare("SELECT * FROM `transactions` WHERE `ta_asset` = ? AND `ta_userid`!= ?");
 							$stmt_get_sale_count->bind_param('ii', $asset_id, $asset->creator->id);

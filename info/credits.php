@@ -60,6 +60,7 @@
 					<div id="CreditsContainer">
 						<div class="Note">This is a page dedicated to the people who has ever contributed to this projects (AND MAKING IT COOLER!)</div>
 						<hr>
+						<?php if(false): ?>
 						<table>
 							<tr>
 								<?php CreateProfile(
@@ -116,6 +117,7 @@
 								); ?>
 							</tr>
 						</table>
+						<?php endif ?>
 						<hr>
 						<p>But these aren't the only ones, no.</p>
 						<p>Thank you everyone (in this list below) for playing on/participating in the community for this project!</p>

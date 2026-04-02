@@ -11,29 +11,12 @@
 		die(header("Location: /login"));
 	}
 
-	$client = ClientDetector::DetectClient();
-
-	$year = AssetYear::Y2016;
-
-	switch($client) {
-		case Client::C2013:
-			$year = AssetYear::Y2013;
-			break;
-		case Client::C2016:
-			$year = AssetYear::Y2016;
-			break;
-		case Client::Unknown:
-			//break;
-			die("Hey something isn't right here... You sure you're using the right studio?");
-	}
-
-	$places = $user->GetPlaces(false);
-
-	$teamplaces = [];
-	if($year == AssetYear::Y2016) {
-		$teamplaces = $user->GetPlaces(true);
-	}
+	$isclient = ClientDetector::IsAClient();
+	if(!$isclient)
+		die("Hey something isn't right here... You sure you're using the right studio?");
 	
+	$places = $user->GetPlaces(false);
+	$teamplaces = $user->GetPlaces(true);
 ?>
 <!DOCTYPE html>
 <html>
@@ -54,28 +37,6 @@
 			function editrecentfile(recentpath) {
 				window.external.StartGame("","", recentpath);	
 			}
-
-			<?php if($client != Client::Unknown): ?>
-			$(function() {
-				$("#YearToggle").on("change", function() {
-					if($("#YearToggle").is(':checked')) {
-						$(".template").each(function() {
-							var attr = $(this).attr("placeyear");
-							if(attr != undefined) {
-								if($(this).attr("placeyear") != "<?= $year->ordinal() ?>") {
-									$(this).css("display", "none");
-								}
-								
-							}
-						})
-					} else {
-						$(".template").each(function() {
-							$(this).removeAttr("style");
-						})
-					}
-				})
-			})
-			<?php endif ?>
 		</script>
 	</head>
 	<body id="StudioWelcomeBody">
@@ -162,7 +123,7 @@
 					</div>
 				</div>
 				<div id="MyProjectsView" class="welcome-content-area" style="display: none;">
-					<h2>My Published Projects<?php if($client != Client::Unknown): ?> | <span style="font-size: 12px">Show only <?= $year->ordinal() ?> games</span> <input id="YearToggle" type="checkbox"><?php endif ?></h2>
+					<h2>My Published Projects</h2>
 					<div class="templates" style="display: block;">
 						<?php if(count($teamplaces) != 0): ?>
 						<div><h3>Collaborative Projects</h3></div>
@@ -172,7 +133,7 @@
 									$place_id = $place->id;
 									$place_name = $place->name;
 									echo <<<EOT
-									<div class="template" placeid="$place_id" placeyear="2016">
+									<div class="template" placeid="$place_id">
 										<a class="game-image">
 											<img width="197" src="/thumbs/?id=$place_id&sx=197&sy=111">
 										</a>
@@ -194,10 +155,8 @@
 										$place_id = $place->id;
 										$place_name = $place->name;
 
-										$place_year = $place->year->ordinal();
-
 										echo <<<EOT
-										<div class="template" placeid="$place_id" placeyear="$place_year">
+										<div class="template" placeid="$place_id">
 											<a class="game-image">
 												<img width="197" src="/thumbs/?id=$place_id&sx=197&sy=111">
 											</a>

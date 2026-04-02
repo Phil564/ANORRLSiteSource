@@ -1,5 +1,6 @@
 <?php
 	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/userutils.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/splasher.php';
 	$user = UserUtils::RetrieveUser();
 
 	if($user == null) {
@@ -7,18 +8,7 @@
 	}
 
     //took this from games.php but idrc atp -skylerclock
-	$randomvandalsplashes = [
-		"Vandals",
-		"Vandalizers!",
-		"i wonder if i can make friends now...",
-		"RAAAAAH VANDALS!",
-		"the very important vandals!",
-		"i need sum friends...",
-		"W people",
-		"VandGDs????"
-	];
-
-	$randomvandalsplash = $randomvandalsplashes[array_rand($randomvandalsplashes)];
+	$randomsplash = new Splasher("people")->getRandomSplash();
 ?>
 <!DOCTYPE html>
 <html>
@@ -37,7 +27,7 @@
 		<?php include $_SERVER['DOCUMENT_ROOT'].'/core/ui/header.php'; ?>
 			<div id="Body">
 				<div id="BodyContainer">
-					<h2 style="margin: 0; margin-top: 10px;"><?= $randomvandalsplash ?></h2>
+					<h2 style="margin: 0; margin-top: 10px;"><?= $randomsplash ?></h2>
 					<div id="Users">
 						<div method="GET" id="FormPanel">
 							<input id="SearchBox" name="query" type="text" placeholder="Look for users lol">

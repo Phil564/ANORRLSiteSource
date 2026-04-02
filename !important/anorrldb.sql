@@ -63,7 +63,6 @@ CREATE TABLE `active_servers` (
   `server_pid` int(11) NOT NULL,
   `server_jobid` varchar(255) NOT NULL,
   `server_placeid` int(11) NOT NULL,
-  `server_year` varchar(4) NOT NULL DEFAULT '2016',
   `server_playercount` int(11) NOT NULL DEFAULT 0,
   `server_maxcount` int(11) NOT NULL,
   `server_port` varchar(5) NOT NULL,
@@ -99,7 +98,6 @@ CREATE TABLE `assets` (
   `asset_public` int(11) NOT NULL DEFAULT 0,
   `asset_favourites_count` int(11) NOT NULL DEFAULT 0,
   `asset_comments_enabled` int(11) NOT NULL DEFAULT 1,
-  `asset_year` int(1) NOT NULL DEFAULT 0,
   `asset_onsale` int(11) NOT NULL DEFAULT 0,
   `asset_sales_count` int(11) NOT NULL DEFAULT 0,
   `asset_relatedid` int(11) DEFAULT NULL,
@@ -112,11 +110,11 @@ CREATE TABLE `assets` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `assetversions`
+-- Table structure for table `asset_versions`
 --
 
-DROP TABLE IF EXISTS `assetversions`;
-CREATE TABLE `assetversions` (
+DROP TABLE IF EXISTS `asset_versions`;
+CREATE TABLE `asset_versions` (
   `version_id` int(11) NOT NULL,
   `version_assetid` int(11) NOT NULL,
   `version_md5sig` varchar(50) NOT NULL,
@@ -325,8 +323,6 @@ CREATE TABLE `transactions` (
   `ta_userid` int(11) NOT NULL,
   `ta_assetcreator` int(11) DEFAULT NULL,
   `ta_asset` varchar(15) DEFAULT NULL,
-  `ta_assettype` text DEFAULT NULL,
-  `ta_showsupatall` int(11) NOT NULL DEFAULT 1,
   `ta_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
@@ -413,9 +409,9 @@ ALTER TABLE `assets`
   ADD PRIMARY KEY (`asset_id`);
 
 --
--- Indexes for table `assetversions`
+-- Indexes for table `asset_versions`
 --
-ALTER TABLE `assetversions`
+ALTER TABLE `asset_versions`
   ADD PRIMARY KEY (`version_id`);
 
 --
@@ -489,9 +485,9 @@ ALTER TABLE `assets`
   MODIFY `asset_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `assetversions`
+-- AUTO_INCREMENT for table `asset_versions`
 --
-ALTER TABLE `assetversions`
+ALTER TABLE `asset_versions`
   MODIFY `version_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --

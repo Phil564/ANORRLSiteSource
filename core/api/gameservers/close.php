@@ -10,7 +10,7 @@
 	$access = $settings['asset']['ACCESSKEY'];
 	$rcc_ip = $rcc_settings['RCCGAMEIP'];
 
-	$arbiter_ip = $settings['arbiter']['LOC'];// "37.114.46.52";
+	$arbiter_ip = $settings['arbiter']['LOC'];
 	$arbiter_token = $settings['arbiter']['token'];
 
 	if(isset($_GET['access']) && isset($_GET['jobID'])) {
@@ -27,29 +27,25 @@
 				$row = $result_getactiveservers->fetch_assoc();
 
 				if(!isset($_GET['dontcall'])) {
-					if($row['server_year'] == "2016") {
-						$data = json_encode([
-							"pid" => intval($row['server_pid'])
-						]);
+					$data = json_encode([
+						"pid" => intval($row['server_pid'])
+					]);
 
-						$ch = curl_init("http://$arbiter_ip/api/v1/gameserver/kill");
-						curl_setopt($ch, CURLOPT_HTTPHEADER, [
-							"Authorization: Bearer $arbiter_token",
-							"Content-Type: application/json",
-							"User-Agent: ANORRL/1.0"
-						]);
-						curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-						curl_setopt($ch, CURLOPT_POST, true);
-						curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-						$response = curl_exec($ch);
-						$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-						curl_close($ch);
+					$ch = curl_init("http://$arbiter_ip/api/v1/gameserver/kill");
+					curl_setopt($ch, CURLOPT_HTTPHEADER, [
+						"Authorization: Bearer $arbiter_token",
+						"Content-Type: application/json",
+						"User-Agent: ANORRL/1.0"
+					]);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_setopt($ch, CURLOPT_POST, true);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+					$response = curl_exec($ch);
+					$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					curl_close($ch);
 
-						if($code != 200) {
-							die(http_response_code(503));
-						}
-					} else if($row['server_year'] == "2013") {
-						file_get_contents("http://$rcc_ip:64209/2013/StopServer?serverId=".$row['server_id']."&placeId=".$row['server_placeid']);
+					if($code != 200) {
+						die(http_response_code(503));
 					}
 				}
 

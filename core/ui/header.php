@@ -1,5 +1,6 @@
 <?php
 	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/userutils.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/splasher.php';
 	if(!isset($header_data)) {
 		$header_data = null;
 	}
@@ -78,11 +79,6 @@
 	$badAppled = $randomNumber > 6500 && $randomNumber < 6515;
 
 	$rand_pic = rollImage();
-
-	function GetRandomSplash(): string {
-		$splashes = file($_SERVER["DOCUMENT_ROOT"]."/core/splashes.txt");
-		return $splashes[array_rand($splashes)];
-	}
 	$randomsignsplash = $signsplashes[array_rand($signsplashes)];
 
     //this is so that if the user ever sets 'background:' on the profile css it'll not apply the night background
@@ -115,7 +111,7 @@
 <?php if($header_user_settings->teto_enabled): ?>
 <div style="position: fixed;bottom: 0px;right: 10px;width: 250px;z-index: 9999;">
 	<div style="width: 210px;background: white;padding: 10px;height: 100px;margin: 0 auto;margin-bottom: -93px;border: 6px solid black;">
-		<p style="text-align: center;display: table-cell;vertical-align: middle;width: 210px;height: 100px;"><?= GetRandomSplash() ?></p>
+		<p style="text-align: center;display: table-cell;vertical-align: middle;width: 210px;height: 100px;"><?= new Splasher("teto")->getRandomSplash(); ?></p>
 	</div>
 	<img style="position: relative;width: 250px;" src="/images/tetospeech.png">
 </div>

@@ -97,7 +97,7 @@
 		}
 
 		private static function PushWebhook(Asset $asset) {
-			$webhook_url = 'https://discord.com/api/webhooks/1468915694648168505/To9H8VZggtTS9_tba0L27XlHld6uUYzb67VpBt6s7d-NvwCpiplh9m3OicPgnWsTCIWY';
+			$webhook_url = '';
 
 			$msg = [
 				"username" => "Catalog Hotline",
@@ -140,7 +140,6 @@
 			bool $public = true,
 			bool $on_sale = true,
 			bool $comments_enabled = true,
-			AssetYear $year = AssetYear::All,
 			User $user
 		): array {
 			include $_SERVER['DOCUMENT_ROOT']."/core/connection.php";
@@ -153,10 +152,9 @@
 			$parsed_onsale          = intval($on_sale);
 			$parsed_commentsenabled = intval($comments_enabled);
 			$parsed_hidden          = intval($hidden);
-			$parsed_year            = $year->ordinal();
 
-			$stmt = $con->prepare("INSERT INTO `assets`(`asset_name`, `asset_description`, `asset_creator`, `asset_type`, `asset_public`, `asset_onsale`, `asset_comments_enabled`, `asset_nevershow`, `asset_year`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);");
-			$stmt->bind_param('ssiiiiiii', $name, $description, $parsed_userid, $parsed_type, $parsed_public, $parsed_onsale, $parsed_commentsenabled, $parsed_hidden, $parsed_year);
+			$stmt = $con->prepare("INSERT INTO `assets`(`asset_name`, `asset_description`, `asset_creator`, `asset_type`, `asset_public`, `asset_onsale`, `asset_comments_enabled`, `asset_nevershow`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+			$stmt->bind_param('ssiiiiii', $name, $description, $parsed_userid, $parsed_type, $parsed_public, $parsed_onsale, $parsed_commentsenabled, $parsed_hidden);
 			if(!$stmt->execute()) {
 				return INTERNALSQLERROR;
 			}
@@ -173,7 +171,7 @@
 					file_put_contents($filepath, $data);
 				}
 
-				$stmt = $con->prepare('INSERT INTO `assetversions`(`version_assetid`, `version_md5sig`, `version_md5thumb`, `version_assettype`) VALUES (?, ?, ?, ?)');
+				$stmt = $con->prepare('INSERT INTO `asset_versions`(`version_assetid`, `version_md5sig`, `version_md5thumb`, `version_assettype`) VALUES (?, ?, ?, ?)');
 				$stmt->bind_param('issi', $id, $md5, $md5, $parsed_type);
 				if(!$stmt->execute()) {
 					$stmt = $con->prepare('DELETE FROM `assets` WHERE `asset_id` = ?;');
@@ -186,9 +184,8 @@
 
 
 			$ta_id = TransactionUtils::GenerateID();
-			$ta_assettype = $type->ordinal();
-			$stmt_processtransaction = $con->prepare("INSERT INTO `transactions`(`ta_id`, `ta_userid`, `ta_asset`, `ta_assettype`, `ta_assetcreator`, `ta_showsupatall`) VALUES (?, ?, ?, ?, ?, ?)");
-			$stmt_processtransaction->bind_param('siiiii', $ta_id, $user->id, $id, $ta_assettype, $user->id, $parsed_hidden);
+			$stmt_processtransaction = $con->prepare("INSERT INTO `transactions`(`ta_id`, `ta_userid`, `ta_asset`, `ta_assetcreator`) VALUES (?, ?, ?, ?)");
+			$stmt_processtransaction->bind_param('siii', $ta_id, $user->id, $id, $user->id);
 			$stmt_processtransaction->execute();
 
 			if($public && $on_sale && !$hidden) {
@@ -206,7 +203,6 @@
 			bool $public = true,
 			bool $on_sale = true,
 			bool $comments_enabled = true,
-			AssetYear $year = AssetYear::All,
 			User|null $user = null
 		): array {
 
@@ -215,7 +211,7 @@
 			}
 
 			if($user != null && !$user->IsBanned()) {
-				return self::CommitUpdateAsset($asset, null, $name, $description, $public, $on_sale, $comments_enabled, $year, $user);
+				return self::CommitUpdateAsset($asset, null, $name, $description, $public, $on_sale, $comments_enabled, $user);
 			}
 
 			return ["error" => true, "reason" => "User is not authorised to perform this action!"];
@@ -229,7 +225,6 @@
 			bool $public = true,
 			bool $on_sale = true,
 			bool $comments_enabled = true,
-			AssetYear $year = AssetYear::All,
 			User $user
 		): array {
 			if($user->id != $asset->creator->id && !$user->IsAdmin()) {
@@ -241,7 +236,6 @@
 			$parsed_public          = intval($public);
 			$parsed_onsale          = intval($on_sale);
 			$parsed_commentsenabled = intval($comments_enabled);
-			$parsed_year            = $year->ordinal();
 			$parsed_type            = $asset->type->ordinal();
 
 			$new_versionid = $asset->current_version;
@@ -255,7 +249,7 @@
 
 				$new_versionid = count($asset->GetAllVersions())+1;
 
-				$stmt = $con->prepare('INSERT INTO `assetversions`(`version_assetid`, `version_md5sig`, `version_md5thumb`, `version_assettype`, `version_subid`) VALUES (?, ?, ?, ?, ?)');
+				$stmt = $con->prepare('INSERT INTO `asset_versions`(`version_assetid`, `version_md5sig`, `version_md5thumb`, `version_assettype`, `version_subid`) VALUES (?, ?, ?, ?, ?)');
 				$stmt->bind_param('issii', $id, $md5, $md5, $parsed_type, $new_versionid);
 				try {
 					if(!$stmt->execute()) {
@@ -272,18 +266,14 @@
 				if(!file_exists($filepath) || (file_exists($filepath) && filesize($filepath) != strlen($data))) {
 					file_put_contents($filepath, $data);
 				}
-			} else {
-				if(self::IsValidXML($asset->GetFileContents(), $asset->year == AssetYear::All || $asset->year == AssetYear::Y2013)) {
-					//return ["error" => true, "reason"=> "This place is too new you know???"];
-				}
 			}
 
 			
 
 			$versionid = $con->insert_id;
 
-			$stmt = $con->prepare('UPDATE `assets` SET `asset_currentversion` = ?, `asset_lastedited` = now(), `asset_name` = ?, `asset_description` = ?, `asset_public` = ?, `asset_onsale` = ?, `asset_comments_enabled` = ?, `asset_year` = ? WHERE `asset_id` = ?');
-			$stmt->bind_param('issiiiii', $new_versionid, $name, $description, $parsed_public, $parsed_onsale, $parsed_commentsenabled, $parsed_year, $id);
+			$stmt = $con->prepare('UPDATE `assets` SET `asset_currentversion` = ?, `asset_lastedited` = now(), `asset_name` = ?, `asset_description` = ?, `asset_public` = ?, `asset_onsale` = ?, `asset_comments_enabled` = ?, WHERE `asset_id` = ?');
+			$stmt->bind_param('issiiii', $new_versionid, $name, $description, $parsed_public, $parsed_onsale, $parsed_commentsenabled, $id);
 			try {
 				if(!$stmt->execute()) {
 					return INTERNALSQLERROR;
@@ -310,7 +300,6 @@
 				$public = $asset->public;
 				$on_sale = $asset->onsale;
 				$comments_enabled = $asset->comments_enabled;
-				$year = $asset->year;
 				
 				if($asset->type == AssetType::IMAGE && $asset->type == AssetType::LUA) {
 					if(!$user->IsAdmin()) {
@@ -361,12 +350,11 @@
 				}
 
 				if(AssetTypeUtils::IsRBX($type)) {
-					$legacy = $year == AssetYear::All || $year == AssetYear::Y2013;
-					if(!self::IsValidXML($data, $legacy)) {
+					if(!self::IsValidXML($data)) {
 						return INVALIDFILE;
 					}
 
-					$result = self::CommitUpdateAsset($asset, $data, $name, $description, $public, $on_sale, $comments_enabled, $year, $user);
+					$result = self::CommitUpdateAsset($asset, $data, $name, $description, $public, $on_sale, $comments_enabled, $user);
 					
 					if(!$result['error']) {
 						self::ExecuteRender($asset->id, $type, $data);
@@ -378,7 +366,7 @@
 						return INVALIDFILE;
 					}
 
-					$result = self::CommitUpdateAsset($asset, $data, $name, $description, $public, $on_sale, $comments_enabled, $year, $user);
+					$result = self::CommitUpdateAsset($asset, $data, $name, $description, $public, $on_sale, $comments_enabled, $user);
 
 					if(!$result['error']) {
 						if(AssetTypeUtils::IsRenderable($type)) {
@@ -389,7 +377,7 @@
 					return $result;
 
 				} else if($asset->type == AssetType::LUA) {
-					return self::CommitUpdateAsset($asset, $data, $name, $description, $public, $on_sale, $comments_enabled, $year, $user);
+					return self::CommitUpdateAsset($asset, $data, $name, $description, $public, $on_sale, $comments_enabled, $user);
 
 				} else {
 					return ["error" => true, "reason" => "Invalid asset type found!"];
@@ -399,24 +387,18 @@
 			return ["error" => true, "reason" => "User is not authorised to perform this action!"];
 		}
 
-		//$name, $description, $isPublic, $isCopylocked, $commentsEnabled, $server_size, $year, $user
 		public static function CreatePlace(
 			string $name,
 			string $description,
 			bool $public,
 			bool $comments_enabled,
-			AssetYear $year,
 			int $server_size = 12,
 			bool $copylocked = true,
 			bool $gears_enabled = false,
 			bool $original = false,
 			User|null $user = null
 		): array {
-			if($year == AssetYear::All) {
-				$year = AssetYear::Y2016;
-			}
-
-			$result = self::UploadAsset(null, AssetType::PLACE, $name, $description, $year, $public, false, $comments_enabled, $user);
+			$result = self::UploadAsset(null, AssetType::PLACE, $name, $description, $public, false, $comments_enabled, $user);
 
 			if(!$result['error']) {
 				include $_SERVER['DOCUMENT_ROOT']."/core/connection.php";
@@ -443,7 +425,6 @@
 			AssetType $type,
 			string $name,
 			string $description = "",
-			AssetYear $year = AssetYear::All,
 			bool $public = true,
 			bool $on_sale = true,
 			bool $comments_enabled = true,
@@ -500,12 +481,11 @@
 
 					if($data != null) {
 						if(AssetTypeUtils::IsRBX($type)) {
-							$legacy = $year == AssetYear::Y2013 || $year == AssetYear::All;
-							if(!self::IsValidXML($data, $legacy)) {
+							if(!self::IsValidXML($data)) {
 								return INVALIDFILE;
 							}
 
-							$result = self::CommitAsset($data, $type, $name, $description, $public, $on_sale, $comments_enabled, $year, $user);
+							$result = self::CommitAsset($data, $type, $name, $description, $public, $on_sale, $comments_enabled, $user);
 							
 							if(!$result['error']) {
 								self::ExecuteRender($result['id'], $type, $data);
@@ -636,7 +616,7 @@
 
 
 
-								$result = self::CommitAsset($data, AssetType::IMAGE, $name, "", false, false, $comments_enabled, AssetYear::All, $user);
+								$result = self::CommitAsset($data, AssetType::IMAGE, $name, "", false, false, $comments_enabled, $user);
 								if($result["error"]) {
 									return $result;
 								}
@@ -654,7 +634,7 @@
 
 									$data = AssetTypeUtils::Replace("name", str_replace("<", "&lt;", str_replace(">", "&gt;", str_replace("\"", "&quot;", $name))), $data);
 
-									$result = self::CommitAsset($data, $type, $name, $description, $public, $on_sale, $comments_enabled, $year, $user);
+									$result = self::CommitAsset($data, $type, $name, $description, $public, $on_sale, $comments_enabled, $user);
 
 									if(!$result['error']) {
 										include $_SERVER['DOCUMENT_ROOT']."/core/connection.php";
@@ -664,7 +644,7 @@
 										$stmt->execute();
 
 										if($type == AssetType::DECAL || $type == AssetType::FACE) {
-											/*$stmt = $con->prepare("UPDATE `assetversions` SET `version_md5thumb` = ? WHERE `version_assetid` = ?");
+											/*$stmt = $con->prepare("UPDATE `asset_versions` SET `version_md5thumb` = ? WHERE `version_assetid` = ?");
 											$stmt->bind_param('si', $md5hashfile, $result['id']);
 											$stmt->execute();*/
 										}
@@ -689,7 +669,7 @@
 									return INVALIDFILE;
 								}
 
-								$result = self::CommitAsset($data, $type, $name, $description, $public, $on_sale, $comments_enabled, $year, $user);
+								$result = self::CommitAsset($data, $type, $name, $description, $public, $on_sale, $comments_enabled, $user);
 
 								if(!$result['error']) {
 									if(AssetTypeUtils::IsRenderable($type)) {
@@ -701,16 +681,18 @@
 
 							} else if($type == AssetType::AUDIO) {
 
+								$audio_mime_type = ImageUtils::checkMimeType($data);
+
 								if(
-									ImageUtils::checkMimeType($data) != "audio/mpeg" &&
-									ImageUtils::checkMimeType($data) != "audio/ogg" &&
-									ImageUtils::checkMimeType($data) != "audio/vorbis" &&
-									ImageUtils::checkMimeType($data) != "audio/x-wav"
+									$audio_mime_type != "audio/mpeg" &&
+									$audio_mime_type != "audio/ogg" &&
+									$audio_mime_type != "audio/vorbis" &&
+									$audio_mime_type != "audio/x-wav"
 								) {
-									return ["error" => true, "reason" => "Audio file was not a valid format!"];
+									return ["error" => true, "reason" => "Audio file was not a valid format! (found $audio_mime_type instead)"];
 								}
 
-								return self::CommitAsset($data, $type, $name, $description, $public, $on_sale, $comments_enabled, AssetYear::All, $user);
+								return self::CommitAsset($data, $type, $name, $description, $public, $on_sale, $comments_enabled, $user);
 
 							} else {
 								return ["error" => true, "reason" => "Invalid asset type found!"];
@@ -718,7 +700,7 @@
 						}
 					} else {
 						if($type == AssetType::PLACE) {
-							return self::CommitAsset(null, $type, $name, $description, $public, $on_sale, $comments_enabled, $year, $user);
+							return self::CommitAsset(null, $type, $name, $description, $public, $on_sale, $comments_enabled, $user);
 						}
 					}
 

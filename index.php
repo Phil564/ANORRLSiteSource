@@ -42,7 +42,7 @@
 								<code>
 									ANORRL is an acronym stands for <b>AN</b>other <b>O</b>ld <b>R</b>oblox <b>R</b>evival <b>L</b>ol.
 									<br><br>
-									This is a 2013M and 2016E (primarily 2016 XD) friends-of-friends only one-person revival created by <a href="/users/1/profile">grace</a> that prioritizes creativity over popularity.
+									This is a 2016E friends only one-person revival created by <a href="/users/1/profile">grace</a> that prioritizes creativity over popularity.
 									<br><br>
 									We also support expressionism (we allow anyone to upload their own hats and stuff as long as it follows the rules :P)
 									<br><br>

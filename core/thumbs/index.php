@@ -3,7 +3,8 @@
 	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/assetutils.php";
 	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
 	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/imageutils.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/clientdetect.php";
+	
+	// this could be moved to some GetThumbs function or something...
 
 	$user = UserUtils::RetrieveUser();
 
@@ -12,7 +13,7 @@
 
 		$specialcase = false;
 
-		$nocompress = isset($_GET['nocompress']) || ClientDetector::DetectClient() != Client::Unknown;
+		$nocompress = isset($_GET['nocompress']);
 
 		$asset = Asset::FromID($id);
 		if($asset != null) {

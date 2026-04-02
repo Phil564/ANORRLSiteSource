@@ -28,7 +28,7 @@
 			self::UpdateAndSetConfig();
 			$arb_ip = self::$arbiter_ip;
 			$arb_token = self::$arbiter_token;
-			$ch = curl_init("http://$arb_ip" . $endpoint);//37.114.46.52
+			$ch = curl_init("http://$arb_ip" . $endpoint);
 			error_log("http://$arb_ip" . $endpoint);
 
 			curl_setopt_array($ch, [

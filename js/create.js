@@ -68,12 +68,6 @@ ANORRL.Create = {
 			page = this.CurrentPage;
 		}
 
-		if(versionshit.includes(Number(category))) {
-			$("#AssetYear").css("display", "none");
-		} else {
-			$("#AssetYear").css("display", "table-row");
-		}
-
 		if(category != 8) {
 			$("#HatUploadRules").css("display", "none");
 		} else {

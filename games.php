@@ -2,22 +2,14 @@
 	session_start();
 
 	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/userutils.php';
+	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/splasher.php';
 	$user = UserUtils::RetrieveUser();
 
 	if($user == null) {
 		die(header("Location: /login"));
 	}
 
-	$randomclientsplashes = [
-		"Games",
-		"Games!",
-		"RETRO GAMES RAHHH!!!!!",
-		"VIDEO GAMES!!!!",
-		"i wonder if there's some good games today...",
-		"mmm time for sum of dat goooood shit"
-	];
-
-	$randomclientsplash = $randomclientsplashes[array_rand($randomclientsplashes)];
+	$randomsplash = new Splasher("games")->getRandomSplash();
 ?>
 <!DOCTYPE html>
 <html> 
@@ -26,7 +18,7 @@
 		<link rel="icon" type="image/x-icon" href="/favicon.ico">
 		<link rel="stylesheet" href="/css/new/main.css">
 		<link rel="stylesheet" href="/css/new/forms.css">
-		<link rel="stylesheet" href="/css/new/games.css?v=5">
+		<link rel="stylesheet" href="/css/new/games.css?v=6">
 		
 		<script src="/js/core/jquery.js"></script>
 		<script src="/js/main.js?t=1771413807"></script>
@@ -37,7 +29,6 @@
 			<div id="ImageContainer">
 				<div id="FavouritesArea"><img src="/images/favourite_star.gif"> <span>0</span></div>
 				<div id="OriginalArea"><span>Original</span></div>
-				<div id="YearArea"><span></span></div>
 				<img src="">
 			</div>
 			<div id="Info">
@@ -55,7 +46,7 @@
 		<?php include $_SERVER['DOCUMENT_ROOT'].'/core/ui/header.php'; ?>
 			<div id="Body">
 				<div id="BodyContainer">
-					<h2 style="margin: 0px;width: 850px;"><marquee behavior="alternate" scrollamount="10"><?= $randomclientsplash ?></marquee></h2>
+					<h2 style="margin: 0px;width: 850px;"><marquee behavior="alternate" scrollamount="10"><?= $randomsplash ?></marquee></h2>
 					<div id="GamesContainer">
 						<div id="GamesFilterPanel">
 							<h4>Filters</h4>

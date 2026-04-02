@@ -283,10 +283,6 @@
 										<b>Copylocked</b>
 										<span><?= $asset->copylocked ? "Yes" : "No" ?></span>
 									</td>
-									<td id="Detail">
-										<b>Year</b>
-										<span><?= $asset->year->label() ?></span>
-									</td>
 								</table>
 							</div>
 							<div id="InfoBox" content="Badges" style="display:none">
