@@ -59,7 +59,7 @@
 	}
 
 	$rand_pic = rollImage();
-	
+
 	$randomsignsplash = new Splasher("sign")->getRandomSplash();
 
     //this is so that if the user ever sets 'background:' on the profile css it'll not apply the night background
@@ -130,7 +130,6 @@
 					</div>
 					<hr>
 					<div id="CreditsRow">
-						
 						<span title="Your pending requests"><a href="/my/friends"><img src="/images/icons/messages<?= $pendingreqscount == 0 ? "" : "_notify" ?>.png"> <?= $pendingreqscount ?></a></span> <span class="Separator">|</span>
 						<span title="Your friends"><a href="/my/friends"><img src="/images/icons/friends.png"> <?= $header_check_user->GetFriendsCount() ?></a></span>
 						<hr>
@@ -160,13 +159,13 @@
 					<a href="/vandals">Vandals</a>
 				</div>
 				<div id="UserLinks" >
-					<a href="/my/home"      <?php if($_SERVER['SCRIPT_NAME'] == "/my/home.php"     		 ):?>selected<?php endif ?>>Home</a>
-					<a href="/my/profile"   <?php if($_SERVER['SCRIPT_NAME'] == "/my/profile.php"  		 ):?>selected<?php endif ?>>Account</a>
-					<a href="/my/character" <?php if($_SERVER['SCRIPT_NAME'] == "/my/character.php"		 ):?>selected<?php endif ?>>Character</a>
-					<a href="/my/friends"   <?php if($_SERVER['SCRIPT_NAME'] == "/my/friends.php"		 ):?>selected<?php endif ?>>Friends</a>
-					<a href="/create/"      <?php if($_SERVER['SCRIPT_NAME'] == "/core/create.php" 		 ):?>selected<?php endif ?>>Create</a>
-					<a href="/my/stuff"     <?php if($_SERVER['SCRIPT_NAME'] == "/my/stuff.php"    		 ):?>selected<?php endif ?>>Stuff</a>
-					<a href="/download"     <?php if($_SERVER['SCRIPT_NAME'] == "/download/index.php"    ):?>selected<?php endif ?>>Download</a>
+					<a href="/my/home"      <?php if($_SERVER['SCRIPT_NAME'] == "/private/views/my/home.php"     		 ):?>selected<?php endif ?>>Home</a>
+					<a href="/my/profile"   <?php if($_SERVER['SCRIPT_NAME'] == "/private/views/my/profile.php"  		 ):?>selected<?php endif ?>>Account</a>
+					<a href="/my/character" <?php if($_SERVER['SCRIPT_NAME'] == "/private/views/my/character.php"		 ):?>selected<?php endif ?>>Character</a>
+					<a href="/my/friends"   <?php if($_SERVER['SCRIPT_NAME'] == "/private/views/my/friends.php"		     ):?>selected<?php endif ?>>Friends</a>
+					<a href="/create/"      <?php if($_SERVER['SCRIPT_NAME'] == "/private/views/create.php" 		     ):?>selected<?php endif ?>>Create</a>
+					<a href="/my/stuff"     <?php if($_SERVER['SCRIPT_NAME'] == "/private/views/my/stuff.php"    		 ):?>selected<?php endif ?>>Stuff</a>
+					<a href="/download"     <?php if($_SERVER['SCRIPT_NAME'] == "/private/views/download/index.php"      ):?>selected<?php endif ?>>Download</a>
 				</div>
 				<?php else: ?>
 				<div id="Links"></div>

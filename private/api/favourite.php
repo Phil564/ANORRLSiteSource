@@ -1,12 +1,10 @@
 <?php
+	use anorrl\Asset;
+
 	header("Content-Type: application/json");
 
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/assetutils.php";
-
-	$user = UserUtils::RetrieveUser();
-
-	if($user != null) {
+	if(SESSION) {
+		$user = SESSION->user;
 		if(isset($_POST['asset'])) {
 			$assetid = intval($_POST['asset']);
 			$asset = Asset::FromID($assetid);

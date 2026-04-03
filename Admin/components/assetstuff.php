@@ -1,4 +1,7 @@
 <?php
+
+	// REMOVE THIS AND LIKE KILL EVERYONE
+
 	include $_SERVER["DOCUMENT_ROOT"]."/core/connection.php";
 	require_once $_SERVER["DOCUMENT_ROOT"]."/core/utilities/assetutils.php";
 	require_once $_SERVER["DOCUMENT_ROOT"]."/core/classes/renderer.php";

@@ -1,13 +1,14 @@
 <?php
-	header("Content-Type: application/json");
+	use anorrl\enums\AssetType;
+	use anorrl\User;
 
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
+	header("Content-Type: application/json");
 
 	if(isset($_GET['id']) && isset($_GET['request'])) {
 		$user = User::FromID(intval($_GET['id']));
 		$selfuser = false;
 		if($user == null) {
-			$user = UserUtils::RetrieveUser();
+			$user = SESSION ? SESSION->user : null;
 			$selfuser = true;
 		}
 
@@ -54,7 +55,7 @@
 		$user = User::FromID(intval($_POST['id']));
 		$selfuser = false;
 		if($user == null) {
-			$user = UserUtils::RetrieveUser();
+			$user = SESSION ? SESSION->user : null;
 			$selfuser = true;
 		}
 
@@ -62,7 +63,7 @@
 		if($user != null) {
 			
 			if($_POST['request'] == "follow" && !$selfuser) {
-				$founduser = UserUtils::RetrieveUser();
+				$founduser = SESSION ? SESSION->user : null;
 
 				if($founduser != null) {
 					if($founduser->id != $user->id) {
@@ -76,7 +77,7 @@
 					}
 				}
 			} else if($_POST['request'] == "friend" && !$selfuser) {
-				$founduser = UserUtils::RetrieveUser();
+				$founduser = SESSION ? SESSION->user : null;
 
 				if($founduser != null) {
 					if($founduser->id != $user->id) {
@@ -90,7 +91,7 @@
 					}
 				}
 			} else if($_POST['request'] == "unfriend" && !$selfuser) {
-				$founduser = UserUtils::RetrieveUser();
+				$founduser = SESSION ? SESSION->user : null;
 
 				if($founduser != null) {
 					if($founduser->id != $user->id) {

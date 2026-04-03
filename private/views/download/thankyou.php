@@ -1,0 +1,19 @@
+<?php
+	use anorrl\Page;
+	
+	$user = SESSION ? SESSION->user : null;
+
+	if($user == null) {
+		die(header("Location: /login"));
+	}
+
+	$page = new Page("Thanks for downloading...");
+	$page->addStylesheet("/css/new/download.css");
+	$page->loadHeader();
+?>
+<h2>Wow... Thanks for installing this!</h2>
+<div id="DownloadContainer">
+	<p>NOW I HAVE ALL UR CREDITS AND DEBITS AND PASSWORD AND PORN AND WHATEVER!!!!</p>
+	<p>MWAHHAHAHAHAHAHAHAHAHHAHAHAAHHAHA</p>
+</div>
+<?php $page->loadFooter() ?>

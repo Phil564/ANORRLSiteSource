@@ -1,11 +1,10 @@
 <?php
 	header("Content-Type: application/json");
 
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/utilutils.php";
+	use anorrl\Status;
+	use anorrl\utilities\UtilUtils;
 
-	$user = UserUtils::RetrieveUser();
-	error_reporting(E_ALL ^ E_DEPRECATED);
+	$user = SESSION ? SESSION->user : null;
 
 	if($user != null) {
 

@@ -1,5 +1,6 @@
 <?php
-	require_once $_SERVER['DOCUMENT_ROOT'] . "/core/utilities/userutils.php";
+	use anorrl\User;
+	
 	header("Content-Type: application/json");
 	
 	if(isset($_GET['username'])) {

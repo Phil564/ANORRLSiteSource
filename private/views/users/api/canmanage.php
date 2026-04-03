@@ -1,11 +1,12 @@
 <?php
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/assetutils.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
+	use anorrl\User;
+	use anorrl\Place;
+
 	header("Content-Type: application/json");
 
-	if(isset($_GET['userId']) && isset($_GET['placeId'])) {
-		$user = User::FromID(intval($_GET['userId']));
-		$place = Place::FromID(intval($_GET['placeId']));
+	if(isset($userId) && isset($placeId)) {
+		$user = User::FromID($userId);
+		$place = Place::FromID($placeId);
 
 		if($place != null && $user != null) {
 			die(json_encode([

@@ -82,7 +82,7 @@
 		}
 
 		private static function GetTemplate(string $filename): string {
-			return file_get_contents($_SERVER['DOCUMENT_ROOT']."/core/templates/$filename.rbxm");
+			return file_get_contents($_SERVER['DOCUMENT_ROOT']."/private/templates/assets/$filename.rbxm");
 		}
 
 		public static function Replace(string $var, mixed $val, string $data) {

@@ -1,6 +1,5 @@
 <?php
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/classes/asset.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/classes/user.php";
+	use anorrl\User;
 
 	$settings = parse_ini_file($_SERVER['DOCUMENT_ROOT']."/../settings.env", true);
 	

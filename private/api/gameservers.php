@@ -1,13 +1,13 @@
 <?php
+	use anorrl\Place;
+	use anorrl\User;
+
 	header("Content-Type: application/json");
 
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/assetutils.php";
 	include $_SERVER['DOCUMENT_ROOT']."/core/connection.php";
 
-	$user = UserUtils::RetrieveUser();
 
-	if($user != null) {
+	if(SESSION) {
 		if(isset($_GET['placeId'])) {
 			$place = Place::FromID(intval($_GET['placeId']));
 

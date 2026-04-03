@@ -1,10 +1,8 @@
 <?php
-
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/classes/comment.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
-
-	$user = UserUtils::RetrieveUser();
-
+	use anorrl\Asset;
+	use anorrl\Comment;
+	use anorrl\User;
+	
 	if(session_start() != PHP_SESSION_ACTIVE) {
 		session_start();
 	}
@@ -12,7 +10,7 @@
 	if(
 		isset($_POST['ANORRL$Comment$Post$Contents']) &&
 		isset($_POST['ANORRL$Comment$Post$Submit']) &&
-		$user != null
+		SESSION
 	) {
 		if(isset($_SESSION['ANORRL$Comment$Post$AssetID'])) {
 			Comment::Post(Asset::FromID(intval($_SESSION['ANORRL$Comment$Post$AssetID'])), $_POST['ANORRL$Comment$Post$Contents']);

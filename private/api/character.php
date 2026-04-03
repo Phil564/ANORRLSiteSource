@@ -1,12 +1,11 @@
 <?php
 	header("Content-Type: application/json");
 
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/assetutils.php";
+	use anorrl\enums\AssetType;
+	use anorrl\Asset;
+	use anorrl\utilities\Renderer;
 
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/classes/renderer.php";
-
-	$user = UserUtils::RetrieveUser();
+	$user = SESSION ? SESSION->user : null;
 
 	function sanitizeBodyColourID($rawcolour) {
 		$colour = intval($_POST[$rawcolour]);

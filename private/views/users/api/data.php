@@ -1,6 +1,6 @@
 <?php
-	require_once $_SERVER['DOCUMENT_ROOT'].'/core/utilities/userutils.php';
-
+	use anorrl\User;
+	
 	function IsRewrite() {
 		if(!empty($_SERVER['IIS_WasUrlRewritten']))
 			return true;

@@ -1,8 +1,11 @@
 <?php
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/assetutils.php";
-	require_once $_SERVER['DOCUMENT_ROOT']."/core/utilities/userutils.php";
+	use anorrl\Place;
 
-	$user = UserUtils::RetrieveUser();
+	if(!SESSION) {
+		die();
+	}
+
+	$user = SESSION->user;
 
 
 	function getRandomString(int $length = 25): string {
