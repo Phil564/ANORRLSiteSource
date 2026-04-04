@@ -86,7 +86,8 @@
 			die($contents);
 			
 		} else {
-			die(http_response_code(404));
+			http_response_code(404);
+			die("Asset not found!");
 		}
 	} else {
 		$roblosec = CONFIG->asset->roblosec;
@@ -123,6 +124,7 @@
 						file_put_contents($_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id."_".$version, $contents);
 					}
 
+					echo "Unauthorised access to this roblox asset!";
 					die(http_response_code(500));
 				} else {
 					header("Content-Type: $mimetype");
@@ -146,7 +148,8 @@
 						die(http_response_code(500));
 					}
 				} else {
-					die(http_response_code(404));
+					http_response_code(404);
+					die("Asset not found!");
 				}
 				
 			}
@@ -154,7 +157,8 @@
 			echo $contents;	
 		
 		} else {
-			die(http_response_code(404));
+			http_response_code(404);
+			die("Asset not found!");
 		}
 
 		
