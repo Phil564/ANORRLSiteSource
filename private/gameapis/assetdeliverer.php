@@ -109,12 +109,6 @@
 				$output = curl_exec($ch);
 				curl_close($ch);
 				
-				
-
-				/*if(strlen(gzdecode($output)) != 0) {
-					$output = gzdecode($output);
-				}*/
-
 				$mimetype = checkMimeType($output);
 				
 				if($mimetype == "application/gzip") {
