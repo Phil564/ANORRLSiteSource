@@ -107,16 +107,22 @@
 		}
 
 		function DisableTeamCreate() {
-			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_disableteamcreate = $con->prepare('UPDATE `asset_places` SET `place_teamcreate_enabled` = 0 WHERE `place_id` = ?');
-			$stmt_disableteamcreate->bind_param('i', $this->id);
-			$stmt_disableteamcreate->execute();
+
+			$db = Database::singleton();
+
+			$db->run("UPDATE `asset_places` SET `place_teamcreate_enabled` = 0 WHERE `place_id` = :placeid", [":placeid" => $this->id])->execute();
 
 			if($this->teamcreate_enabled) {
-				$stmt_checkiseditor = $con->prepare('DELETE FROM `cloudeditors` WHERE `cloudeditor_userid` != ? AND `cloudeditor_placeid` = ?;');
-				$stmt_checkiseditor->bind_param('ii', $this->creator->id, $this->id);
-				$stmt_checkiseditor->execute();
+				$db->run(
+					"DELETE FROM `cloudeditors` WHERE `cloudeditor_userid` != :creator AND `cloudeditor_placeid` = :placeid;",
+					[
+						":creator" => $this->creator->id,
+						":placeid" => $this->id
+					]
+				)->execute();
 
+				// rewrite to pdo later
+				include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 				$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `server_placeid` = ? AND `server_teamcreate` = 1");
 				$stmt_getactiveservers->bind_param("i", $this->id);
 				$stmt_getactiveservers->execute();
@@ -152,13 +158,8 @@
 						die(http_response_code(503));
 					}
 
-					include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-					$stmt_createnewserver = $con->prepare("DELETE FROM `active_servers` WHERE `server_jobid` = ?;");
-					$stmt_createnewserver->bind_param("s", $jobID);
-					$stmt_createnewserver->execute();
+					$db->run("DELETE FROM `active_servers` WHERE `server_jobid` = :jobid;", [ ":jobid" => $jobID ])->execute();
 				}
-
-				
 			}
 		}
 
