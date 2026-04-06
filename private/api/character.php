@@ -189,7 +189,7 @@
 					$wearing_array = $user->GetWearingArray();
 
 					$total_assets = $user->GetOwnedAssetsCount(AssetType::index($type), "", false, true, $wearing_array);
-					$total_pages = ceil($total_assets/8)+1;
+					$total_pages = floor($total_assets/8)+1;
 
 					if(count($user->GetOwnedAssets(AssetType::index($type), "", false, true, $wearing_array, $total_pages, 8)) == 0 && $page != 1) {
 						$total_pages--;
@@ -231,7 +231,7 @@
 				
 				$wearing_array = $user->GetWearingArray();
 				$all_assets = $user->GetOwnedAssets($category, $query, false, true, $wearing_array, $page, 8);
-				$total_pages = ceil($user->GetOwnedAssetsCount($category, $query, false, true, $wearing_array)/8);
+				$total_pages = floor($user->GetOwnedAssetsCount($category, $query, false, true, $wearing_array)/8);
 				$assets_raw = [];
 
 				foreach($all_assets as $asset) {

@@ -6,6 +6,8 @@
 	$page = new Page("Welcome to ANORRL!");
 	$page->addStylesheet("/css/new/frontpage.css?v=3");
 	$page->loadHeader();
+
+	$settings = SESSION ? SESSION->settings : UserSettings::Get();
 ?>
 <div id="IntroductoryArea">
 	<h2>&nbsp;</h2>
@@ -51,32 +53,23 @@
 				$users_count = count($users);
 			?>
 			<tr>
-				<?php  
-					foreach($users as $user) {
-						$user_id = $user->id;
-						$user_name = $user->name;
-						$profile = $user->setprofilepicture ? "profile" : "headshot";
-						if(UserSettings::Get(UserUtils::RetrieveUser())->headshots_enabled && UserUtils::RetrieveUser() != null) {
-							$profile = "headshot";
-						}
-						echo <<<EOT
-							<td>
-								<div class="User" title="$user_name">
-									<a href="/users/$user_id/profile">
-										<img src="/thumbs/$profile?id=$user_id&sxy=100">
-										<span>$user_name</span>
-									</a>
-								</div>
-							</td>
-						EOT;
-					}
-
+				<?php foreach($users as $user): 
+					// uh yeah.
+					$thumbs_type = $user->setprofilepicture ? ($settings->headshots_enabled ? "headshot" : "profile") : "headshot";
+				?>
+				<td>
+					<div class="User" title="<?= $user->name ?>">
+						<a href="/users/<?= $user->id ?>/profile">
+							<img src="/thumbs/<?= $thumbs_type ?>?id=<?= $user->id ?>&sxy=100">
+							<span><?= $user->name ?></span>
+						</a>
+					</div>
+				</td>
+				<?php endforeach;
 					if($users_count < 6) {
 						$count = 6 - $users_count;
 						for($i = 0; $i < $count; $i++) {
-							echo <<<EOT
-								<td></td>
-							EOT;
+							echo "<td></td>";
 						}
 					}
 				?>

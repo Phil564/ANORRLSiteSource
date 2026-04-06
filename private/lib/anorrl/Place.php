@@ -11,7 +11,7 @@
 		/** is the same as Asset::public */
 		public bool $friends_only;
 		public bool $copylocked;
-		public int $server_size;
+		public int  $server_size;
 		public int  $visit_count;
 		public int  $current_playing_count;
 		public bool $is_original;

@@ -38,13 +38,17 @@ ANORRL.Stuff  = {
 	CurrentPage: 1,
 	CurrentCategory: 8,
 	CurrentlyLoadingCrapBruh: false,
+	CurrentQuery: "",
+	Submit: function() {
+		this.GrabAssets(this.CurrentCategory, this.CurrentPage, $("#SearchBox[name=query]").val());
+	},
 	AdvancePager: function() {
 		this.GrabAssets(this.CurrentCategory, this.CurrentPage + 1);
 	},
 	DeadvancePager: function() {
 		this.GrabAssets(this.CurrentCategory, this.CurrentPage - 1);
 	},
-	GrabAssets: function(category, page) {
+	GrabAssets: function(category, page, query) {
 
 		if(this.CurrentlyLoadingCrapBruh) {
 			return;
@@ -63,6 +67,13 @@ ANORRL.Stuff  = {
 		} else {
 			this.CurrentCategory = category;
 		}
+
+		if(query === undefined) {
+			query = this.CurrentQuery;
+		} else {
+			this.CurrentQuery = query;
+		}
+
 		if(page === undefined) {
 			page = 1;
 		}
@@ -100,7 +111,7 @@ ANORRL.Stuff  = {
 		
 		ANORRL.ChangeUrl("", "/my/stuff#"+categorylabel);
 
-		$.get("/api/stuff", {c: category, p : page}, function(data) {
+		$.get("/api/stuff", {c: category, p : page, q: query}, function(data) {
 			
 			var assets = data['assets'];
 			ANORRL.Stuff.CurrentPage = data['page'];
@@ -225,7 +236,12 @@ $(function(){
 	$("#Paginator").find("input").on("change", function() {
 		ANORRL.Stuff.GrabAssets(ANORRL.Stuff.CurrentCategory, Number($(this).val()));
 	});
-	
+
+	$("#SearchBox").on("keypress", function(e) {
+		if(e.keyCode == 13) {
+			ANORRL.Stuff.Submit();
+		}
+	});
 
 	$.get("/api/user?id=0&request=isadmin", function(data) {
 		ANORRL.Stuff.IsAdmin = data['isadmin'];

@@ -7,7 +7,8 @@
 
 	$page = new Page("Your Stuff");
 	$page->addStylesheet("/css/new/stuff.css?v=1");
-	$page->addScript("/js/stuff.js?t=1771413807");
+	$page->addStylesheet("/css/new/forms.css");
+	$page->addScript("/js/stuff.js?t=177112345");
 	$page->loadHeader();
 ?>
 <div class="Asset" template>
@@ -47,6 +48,10 @@
 			<li data_category="32"><a>Packages</a></li>
 		</ul>
 	</div><div id="AssetsContainer">
+		<div id="FormPanel" style="margin: 5px auto;">
+					<input id="SearchBox" name="query" type="text" placeholder="Look for teh stuff u own!!!" style="width: 400px;">
+					<input id="Submit" type="submit" value="Search" onclick="ANORRL.Stuff.Submit(); return false;">
+				</div>
 		<div id="StatusText">
 			<b id="Loading" style="display: none">Loading assets...</b>
 			<b id="NoAssets" style="display: none"><img src="/images/noassets.png" style="width: 110px;display: block;margin: 0 auto;margin-bottom: -92px;margin-top: 23px;">You have no <span id="AssetType"></span>!</b>
