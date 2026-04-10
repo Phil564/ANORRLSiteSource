@@ -131,12 +131,15 @@ ANORRL.Catalog  = {
 					td.append(template);
 					template.removeAttr("template");
 
+					
+					
+					/*
 					template.find("#Pricing").attr("oneprice", "true");
 					template.find("#Pricing").children().each(function() {
 						$(this).remove();
 					});
 					
-					/*if(asset['onsale']) {
+					if(asset['onsale']) {
 						var salecount = asset['sales_count']+" times";
 						if(asset['sales_count'] == 1) {
 							salecount = asset['sales_count']+" time";

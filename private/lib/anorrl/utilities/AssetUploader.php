@@ -2,6 +2,7 @@
 	namespace anorrl\utilities;
 
 	use anorrl\Asset;
+	use anorrl\Database;
 	use anorrl\enums\TransactionType;
 	use anorrl\User;
 	use anorrl\enums\AssetType;
@@ -278,16 +279,21 @@
 			
 
 			$versionid = $con->insert_id;
-
-			$stmt = $con->prepare('UPDATE `assets` SET `asset_currentversion` = ?, `asset_lastedited` = now(), `asset_name` = ?, `asset_description` = ?, `asset_public` = ?, `asset_onsale` = ?, `asset_comments_enabled` = ? WHERE `asset_id` = ?');
-			$stmt->bind_param('issiiii', $new_versionid, $name, $description, $parsed_public, $parsed_onsale, $parsed_commentsenabled, $id);
-			try {
-				if(!$stmt->execute()) {
-					return INTERNALSQLERROR;
-				}
-			} catch(\mysqli_sql_exception $e) {
-				return INTERNALSQLERROR;
-			}
+			
+			Database::singleton()->run(
+				"UPDATE `assets` SET `asset_currentversion` = :curver, `asset_lastedited` = now(), `asset_name` = :name, `asset_description` = :desc, `asset_public` = :public, `asset_onsale` = :onsale, `asset_cones` = :cones, `asset_lights` = :lights, `asset_comments_enabled` = :commentsenabled WHERE `asset_id` = :assetid",
+				[
+					":curver" => $new_versionid,
+					":name" => $name,
+					":desc" => $description,
+					":public" => $parsed_public,
+					":onsale" => $parsed_onsale,
+					":cones" => $cones,
+					":lights" => $lights,
+					":commentsenabled" => $parsed_commentsenabled,
+					":assetid" => $id,
+				]
+			);
 		
 			return ["error" => false, "versionid" => $versionid];
 		}
