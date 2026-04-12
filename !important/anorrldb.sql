@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 11, 2026 at 01:11 AM
+-- Generation Time: Apr 12, 2026 at 02:06 PM
 -- Server version: 12.2.2-MariaDB
--- PHP Version: 8.5.4
+-- PHP Version: 8.5.5
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,8 +31,8 @@ USE `anorrldb`;
 
 DROP TABLE IF EXISTS `accesskeys`;
 CREATE TABLE `accesskeys` (
-  `access_key` varchar(50) NOT NULL,
-  `access_discorduid` varchar(256) NOT NULL
+  `key` varchar(50) NOT NULL,
+  `discorduid` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -43,12 +43,12 @@ CREATE TABLE `accesskeys` (
 
 DROP TABLE IF EXISTS `active_players`;
 CREATE TABLE `active_players` (
-  `session_id` varchar(256) NOT NULL,
-  `session_serverid` varchar(11) NOT NULL,
-  `session_playerid` int(11) NOT NULL,
-  `session_status` int(1) NOT NULL,
-  `session_teamcreate` int(1) NOT NULL DEFAULT 0,
-  `session_timestarted` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` varchar(256) NOT NULL,
+  `serverid` varchar(11) NOT NULL,
+  `playerid` int(11) NOT NULL,
+  `status` int(1) NOT NULL,
+  `teamcreate` int(1) NOT NULL DEFAULT 0,
+  `timestarted` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -59,14 +59,14 @@ CREATE TABLE `active_players` (
 
 DROP TABLE IF EXISTS `active_servers`;
 CREATE TABLE `active_servers` (
-  `server_id` varchar(11) NOT NULL,
-  `server_pid` int(11) NOT NULL,
-  `server_jobid` varchar(255) NOT NULL,
-  `server_placeid` int(11) NOT NULL,
-  `server_playercount` int(11) NOT NULL DEFAULT 0,
-  `server_maxcount` int(11) NOT NULL,
-  `server_port` varchar(5) NOT NULL,
-  `server_teamcreate` int(1) NOT NULL DEFAULT 0
+  `id` varchar(11) NOT NULL,
+  `pid` int(11) NOT NULL,
+  `jobid` varchar(255) NOT NULL,
+  `placeid` int(11) NOT NULL,
+  `playercount` int(11) NOT NULL DEFAULT 0,
+  `maxcount` int(11) NOT NULL,
+  `port` varchar(5) NOT NULL,
+  `teamcreate` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -90,35 +90,23 @@ CREATE TABLE `activity` (
 
 DROP TABLE IF EXISTS `assets`;
 CREATE TABLE `assets` (
-  `asset_id` int(11) NOT NULL,
-  `asset_creator` int(11) NOT NULL,
-  `asset_type` int(11) NOT NULL,
-  `asset_name` varchar(128) NOT NULL,
-  `asset_description` text NOT NULL,
-  `asset_public` int(11) NOT NULL DEFAULT 0,
-  `asset_favourites_count` int(11) NOT NULL DEFAULT 0,
-  `asset_comments_enabled` int(11) NOT NULL DEFAULT 1,
-  `asset_onsale` int(11) NOT NULL DEFAULT 0,
-  `asset_cones` int(11) NOT NULL DEFAULT 0,
-  `asset_lights` int(11) NOT NULL DEFAULT 0,
-  `asset_sales_count` int(11) NOT NULL DEFAULT 0,
-  `asset_relatedid` int(11) DEFAULT NULL,
-  `asset_currentversion` int(11) NOT NULL DEFAULT 1,
-  `asset_nevershow` int(11) NOT NULL DEFAULT 0,
-  `asset_lastedited` timestamp NOT NULL DEFAULT current_timestamp(),
-  `asset_created` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `asset_packages`
---
-
-DROP TABLE IF EXISTS `asset_packages`;
-CREATE TABLE `asset_packages` (
-  `package_id` int(11) NOT NULL,
-  `package_items` text NOT NULL
+  `id` int(11) NOT NULL,
+  `creator` int(11) NOT NULL,
+  `type` int(11) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `description` text NOT NULL,
+  `public` int(11) NOT NULL DEFAULT 0,
+  `favourites_count` int(11) NOT NULL DEFAULT 0,
+  `comments_enabled` int(11) NOT NULL DEFAULT 1,
+  `onsale` int(11) NOT NULL DEFAULT 0,
+  `cones` int(11) NOT NULL DEFAULT 0,
+  `lights` int(11) NOT NULL DEFAULT 0,
+  `sales_count` int(11) NOT NULL DEFAULT 0,
+  `relatedid` int(11) DEFAULT NULL,
+  `currentversion` int(11) NOT NULL DEFAULT 1,
+  `nevershow` int(11) NOT NULL DEFAULT 0,
+  `lastedited` timestamp NOT NULL DEFAULT current_timestamp(),
+  `created` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -129,14 +117,14 @@ CREATE TABLE `asset_packages` (
 
 DROP TABLE IF EXISTS `asset_places`;
 CREATE TABLE `asset_places` (
-  `place_id` int(11) NOT NULL,
-  `place_copylocked` int(11) NOT NULL DEFAULT 1,
-  `place_serversize` int(11) NOT NULL DEFAULT 12,
-  `place_visit_count` int(11) NOT NULL DEFAULT 0,
-  `place_currently_playing` int(11) NOT NULL DEFAULT 0,
-  `place_teamcreate_enabled` int(1) NOT NULL DEFAULT 0,
-  `place_original` int(1) NOT NULL DEFAULT 0,
-  `place_gears_enabled` int(1) NOT NULL DEFAULT 0
+  `id` int(11) NOT NULL,
+  `copylocked` int(11) NOT NULL DEFAULT 1,
+  `serversize` int(11) NOT NULL DEFAULT 12,
+  `visit_count` int(11) NOT NULL DEFAULT 0,
+  `currently_playing_count` int(11) NOT NULL DEFAULT 0,
+  `teamcreate_enabled` int(1) NOT NULL DEFAULT 0,
+  `original` int(1) NOT NULL DEFAULT 0,
+  `gears_enabled` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -147,13 +135,12 @@ CREATE TABLE `asset_places` (
 
 DROP TABLE IF EXISTS `asset_versions`;
 CREATE TABLE `asset_versions` (
-  `version_id` int(11) NOT NULL,
-  `version_assetid` int(11) NOT NULL,
-  `version_md5sig` varchar(50) NOT NULL,
-  `version_md5thumb` varchar(50) NOT NULL DEFAULT 'sound',
-  `version_subid` int(11) NOT NULL DEFAULT 1,
-  `version_assettype` int(11) NOT NULL DEFAULT 1,
-  `version_publishdate` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `assetid` int(11) NOT NULL,
+  `md5sig` varchar(50) NOT NULL,
+  `md5thumb` varchar(50) NOT NULL DEFAULT 'sound',
+  `subid` int(11) NOT NULL DEFAULT 1,
+  `publishdate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -164,13 +151,13 @@ CREATE TABLE `asset_versions` (
 
 DROP TABLE IF EXISTS `bodycolours`;
 CREATE TABLE `bodycolours` (
-  `colours_userid` int(11) NOT NULL,
-  `colours_head` int(11) NOT NULL DEFAULT 24,
-  `colours_torso` int(11) NOT NULL DEFAULT 23,
-  `colours_leftarm` int(11) NOT NULL DEFAULT 24,
-  `colours_rightarm` int(11) NOT NULL DEFAULT 24,
-  `colours_leftleg` int(11) NOT NULL DEFAULT 119,
-  `colours_rightleg` int(11) NOT NULL DEFAULT 119
+  `userid` int(11) NOT NULL,
+  `head` int(11) NOT NULL DEFAULT 24,
+  `torso` int(11) NOT NULL DEFAULT 23,
+  `leftarm` int(11) NOT NULL DEFAULT 24,
+  `rightarm` int(11) NOT NULL DEFAULT 24,
+  `leftleg` int(11) NOT NULL DEFAULT 119,
+  `rightleg` int(11) NOT NULL DEFAULT 119
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -181,10 +168,10 @@ CREATE TABLE `bodycolours` (
 
 DROP TABLE IF EXISTS `cloudeditors`;
 CREATE TABLE `cloudeditors` (
-  `cloudeditor_id` int(11) NOT NULL,
-  `cloudeditor_userid` int(11) NOT NULL,
-  `cloudeditor_placeid` int(11) NOT NULL,
-  `cloudeditor_added` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `userid` int(11) NOT NULL,
+  `placeid` int(11) NOT NULL,
+  `added` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -195,11 +182,11 @@ CREATE TABLE `cloudeditors` (
 
 DROP TABLE IF EXISTS `comments`;
 CREATE TABLE `comments` (
-  `comment_id` varchar(11) NOT NULL,
-  `comment_parent` varchar(13) NOT NULL,
-  `comment_poster` int(11) NOT NULL,
-  `comment_content` varchar(256) NOT NULL,
-  `comment_postdate` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` varchar(11) NOT NULL,
+  `parent` varchar(13) NOT NULL,
+  `poster` int(11) NOT NULL,
+  `content` varchar(256) NOT NULL,
+  `postdate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -226,10 +213,10 @@ CREATE TABLE `datastores` (
 
 DROP TABLE IF EXISTS `favourites`;
 CREATE TABLE `favourites` (
-  `fav_assetid` int(11) NOT NULL,
-  `fav_userid` int(11) NOT NULL,
-  `fav_assettype` int(2) NOT NULL,
-  `fav_date` timestamp NOT NULL DEFAULT current_timestamp()
+  `assetid` int(11) NOT NULL,
+  `userid` int(11) NOT NULL,
+  `assettype` int(2) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -267,9 +254,9 @@ CREATE TABLE `friends` (
 
 DROP TABLE IF EXISTS `inventory`;
 CREATE TABLE `inventory` (
-  `inv_userid` int(11) NOT NULL,
-  `inv_assetid` int(11) NOT NULL,
-  `inv_assettype` int(11) NOT NULL
+  `userid` int(11) NOT NULL,
+  `assetid` int(11) NOT NULL,
+  `assettype` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -296,9 +283,10 @@ CREATE TABLE `outfits` (
 
 DROP TABLE IF EXISTS `profilebadges`;
 CREATE TABLE `profilebadges` (
-  `badge_id` int(2) NOT NULL,
-  `badge_userid` int(10) NOT NULL,
-  `badge_recieved` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(11) NOT NULL,
+  `badgeid` int(2) NOT NULL,
+  `userid` int(10) NOT NULL,
+  `recieved_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -309,10 +297,10 @@ CREATE TABLE `profilebadges` (
 
 DROP TABLE IF EXISTS `statuses`;
 CREATE TABLE `statuses` (
-  `status_id` varchar(20) NOT NULL,
-  `status_poster` int(10) NOT NULL,
-  `status_content` varchar(64) NOT NULL,
-  `status_posted` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` varchar(20) NOT NULL,
+  `poster` int(10) NOT NULL,
+  `content` varchar(64) NOT NULL,
+  `posted` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -352,17 +340,17 @@ CREATE TABLE `transactions` (
 
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
-  `user_id` int(10) NOT NULL,
-  `user_name` varchar(20) NOT NULL,
-  `user_blurb` varchar(1000) NOT NULL DEFAULT '',
-  `user_discord` varchar(256) NOT NULL,
-  `user_password` varchar(256) NOT NULL,
-  `user_security` varchar(255) NOT NULL,
-  `user_lastprofileupdate` timestamp NOT NULL DEFAULT current_timestamp(),
-  `user_setprofilepicture` int(1) NOT NULL DEFAULT 0,
-  `user_currentappearancemd5` varchar(255) NOT NULL DEFAULT 'e729ef49ab16651b0826febda215862b',
-  `user_online` int(1) NOT NULL DEFAULT 0,
-  `user_joindate` timestamp NOT NULL DEFAULT current_timestamp()
+  `id` int(10) NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `blurb` varchar(1000) NOT NULL,
+  `discord` varchar(256) NOT NULL,
+  `password` varchar(256) NOT NULL,
+  `security` varchar(255) NOT NULL,
+  `lastprofileupdate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `setprofilepicture` int(1) NOT NULL DEFAULT 0,
+  `currentappearancemd5` varchar(255) NOT NULL DEFAULT 'e729ef49ab16651b0826febda215862b',
+  `online` int(1) NOT NULL DEFAULT 0,
+  `joindate` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -381,7 +369,8 @@ CREATE TABLE `users_settings` (
   `headshots` int(1) NOT NULL DEFAULT 1,
   `nightbg` int(1) NOT NULL DEFAULT 0,
   `bgm` int(11) NOT NULL DEFAULT -1,
-  `css` text NOT NULL
+  `css` text NOT NULL,
+  `loadingscreens` int(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -392,9 +381,9 @@ CREATE TABLE `users_settings` (
 
 DROP TABLE IF EXISTS `visits`;
 CREATE TABLE `visits` (
-  `visit_place` int(11) NOT NULL,
-  `visit_player` int(11) NOT NULL,
-  `visit_time` timestamp NOT NULL DEFAULT current_timestamp()
+  `place` int(11) NOT NULL,
+  `player` int(11) NOT NULL,
+  `time` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -402,16 +391,22 @@ CREATE TABLE `visits` (
 --
 
 --
+-- Indexes for table `accesskeys`
+--
+ALTER TABLE `accesskeys`
+  ADD PRIMARY KEY (`key`);
+
+--
 -- Indexes for table `active_players`
 --
 ALTER TABLE `active_players`
-  ADD PRIMARY KEY (`session_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `active_servers`
 --
 ALTER TABLE `active_servers`
-  ADD PRIMARY KEY (`server_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `activity`
@@ -423,43 +418,37 @@ ALTER TABLE `activity`
 -- Indexes for table `assets`
 --
 ALTER TABLE `assets`
-  ADD PRIMARY KEY (`asset_id`);
-
---
--- Indexes for table `asset_packages`
---
-ALTER TABLE `asset_packages`
-  ADD PRIMARY KEY (`package_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `asset_places`
 --
 ALTER TABLE `asset_places`
-  ADD PRIMARY KEY (`place_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `asset_versions`
 --
 ALTER TABLE `asset_versions`
-  ADD PRIMARY KEY (`version_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `bodycolours`
 --
 ALTER TABLE `bodycolours`
-  ADD PRIMARY KEY (`colours_userid`);
+  ADD PRIMARY KEY (`userid`);
 
 --
 -- Indexes for table `cloudeditors`
 --
 ALTER TABLE `cloudeditors`
-  ADD PRIMARY KEY (`cloudeditor_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `comments`
 --
 ALTER TABLE `comments`
-  ADD PRIMARY KEY (`comment_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `datastores`
@@ -468,10 +457,16 @@ ALTER TABLE `datastores`
   ADD PRIMARY KEY (`dkey`(100));
 
 --
+-- Indexes for table `profilebadges`
+--
+ALTER TABLE `profilebadges`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `statuses`
 --
 ALTER TABLE `statuses`
-  ADD PRIMARY KEY (`status_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `subscriptions`
@@ -489,7 +484,7 @@ ALTER TABLE `transactions`
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`user_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `users_settings`
@@ -505,25 +500,31 @@ ALTER TABLE `users_settings`
 -- AUTO_INCREMENT for table `assets`
 --
 ALTER TABLE `assets`
-  MODIFY `asset_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `asset_versions`
 --
 ALTER TABLE `asset_versions`
-  MODIFY `version_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `cloudeditors`
 --
 ALTER TABLE `cloudeditors`
-  MODIFY `cloudeditor_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `profilebadges`
+--
+ALTER TABLE `profilebadges`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
