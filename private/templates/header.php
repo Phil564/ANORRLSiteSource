@@ -69,7 +69,7 @@
 				font-size: 16px;
 				justify-content: center;
 				align-items: center;
-				transition: opacity 1.2s;
+				transition: opacity 0.75s;
 				backdrop-filter: blur(10px);
 				display: none;
 			}
@@ -96,18 +96,18 @@
 			// do loading screen if the page hasn't loaded in a second.
 
 			var hasLoaded = false;
-			var initiateLoading = false;
+			var initiateLoading = true;
 			setVisible("#Container", false);
 
-			wait(1000).then(() => {
+			wait(000).then(() => {
 				if(!hasLoaded) {
 					setVisible('#LoadingScreen', true);
-					initiateLoading = true;
+					
 				}
 			})
 
 			document.addEventListener('DOMContentLoaded', function() {
-				hasLoaded = true;
+				//hasLoaded = true;
 				setVisible("#Container", true);
 				if(initiateLoading) {
 					// mom im a genius
