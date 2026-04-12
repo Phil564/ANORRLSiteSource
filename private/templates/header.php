@@ -20,17 +20,10 @@
 	//this is so that if the user ever sets 'background:' on the profile css it'll not apply the night background
 	//because the night background can override the user's background
 	$hasBackground = false;
-	if (isset($get_user)) {
-		$userCSS = UserSettings::Get($get_user)->css;
-		if (!empty($userCSS) && preg_match('/background\s*:/i', $userCSS)) {
-			$hasBackground = true;
-		}
-	} else {
-		$userCSS = SESSION ? SESSION->settings->css : "";
-		if (!empty($userCSS) && preg_match('/background\s*:/i', $userCSS)) {
-			$hasBackground = true;
-			$this->addStylesheet("/users/{$header_check_user->id}/css");
-		}
+
+	$userCSS = isset($get_user) ? UserSettings::Get($get_user)->css : (SESSION ? SESSION->settings->css : "");
+	if (!empty($userCSS) && preg_match('/background\s*:/i', $userCSS)) {
+		$hasBackground = true;
 	}
 
 	/*
@@ -46,20 +39,21 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title><?= $this->title ?> - ANORRL</title>
+		<title><?= $this->title ?><?php if(!str_contains($this->title, "ANORRL")): ?> - ANORRL<?php endif ?></title>
 		<link rel="icon" type="image/x-icon" href="/favicon.ico">
+		
 		<?php foreach($this->scripts as $script): ?>
 		<script src="<?= $script ?>"></script>
 		<?php endforeach ?>
+		
 		<?php foreach($this->stylesheets as $stylesheet): ?>
 		<link rel="stylesheet" href="<?= $stylesheet ?>">
 		<?php endforeach ?>
 
-		<?php if(count($this->metas) != 0): ?>
-			<?php foreach($this->metas as $meta): ?>
-			<meta property="<?= $meta['type'] ?>" content="<?= $meta['contents'] ?>">
-			<?php endforeach ?>
-		<?php endif ?>
+		<?php foreach($this->metas as $meta): ?>
+		<meta property="<?= $meta['type'] ?>" content="<?= $meta['contents'] ?>">
+		<?php endforeach ?>
+		
 		<?php if($this->settings->loadingscreens_enabled): ?>
 		<style>
 			#LoadingScreen {
@@ -83,7 +77,6 @@
 			}
 		</style>
 		<script>
-			
 			const wait = (delay = 0) =>	new Promise(resolve => setTimeout(resolve, delay));
 
 			function setVisible(element, visible) {
@@ -91,7 +84,6 @@
 			}
 
 			setVisible('#LoadingScreen', true);
-			
 
 			document.addEventListener('DOMContentLoaded', function() {
 				// mom im a genius
@@ -200,7 +192,7 @@
 				<?php if($header_check_user->pendingStipend()): ?>
 				<div id="StipendThingy">
 					<span style="font-size: 13px">Yoo bitch you got a paycheck incoming!!!</span>
-					<a href="javascript:ANORRL.CollectStipend()" style=>Collect</a>
+					<a href="javascript:ANORRL.CollectStipend()">Collect</a>
 				</div>
 				<?php endif ?>
 				<?php else: ?>
