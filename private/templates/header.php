@@ -96,18 +96,18 @@
 			// do loading screen if the page hasn't loaded in a second.
 
 			var hasLoaded = false;
-			var initiateLoading = true;
+			var initiateLoading = false;
 			setVisible("#Container", false);
 
 			wait(000).then(() => {
 				if(!hasLoaded) {
 					setVisible('#LoadingScreen', true);
-					
+					initiateLoading = true;
 				}
 			})
 
 			document.addEventListener('DOMContentLoaded', function() {
-				//hasLoaded = true;
+				hasLoaded = true;
 				setVisible("#Container", true);
 				if(initiateLoading) {
 					// mom im a genius
