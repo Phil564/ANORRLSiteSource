@@ -15,10 +15,9 @@
 	$domain = CONFIG->domain;
 
 	if($asset != null) {
-		$urlname = $asset->getURLTitle();
 		
-		if($urlname != $name) {
-			die(header("Location: /$urlname-place?id=$id"));
+		if($asset->getURLTitle() != $name) {
+			die(header("Location: {$asset->getUrl()}"));
 		}
 
 		if($user != null) {
@@ -37,7 +36,7 @@
 					$_SESSION['ANORRL$Comment$Post$Error'] = $result['reason'];
 				}
 
-				die(header("Location: /$urlname-item?id=$id"));
+				die(header("Location: {$asset->getUrl()}"));
 			}
 
 			$comments = Comment::GetCommentsOn($asset);
@@ -61,8 +60,7 @@
 		if($new_asset == null) {
 			die(header("Location: /my/stuff"));
 		} else {
-			$urlname = $new_asset->getURLTitle();
-			die(header("Location: /$urlname-item?id=$id"));
+			die(header("Location: {$new_asset->getUrl()}"));
 		}
 	}
 	$header_data = $asset;
@@ -82,10 +80,10 @@
 	$page->addMeta("description", htmlspecialchars(substr($asset->description, 0, 128), ENT_QUOTES));
 	$page->addMeta("og:type", "website");
 	$page->addMeta("og:site_name", "ANORRL");
-	$page->addMeta("og:url", "https://$domain/{$asset->getURLTitle()}-place?id={$asset->id}");
+	$page->addMeta("og:url", "https://$domain{$asset->getUrl()}");
 	$page->addMeta("og:title", htmlspecialchars($asset->name, ENT_QUOTES));
 	$page->addMeta("og:description", htmlspecialchars(substr($asset->description, 0, 128), ENT_QUOTES));
-	$page->addMeta("og:image", "https://$domain/thumbs/?id={$asset->id}");
+	$page->addMeta("og:image", "https://$domain{$asset->getThumbsUrl()}");
 
 	$page->loadHeader();
 
@@ -203,7 +201,7 @@
 	</div>
 
 	<?php
-	$teamcreate = $asset->teamcreate_enabled && count($asset->GetCloudEditors());
+	$teamcreate = $asset->teamcreate_enabled && count($asset->getCloudEditors());
 	if($user != null && $teamcreate): ?>
 	<div id="CommentsContainer">
 		<h3>Users worked on this!</h3>
@@ -211,7 +209,7 @@
 				<div id="FriendsContainer">
 					<ul id="Friends" style="width: 848px;border: 0px;background: none;padding: 0px;text-align: center;height: 140px;">
 						<?php 
-							$users = $asset->GetCloudEditors();
+							$users = $asset->getCloudEditors();
 
 							foreach($users as $u) {
 								if($u instanceof User) {

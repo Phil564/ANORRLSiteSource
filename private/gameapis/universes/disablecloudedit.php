@@ -9,6 +9,6 @@
 	$user = SESSION->user;
 
 	if($place != null && $user != null && ($user->id == $place->creator->id || $user->isAdmin())) {
-		$place->DisableTeamCreate();
+		$place->disableTeamCreate();
 	}
 ?>

@@ -23,7 +23,7 @@
 
 		$stmt_teamcreate = $teamcreate ? 1 : 0;
 
-		$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `server_placeid` = ? AND `server_playercount` != `server_maxcount` AND `server_teamcreate` = ?");
+		$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `placeid` = ? AND `playercount` != `maxcount` AND `teamcreate` = ?");
 		$stmt_getactiveservers->bind_param("ii", $placeID, $stmt_teamcreate);
 		$stmt_getactiveservers->execute();
 
@@ -37,7 +37,7 @@
 
 		$stmt_teamcreate = $teamcreate ? 1 : 0;
 
-		$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `server_placeid` = ? AND `server_playercount` < `server_maxcount` AND `server_teamcreate` = ?");
+		$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `placeid` = ? AND `playercount` < `maxcount` AND `teamcreate` = ?");
 		$stmt_getactiveservers->bind_param("ii", $placeID, $stmt_teamcreate);
 		$stmt_getactiveservers->execute();
 
@@ -55,7 +55,7 @@
 
 		$stmt_teamcreate = $teamcreate ? 1 : 0;
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `session_playerid` = ? AND `session_teamcreate` = ?");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `playerid` = ? AND `teamcreate` = ?");
 		$stmt_getsessiondetails->bind_param("ii", $userID, $stmt_teamcreate);
 		$stmt_getsessiondetails->execute();
 
@@ -69,7 +69,7 @@
 
 		$stmt_teamcreate = $teamcreate ? 1 : 0;
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `session_id` = ? AND `session_teamcreate` = ?");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `id` = ? AND `teamcreate` = ?");
 		$stmt_getsessiondetails->bind_param("si", $sessionID, $stmt_teamcreate);
 		$stmt_getsessiondetails->execute();
 
@@ -87,7 +87,7 @@
 
 		$stmt_teamcreate = $teamcreate ? 1 : 0;
 
-		$stmt_getsessiondetails = $con->prepare("UPDATE `active_players` SET `session_serverid` = ? WHERE `session_id` = ? AND `session_teamcreate` = ?");
+		$stmt_getsessiondetails = $con->prepare("UPDATE `active_players` SET `serverid` = ? WHERE `id` = ? AND `teamcreate` = ?");
 		$stmt_getsessiondetails->bind_param("ssi", $placeID, $sessionID, $stmt_teamcreate);
 		$stmt_getsessiondetails->execute();
 
@@ -105,7 +105,7 @@
 
 		$stmt_teamcreate = $teamcreate ? 1 : 0;
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `server_id` = ? AND `server_teamcreate` = ?");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `id` = ? AND `teamcreate` = ?");
 		$stmt_getsessiondetails->bind_param("si", $serverID, $stmt_teamcreate);
 		$stmt_getsessiondetails->execute();
 
@@ -147,7 +147,7 @@
 				$playerID = $user->id;
 				if(isUserInAGame($user->id)) {
 					include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-					$stmt_deletesession = $con->prepare("DELETE FROM `active_players` WHERE `session_playerid` = ?");
+					$stmt_deletesession = $con->prepare("DELETE FROM `active_players` WHERE `playerid` = ?");
 					$stmt_deletesession->bind_param("i", $playerID);
 					$stmt_deletesession->execute();
 				}
@@ -155,14 +155,14 @@
 				$server = getAnActiveServer($place->id);
 
 				if($server != null) {
-					$serverID = $server['server_id'];
+					$serverID = $server['id'];
 				} else {
 					$serverID = strval($place->id);
 				}
 				$sessionID = getRandomString(25);
 				
 				include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-				$stmt_createnewsession = $con->prepare("INSERT INTO `active_players`(`session_id`, `session_serverid`, `session_playerid`, `session_status`) VALUES (?,?,?,0)");
+				$stmt_createnewsession = $con->prepare("INSERT INTO `active_players`(`id`, `serverid`, `playerid`, `status`) VALUES (?,?,?,0)");
 				$stmt_createnewsession->bind_param("ssi", $sessionID, $serverID, $playerID);
 				$stmt_createnewsession->execute();
 
@@ -194,7 +194,7 @@
 
 						if ($code != 200) {
 							include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-							$stmt = $con->prepare("DELETE FROM `active_players` WHERE `session_id` = ?");
+							$stmt = $con->prepare("DELETE FROM `active_players` WHERE `id` = ?");
 							$stmt->bind_param("s", $sessionID);
 							$stmt->execute();
 
@@ -215,7 +215,7 @@
 
 						include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-						$stmt_createnewserver = $con->prepare("INSERT INTO `active_servers` (`server_id`, `server_jobid`, `server_placeid`, `server_maxcount`, `server_port`, `server_pid`) VALUES (?,?,?,?,?,?)");
+						$stmt_createnewserver = $con->prepare("INSERT INTO `active_servers` (`id`, `jobid`, `placeid`, `maxcount`, `port`, `pid`) VALUES (?,?,?,?,?,?)");
 						$stmt_createnewserver->bind_param("ssiiss", $serverid, $jobid, $placeId, $place->server_size, $strPort, $pid);
 						$stmt_createnewserver->execute();
 
@@ -223,7 +223,7 @@
 
 					} catch(SoapFault $e) {
 						include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-						$stmt_createnewserver = $con->prepare("DELETE FROM `active_players` WHERE `session_id` = ?;");
+						$stmt_createnewserver = $con->prepare("DELETE FROM `active_players` WHERE `id` = ?;");
 						$stmt_createnewserver->bind_param("s", $sessionID);
 						$stmt_createnewserver->execute();
 						die(json_encode([
@@ -235,7 +235,7 @@
 					$server_data = getAnActiveServer($place->id);
 
 					if($server_data != null) {
-						$serverid = $server_data['server_id'];
+						$serverid = $server_data['id'];
 					} else {
 						$dont_load = true;
 					}
@@ -268,7 +268,7 @@
 				$playerID = $user->id;
 				if(isUserInAGame($user->id, true)) {
 					include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-					$stmt_deletesession = $con->prepare("DELETE FROM `active_players` WHERE `session_playerid` = ? AND `session_teamcreate` = 1");
+					$stmt_deletesession = $con->prepare("DELETE FROM `active_players` WHERE `playerid` = ? AND `teamcreate` = 1");
 					$stmt_deletesession->bind_param("i", $playerID);
 					$stmt_deletesession->execute();
 				}
@@ -276,14 +276,14 @@
 				$server = getAnActiveServer($place->id, true);
 
 				if($server != null) {
-					$serverID = $server['server_id'];
+					$serverID = $server['id'];
 				} else {
 					$serverID = strval($place->id);
 				}
 				$sessionID = getRandomString(25);
 				
 				include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-				$stmt_createnewsession = $con->prepare("INSERT INTO `active_players`(`session_id`, `session_serverid`, `session_playerid`, `session_status`, `session_teamcreate`) VALUES (?,?,?,0,1)");
+				$stmt_createnewsession = $con->prepare("INSERT INTO `active_players`(`id`, `serverid`, `playerid`, `status`, `teamcreate`) VALUES (?,?,?,0,1)");
 				$stmt_createnewsession->bind_param("ssi", $sessionID, $serverID, $playerID);
 				$stmt_createnewsession->execute();
 
@@ -328,7 +328,7 @@
 						$strPort = strval($port);
 						
 						include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-						$stmt_createnewserver = $con->prepare("INSERT INTO `active_servers` (`server_id`, `server_jobid`, `server_placeid`, `server_maxcount`, `server_port`, `server_pid`, `server_teamcreate`) VALUES (?,?,?,?,?,?,1)");
+						$stmt_createnewserver = $con->prepare("INSERT INTO `active_servers` (`id`, `jobid`, `placeid`, `maxcount`, `port`, `pid`, `teamcreate`) VALUES (?,?,?,?,?,?,1)");
 						$stmt_createnewserver->bind_param("ssiiss", $serverid, $jobid, $placeId, $place->server_size, $strPort, $pid);
 						$stmt_createnewserver->execute();
 
@@ -337,7 +337,7 @@
 					} catch(SoapFault $e) {
 						
 						include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-						$stmt_createnewserver = $con->prepare("DELETE FROM `active_players` WHERE `session_id` = ? AND `session_teamcreate` = 1;");
+						$stmt_createnewserver = $con->prepare("DELETE FROM `active_players` WHERE `id` = ? AND `teamcreate` = 1;");
 						$stmt_createnewserver->bind_param("s", $sessionID);
 						$stmt_createnewserver->execute();
 						
@@ -350,8 +350,8 @@
 					$server_data = getAnActiveServer($place->id, true);
 
 					if($server_data != null) {
-						$serverid = $server_data['server_id'];
-						$port = $server_data['server_port'];
+						$serverid = $server_data['id'];
+						$port = $server_data['port'];
 					} else {
 						$dont_load = true;
 					}
@@ -406,19 +406,19 @@
 
 		if($session_data != null) {
 
-			$place = Place::FromID(intval($session_data['session_serverid']));
+			$place = Place::FromID(intval($session_data['serverid']));
 			
 			if($place == null) {
-				$server_details = getServerDetails($session_data['session_serverid']);
+				$server_details = getServerDetails($session_data['serverid']);
 				if($server_details != null) {
-					$place = Place::FromID(intval($server_details['server_placeid']));
+					$place = Place::FromID(intval($server_details['placeid']));
 				} else {
 					$place = null;
 				}
 				
 			}
 			
-			$user = User::FromID(intval($session_data['session_playerid']));
+			$user = User::FromID(intval($session_data['playerid']));
 
 			if($place != null && $user != null && !$user->isBanned()) {
 				if(UserUtils::RetrieveUser() == null) {
@@ -465,7 +465,7 @@
 						$strPort = strval($port);
 
 						include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-						$stmt_createnewserver = $con->prepare("INSERT INTO `active_servers`(`server_id`, `server_jobid`, `server_placeid`, `server_maxcount`, `server_port`, `server_pid`) VALUES (?,?,?,?,?,?)");
+						$stmt_createnewserver = $con->prepare("INSERT INTO `active_servers`(`id`, `jobid`, `placeid`, `maxcount`, `port`, `pid`) VALUES (?,?,?,?,?,?)");
 						$stmt_createnewserver->bind_param("ssiiss", $serverid, $jobid, $placeId, $place->server_size, $strPort, $pid);
 						$stmt_createnewserver->execute();
 
@@ -473,7 +473,7 @@
 
 					} catch(Exception $e) {
 						include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-						$stmt_createnewserver = $con->prepare("DELETE FROM `active_players` WHERE `session_id` = ?;");
+						$stmt_createnewserver = $con->prepare("DELETE FROM `active_players` WHERE `id` = ?;");
 						$stmt_createnewserver->bind_param("s", $sessionToken);
 						$stmt_createnewserver->execute();
 						die(json_encode([
@@ -485,7 +485,7 @@
 					$server_data = getAnActiveServer($place->id);
 
 					if($server_data != null) {
-						$serverid = $server_data['server_id'];
+						$serverid = $server_data['id'];
 					} else {
 						$dont_load = true;
 					}

@@ -5,7 +5,7 @@
 	function getServerDetailsFromJobID(string $jobID): array|null {
 		include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `server_jobid` = ?");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `jobid` = ?");
 		$stmt_getsessiondetails->bind_param("s", $jobID);
 		$stmt_getsessiondetails->execute();
 
@@ -24,21 +24,21 @@
 			$user = User::FromID(intval($_GET['userID']));
 
 			if($server_details != null && $user != null) {
-				$place = Place::FromID(intval($server_details['server_placeid']));
+				$place = Place::FromID(intval($server_details['placeid']));
 				if($place != null) {
 					include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-					$stmt_checkplayer = $con->prepare("SELECT * FROM `active_players` WHERE `session_serverid` = ? AND `session_playerid` = ?;");
-					$stmt_checkplayer->bind_param("si", $server_details['server_id'], $user->id);
+					$stmt_checkplayer = $con->prepare("SELECT * FROM `active_players` WHERE `serverid` = ? AND `playerid` = ?;");
+					$stmt_checkplayer->bind_param("si", $server_details['id'], $user->id);
 					$stmt_checkplayer->execute();
 
 					$result_checkplayer = $stmt_checkplayer->get_result();
 
 					if($result_checkplayer->num_rows != 0) {
-						$stmt_checkplayer = $con->prepare("UPDATE `active_players` SET `session_status` = 1 WHERE `session_serverid` = ? AND `session_playerid` = ?;");
-						$stmt_checkplayer->bind_param("si", $server_details['server_id'], $user->id);
+						$stmt_checkplayer = $con->prepare("UPDATE `active_players` SET `status` = 1 WHERE `serverid` = ? AND `playerid` = ?;");
+						$stmt_checkplayer->bind_param("si", $server_details['id'], $user->id);
 
 						if($stmt_checkplayer->execute()) {
-							$place->Visit($user);
+							$place->visit($user);
 							echo "OK";
 						}
 					}

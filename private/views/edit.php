@@ -140,7 +140,7 @@
 				$server_size = $allUsersCount;
 			}
 
-			$stmt = $con->prepare('UPDATE `asset_places` SET `place_copylocked` = ?, `place_serversize` = ?, `place_original` = ?, `place_gears_enabled` = ? WHERE `place_id` = ?;');
+			$stmt = $con->prepare('UPDATE `places` SET `copylocked` = ?, `serversize` = ?, `original` = ?, `gears_enabled` = ? WHERE `id` = ?;');
 			$stmt->bind_param('iiiii', $copylocked, $server_size, $original, $gears, $id);
 			$stmt->execute();
 
@@ -169,7 +169,7 @@
 			}
 		}
 
-		die(header("Location: /".$asset->getURLTitle()."-item?id=$id"));
+		die(header("Location: {$asset->getUrl()}"));
 		
 	} else if(isset($_FILES['ANORRL$PublishAsset$File']) &&
 	   isset($_POST['ANORRL$PublishAsset$Submit'])) {
@@ -183,7 +183,7 @@
 
 				die(header("Location: /edit?id=$id"));
 			} else {
-				die(header("Location: /".$asset->getURLTitle()."-item?id=$id"));
+				die(header("Location: {$asset->getUrl()}"));
 			}
 		} else {
 			die("Yo, what are you doing??");
@@ -318,7 +318,7 @@
 					<span style="display: block;margin-bottom: 10px;font-size: 10px;color: #999;font-style: italic;">This is for if you want to add a neat little cover for your audio! (Decal/Image ids only!)</span>
 					<div style="width:294px;margin: 0 auto;">
 						<h4 style="margin: 0;width: 254px;">Current Thumbnail Photo</h4>
-						<img style="width: 290px;border: 2px solid black;background: #1a1a1a;" src="/thumbs/?id=<?= $asset->id ?>&sxy=290">
+						<img style="width: 290px;border: 2px solid black;background: #1a1a1a;" src="<?= $asset->getThumbsUrl(290) ?>">
 						<div class="FilePicker" style="display: block;margin-top: 10px;text-align:center">
 							<input type="number" name="ANORRL$EditItem$Audio$AssetID" style="width: 100px;" placeholder="Decal ID" value="">
 							<input type="submit" name="ANORRL$EditItem$Audio$Submit"  style="margin: 0;display: inline-block;"     value="Update">
@@ -406,7 +406,7 @@
 		</div>
 		<?php endif ?>
 	
-		<a type="submit" href="/<?= $asset->getURLTitle() ?>-item?id=<?= $id ?>" style="width:50px">Go Back</a>
+		<a type="submit" href="<?= $asset->getUrl() ?>" style="width:50px">Go Back</a>
 	</div>
 	
 </div>

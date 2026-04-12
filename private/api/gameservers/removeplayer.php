@@ -4,7 +4,7 @@
 	function getServerDetailsFromJobID(string $jobID): array|null {
 		include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `server_jobid` = ?");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `jobid` = ?");
 		$stmt_getsessiondetails->bind_param("s", $jobID);
 		$stmt_getsessiondetails->execute();
 
@@ -24,8 +24,8 @@
 
 			if($server_details != null) {
 				include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-				$stmt_createnewserver = $con->prepare("DELETE FROM `active_players` WHERE `session_serverid` = ? AND `session_playerid` = ?;");
-				$stmt_createnewserver->bind_param("si", $server_details['server_id'], $user->id);
+				$stmt_createnewserver = $con->prepare("DELETE FROM `active_players` WHERE `serverid` = ? AND `playerid` = ?;");
+				$stmt_createnewserver->bind_param("si", $server_details['id'], $user->id);
 				$stmt_createnewserver->execute();
 			}
 			

@@ -1,6 +1,7 @@
 <?php
 	namespace anorrl;
 
+	use anorrl\Database;
 	use anorrl\enums\AssetType;
 	use anorrl\Asset;
 
@@ -11,12 +12,11 @@
 		public int $sub_id;
 		public string $md5sig;
 		public string $md5thumb;
-		public AssetType $asset_type;
 		public \DateTime $publish_date;
 
 		public static function GetVersionFromID(int $versionid) {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_id` = ?");
+			$stmt_getuser = $con->prepare("SELECT * FROM `versions` WHERE `id` = ?");
 			$stmt_getuser->bind_param('i', $versionid);
 			$stmt_getuser->execute();
 			$result = $stmt_getuser->get_result();
@@ -43,7 +43,7 @@
 				$id = $asset->id;
 			}
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_assetid` = ? AND `version_subid` = ?");
+			$stmt_getuser = $con->prepare("SELECT * FROM `versions` WHERE `assetid` = ? AND `subid` = ?");
 			$stmt_getuser->bind_param('ii', $id, $version);
 			$stmt_getuser->execute();
 			$result = $stmt_getuser->get_result();
@@ -57,19 +57,18 @@
 
 
 		function __construct($rowdata) {
-			$this->id = intval($rowdata['version_id']);
-			$this->asset = Asset::FromID(intval($rowdata['version_assetid']));
-			$this->sub_id = intval($rowdata['version_subid']);
-			$this->asset_type = AssetType::index(intval($rowdata['version_assettype']));
-			$this->md5sig = strval($rowdata['version_md5sig']);
-			$this->md5thumb = strval($rowdata['version_md5thumb']);
+			$this->id = intval($rowdata['id']);
+			$this->asset = Asset::FromID(intval($rowdata['assetid']));
+			$this->sub_id = intval($rowdata['subid']);
+			$this->md5sig = strval($rowdata['md5sig']);
+			$this->md5thumb = strval($rowdata['md5thumb']);
 
-			$this->publish_date = \DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['version_publishdate']);	
+			$this->publish_date = \DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['publishdate']);	
 		}
 
 		function ResetThumbnail() {
 			
-			if($this->asset_type != AssetType::AUDIO && $this->asset_type != AssetType::PLACE) {
+			if($this->asset->type != AssetType::AUDIO && $this->asset->type != AssetType::PLACE) {
 				return;
 			}
 
@@ -79,12 +78,15 @@
 				$md5hash = "sound";
 			}
 
-			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("UPDATE `asset_versions` SET `version_md5thumb` = ? WHERE `version_id` = ?");
-			$stmt_getuser->bind_param('si', $md5hash, $this->id);
-			$stmt_getuser->execute();
+			Database::singleton()->run(
+				"UPDATE `versions` SET `md5thumb` = :md5 WHERE `id` = :id",
+				[
+					":md5" => $md5hash,
+					":id" => $this->id
+				]
+			);
 
-			if($this->asset_type == AssetType::PLACE) {
+			if($this->asset->type == AssetType::PLACE) {
 				// remove place thumbnail
 				unlink($_SERVER['DOCUMENT_ROOT']."/../assets/thumbs/".$this->asset->id);
 			}
@@ -98,19 +100,16 @@
 
 			$version = AssetVersion::GetLatestVersionOf($asset);
 
-			if($version == null) {
+			if($version == null)
 				return;
-			}
 
-			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("UPDATE `asset_versions` SET `version_md5thumb` = ? WHERE `version_id` = ?");
-			if($asset->id == $this->asset->id) {
-				$stmt_getuser->bind_param('si', $this->md5sig, $this->id);
-			} else {
-				$stmt_getuser->bind_param('si', $version->md5sig, $this->id);
-			}
-			
-			$stmt_getuser->execute();
+			Database::singleton()->run(
+				"UPDATE `versions` SET `md5thumb` = :md5 WHERE `id` = :id",
+				[
+					":md5" => ($asset->id == $this->asset->id ? $this : $version)->md5sig,
+					":id" => $this->id
+				]
+			);
 		}
 
 	}

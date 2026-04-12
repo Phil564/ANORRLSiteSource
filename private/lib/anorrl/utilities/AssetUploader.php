@@ -114,14 +114,14 @@
 					[
 						"title" => $asset->name,
 						"description" => "Uploaded by: ".$asset->creator->name,
-						"url" => "https://$domain/".$asset->getURLTitle()."-item?id=".$asset->id,
+						"url" => "https://$domain".$asset->getUrl(),
 						"author" => [
 							"name" => "ANORRL",
 							"url" => "https://$domain/",
 							"icon_url" => "https://$domain/images/download/2016client.png"
 						],
 						"thumbnail" => [
-							"url" => "https://$domain/thumbs/?id=".$asset->id
+							"url" => "https://$domain".$asset->getThumbsUrl()
 						],
 					]
 				]
@@ -161,7 +161,7 @@
 			$parsed_commentsenabled = intval($comments_enabled);
 			$parsed_hidden          = intval($hidden);
 
-			$stmt = $con->prepare("INSERT INTO `assets`(`asset_name`, `asset_description`, `asset_creator`, `asset_type`, `asset_public`, `asset_onsale`, `asset_comments_enabled`, `asset_nevershow`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
+			$stmt = $con->prepare("INSERT INTO `assets`(`name`, `description`, `creator`, `type`, `public`, `onsale`, `comments_enabled`, `nevershow`) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 			$stmt->bind_param('ssiiiiii', $name, $description, $parsed_userid, $parsed_type, $parsed_public, $parsed_onsale, $parsed_commentsenabled, $parsed_hidden);
 			if(!$stmt->execute()) {
 				return INTERNALSQLERROR;
@@ -179,10 +179,10 @@
 					file_put_contents($filepath, $data);
 				}
 
-				$stmt = $con->prepare('INSERT INTO `asset_versions`(`version_assetid`, `version_md5sig`, `version_md5thumb`, `version_assettype`) VALUES (?, ?, ?, ?)');
-				$stmt->bind_param('issi', $id, $md5, $md5, $parsed_type);
+				$stmt = $con->prepare('INSERT INTO `versions`(`assetid`, `md5sig`, `md5thumb`) VALUES (?, ?, ?)');
+				$stmt->bind_param('iss', $id, $md5, $md5);
 				if(!$stmt->execute()) {
-					$stmt = $con->prepare('DELETE FROM `assets` WHERE `asset_id` = ?;');
+					$stmt = $con->prepare('DELETE FROM `assets` WHERE `id` = ?;');
 					$stmt->bind_param('i', $id);
 					$stmt->execute();
 
@@ -257,8 +257,8 @@
 
 				$new_versionid = count($asset->getAllVersions())+1;
 
-				$stmt = $con->prepare('INSERT INTO `asset_versions`(`version_assetid`, `version_md5sig`, `version_md5thumb`, `version_assettype`, `version_subid`) VALUES (?, ?, ?, ?, ?)');
-				$stmt->bind_param('issii', $id, $md5, $md5, $parsed_type, $new_versionid);
+				$stmt = $con->prepare('INSERT INTO `versions`(`assetid`, `md5sig`, `md5thumb`, `subid`) VALUES (?, ?, ?, ?)');
+				$stmt->bind_param('issi', $id, $md5, $md5, $new_versionid);
 				try {
 					if(!$stmt->execute()) {
 						return INTERNALSQLERROR;
@@ -281,7 +281,7 @@
 			$versionid = $con->insert_id;
 
 			Database::singleton()->run(
-				"UPDATE `assets` SET `asset_currentversion` = :curver, `asset_lastedited` = now(), `asset_name` = :name, `asset_description` = :desc, `asset_public` = :public, `asset_onsale` = :onsale, `asset_cones` = :cones, `asset_lights` = :lights, `asset_comments_enabled` = :commentsenabled WHERE `asset_id` = :assetid",
+				"UPDATE `assets` SET `currentversion` = :curver, `lastedited` = now(), `name` = :name, `description` = :desc, `public` = :public, `onsale` = :onsale, `cones` = :cones, `lights` = :lights, `comments_enabled` = :commentsenabled WHERE `id` = :assetid",
 				[
 					":curver" => $new_versionid,
 					":name" => $name,
@@ -414,14 +414,14 @@
 
 			if(!$result['error']) {
 				include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-				$stmt_addplace = $con->prepare("INSERT INTO `asset_places`(`place_id`, `place_copylocked`, `place_serversize`, `place_gears_enabled`, `place_original`) VALUES (?, ?, ?, ?, ?)");
+				$stmt_addplace = $con->prepare("INSERT INTO `places`(`id`, `copylocked`, `serversize`, `gears_enabled`, `original`) VALUES (?, ?, ?, ?, ?)");
 				
 				$place_copylocked = $copylocked ? 1 : 0;
 				$place_gears = $gears_enabled ? 1 : 0;
 				$place_original = $original ? 1 : 0;
 				$stmt_addplace->bind_param('iiiii', $result['id'], $place_copylocked, $server_size, $place_gears, $place_original);
 				if(!$stmt_addplace->execute()) {
-					$stmt = $con->prepare('DELETE FROM `assets` WHERE `asset_id` = ?;');
+					$stmt = $con->prepare('DELETE FROM `assets` WHERE `id` = ?;');
 					$stmt->bind_param('i', $result['id']);
 					$stmt->execute();
 
@@ -651,12 +651,12 @@
 									if(!$result['error']) {
 										include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-										$stmt = $con->prepare("UPDATE `assets` SET `asset_relatedid` = ? WHERE `asset_id` = ?;");
+										$stmt = $con->prepare("UPDATE `assets` SET `relatedid` = ? WHERE `id` = ?;");
 										$stmt->bind_param('ii', $result['id'], $image_id);
 										$stmt->execute();
 
 										if($type == AssetType::DECAL || $type == AssetType::FACE) {
-											/*$stmt = $con->prepare("UPDATE `asset_versions` SET `version_md5thumb` = ? WHERE `version_assetid` = ?");
+											/*$stmt = $con->prepare("UPDATE `versions` SET `md5thumb` = ? WHERE `assetid` = ?");
 											$stmt->bind_param('si', $md5hashfile, $result['id']);
 											$stmt->execute();*/
 										}

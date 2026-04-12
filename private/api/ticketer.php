@@ -23,7 +23,7 @@
 	function getAnActiveServer(int $placeID): array|null {
 		include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-		$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `server_placeid` = ? AND `server_playercount` != `server_maxcount` AND `server_teamcreate` = 0");
+		$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `placeid` = ? AND `playercount` != `maxcount` AND `teamcreate` = 0");
 		$stmt_getactiveservers->bind_param("i", $placeID);
 		$stmt_getactiveservers->execute();
 
@@ -39,7 +39,7 @@
 	function isUserInAGame(int $userID): bool {
 		include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `session_playerid` = ?");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `playerid` = ?");
 		$stmt_getsessiondetails->bind_param("i", $userID);
 		$stmt_getsessiondetails->execute();
 
@@ -51,7 +51,7 @@
 	function getServerDetails(string $serverID): array|null {
 		include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `server_id` = ? AND `server_teamcreate` = 0");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `id` = ? AND `teamcreate` = 0");
 		$stmt_getsessiondetails->bind_param("s", $serverID);
 		$stmt_getsessiondetails->execute();
 
@@ -69,7 +69,7 @@
 
 		$stmt_teamcreate = $teamcreate ? 1 : 0;
 
-		$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `server_placeid` = ? AND `server_playercount` != `server_maxcount` AND `server_teamcreate` = ?");
+		$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `placeid` = ? AND `playercount` != `maxcount` AND `teamcreate` = ?");
 		$stmt_getactiveservers->bind_param("ii", $placeID, $stmt_teamcreate);
 		$stmt_getactiveservers->execute();
 
@@ -83,7 +83,7 @@
 
 		$stmt_teamcreate = $teamcreate ? 1 : 0;
 
-		$stmt_getsessiondetails = $con->prepare("UPDATE `active_players` SET `session_serverid` = ? WHERE `session_id` = ? AND `session_teamcreate` = ?");
+		$stmt_getsessiondetails = $con->prepare("UPDATE `active_players` SET `serverid` = ? WHERE `id` = ? AND `teamcreate` = ?");
 		$stmt_getsessiondetails->bind_param("ssi", $placeID, $sessionID, $stmt_teamcreate);
 		$stmt_getsessiondetails->execute();
 
@@ -94,7 +94,7 @@
 		if(isset($_POST['editID'])) {
 			$place = Place::FromID(intval($_POST['editID']));
 
-			if($place != null && ($user->id == $place->creator->id || !$place->copylocked || ($place->teamcreate_enabled && $place->IsCloudEditor($user)) || $user->isAdmin())) {
+			if($place != null && ($user->id == $place->creator->id || !$place->copylocked || ($place->teamcreate_enabled && $place->isCloudEditor($user)) || $user->isAdmin())) {
 				$placeID = $place->id;
 				$clientticket = base64_encode(string: $user->security_key);
 				die("anorrl-studio:1+script:http%3A%2F%2F{$domain}%2Fgame%2Fedit.ashx?placeId=$placeID+placeid:$placeID+launchmode:edit+gameinfo:$clientticket");	
@@ -117,7 +117,7 @@
 					$placeID = $place->id;
 					if(isUserInAGame($user->id)) {
 						include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-						$stmt_createnewsession = $con->prepare("DELETE FROM `active_players` WHERE `session_playerid` = ?");
+						$stmt_createnewsession = $con->prepare("DELETE FROM `active_players` WHERE `playerid` = ?");
 						$stmt_createnewsession->bind_param("i", $playerID);
 						$stmt_createnewsession->execute();
 					}
@@ -125,14 +125,14 @@
 					$server = getAnActiveServer($place->id);
 
 					if($server != null) {
-						$serverID = $server['server_id'];
+						$serverID = $server['id'];
 					} else {
 						$serverID = strval($place->id);
 					}
 					$sessionID = getRandomString();
 					
 					include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-					$stmt_createnewsession = $con->prepare("INSERT INTO `active_players`(`session_id`, `session_serverid`, `session_playerid`, `session_status`) VALUES (?,?,?,0)");
+					$stmt_createnewsession = $con->prepare("INSERT INTO `active_players`(`id`, `serverid`, `playerid`, `status`) VALUES (?,?,?,0)");
 					$stmt_createnewsession->bind_param("ssi", $sessionID, $serverID, $playerID);
 					$stmt_createnewsession->execute();
 					die("anorrl-player:1+placelauncherurl:http%3A%2F%2F{$domain}%2Fgame%2FPlaceLauncher.ashx?sessionID=$sessionID+placeid:$placeID+launchmode:play+gameinfo:0");
@@ -143,7 +143,7 @@
 				$server_details = getServerDetails($_POST['serverID']);
 
 				if($server_details != null) {
-					$place = Place::FromID(intval($server_details['server_placeid']));
+					$place = Place::FromID(intval($server_details['placeid']));
 
 					if($place != null) {
 
@@ -153,7 +153,7 @@
 						$placeID = $place->id;
 						if(isUserInAGame($user->id)) {
 							include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-							$stmt_createnewsession = $con->prepare("DELETE FROM `active_players` WHERE `session_playerid` = ?");
+							$stmt_createnewsession = $con->prepare("DELETE FROM `active_players` WHERE `playerid` = ?");
 							$stmt_createnewsession->bind_param("i", $playerID);
 							$stmt_createnewsession->execute();
 						}
@@ -161,14 +161,14 @@
 						$server = getAnActiveServer($place->id);
 
 						if($server != null) {
-							$serverID = $server['server_id'];
+							$serverID = $server['id'];
 						} else {
 							$serverID = strval($place->id);
 						}
 						$sessionID = getRandomString();
 						
 						include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-						$stmt_createnewsession = $con->prepare("INSERT INTO `active_players`(`session_id`, `session_serverid`, `session_playerid`, `session_status`) VALUES (?,?,?,0)");
+						$stmt_createnewsession = $con->prepare("INSERT INTO `active_players`(`id`, `serverid`, `playerid`, `status`) VALUES (?,?,?,0)");
 						$stmt_createnewsession->bind_param("ssi", $sessionID, $serverID, $playerID);
 						$stmt_createnewsession->execute();
 						die("anorrl-player:1+placelauncherurl:http%3A%2F%2F{$domain}%2Fgame%2FPlaceLauncher.ashx?sessionID=$sessionID+placeid:$placeID+launchmode:play+gameinfo:0");

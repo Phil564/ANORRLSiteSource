@@ -170,10 +170,10 @@ $(function() {
 </style>
 <div id="MusicPlayer">
 	<div jd="Thumbs">
-		<img src="/thumbs/?id=<?= $bgm->id ?>&sxy=128">
+		<img src="<?= $bgm->getThumbsUrl(128) ?>">
 	</div>
 	<div>Playing: </div>
-	<div id="PlayingLink"><a href="/<?= $bgm->getURLTitle() ?>-item?id=<?= $bgm->id ?>"><?= $bgm->name ?></a></div>
+	<div id="PlayingLink"><a href="<?= $bgm->getUrl() ?>"><?= $bgm->name ?></a></div>
 	<!--<div id="ProgressBarContainer">
 		<input id="ProgressBar" type="range" min="0" max="0" step="0">
 	</div>-->
@@ -281,19 +281,14 @@ $(function() {
 				$asset = Asset::FromID($item);
 
 				if($asset instanceof anorrl\Asset) {
-					$asset_id = $asset->id;
-					$asset_urlname = $asset->getURLTitle();
-					$asset_name = $asset->name;
-					$asset_creator_id = $asset->creator->id;
-					$asset_creator_name = $asset->creator->name;
 					echo <<<EOT
 					<li>
 						<div class="Asset">
-							<a id="NameAndThumbs" href="/$asset_urlname-item?id=$asset_id">
-								<img src="/thumbs/?id=$asset_id&sxy=130">
-								<span>$asset_name</span>
+							<a id="NameAndThumbs" href="{$asset->getUrl()}">
+								<img src="{$asset->getThumbsUrl(130)}">
+								<span>{$asset->name}</span>
 							</a>
-							<a id="Creator" href="/users/$asset_creator_id/profile"><span>$asset_creator_name</span></a>
+							<a id="Creator" href="/users/{$asset->creator->id}/profile"><span>{$asset->creator->name}</span></a>
 						</div>
 					</li>
 					EOT;
@@ -341,7 +336,7 @@ $(function() {
 					}
 
 					echo <<<EOT
-					<a data-placeid="$game_id"><img src="/thumbs/?id=$game_id&sx=227&sy=128"></a>
+					<a data-placeid="$game_id"><img src="{$game->getThumbsUrl(227, 128)}"></a>
 					EOT;
 				}
 			?>

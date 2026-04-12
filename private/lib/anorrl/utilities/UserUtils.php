@@ -141,7 +141,7 @@
 		 */
 		static function IsValidKey(string $accesskey): bool {
 			include $_SERVER['DOCUMENT_ROOT'].'/private/connection.php';
-			$stmt_checkkey = $con->prepare('SELECT `access_key` FROM `accesskeys` WHERE `access_key` = ?;');
+			$stmt_checkkey = $con->prepare('SELECT `key` FROM `accesskeys` WHERE `key` = ?;');
 			$stmt_checkkey->bind_param('s', $accesskey);
 			$stmt_checkkey->execute();
 			$result_checkkey = $stmt_checkkey->get_result();
@@ -155,14 +155,14 @@
 		 */
 		static function UseAccessKey(string $accesskey): string|null {
 			include $_SERVER['DOCUMENT_ROOT'].'/private/connection.php';
-			$stmt_checkkey = $con->prepare('SELECT `access_discorduid` FROM `accesskeys` WHERE `access_key` = ?;');
+			$stmt_checkkey = $con->prepare('SELECT `discorduid` FROM `accesskeys` WHERE `key` = ?;');
 			$stmt_checkkey->bind_param('s', $accesskey);
 			$stmt_checkkey->execute();
 			$result_checkkey = $stmt_checkkey->get_result();
 
-			$discorduid = $result_checkkey->fetch_assoc()['access_discorduid'];
+			$discorduid = $result_checkkey->fetch_assoc()['discorduid'];
 
-			$stmt_usekey = $con->prepare('DELETE FROM `accesskeys` WHERE `access_key` = ?;');
+			$stmt_usekey = $con->prepare('DELETE FROM `accesskeys` WHERE `key` = ?;');
 			$stmt_usekey->bind_param('s', $accesskey);
 			$stmt_usekey->execute();
 

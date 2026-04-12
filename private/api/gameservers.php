@@ -12,7 +12,7 @@
 			$place = Place::FromID(intval($_GET['placeId']));
 
 			if($place != null) {
-				$stmt_checkserver = $con->prepare("SELECT * FROM `active_servers` WHERE `server_placeid` = ? AND `server_teamcreate` = 0;");
+				$stmt_checkserver = $con->prepare("SELECT * FROM `active_servers` WHERE `placeid` = ? AND `teamcreate` = 0;");
 				$stmt_checkserver->bind_param("i", $place->id);
 				$stmt_checkserver->execute();
 
@@ -24,8 +24,8 @@
 
 				while($server_row = $result_checkserver->fetch_assoc()) {
 
-					$stmt_checkplayersfromserver = $con->prepare("SELECT * FROM `active_players` WHERE `session_serverid` = ? AND `session_status` = 1 AND `session_teamcreate` = 0;");
-					$stmt_checkplayersfromserver->bind_param("s", $server_row['server_id']);
+					$stmt_checkplayersfromserver = $con->prepare("SELECT * FROM `active_players` WHERE `serverid` = ? AND `status` = 1 AND `teamcreate` = 0;");
+					$stmt_checkplayersfromserver->bind_param("s", $server_row['id']);
 					$stmt_checkplayersfromserver->execute();
 
 					$result_checkplayersfromserver = $stmt_checkplayersfromserver->get_result();
@@ -34,7 +34,7 @@
 
 					if($result_checkplayersfromserver->num_rows != 0) {
 						while($session_row = $result_checkplayersfromserver->fetch_assoc()) {
-							$player = User::FromID(intval($session_row['session_playerid']));
+							$player = User::FromID(intval($session_row['playerid']));
 							$players[] = [
 								"id" => $player->id,
 								"name" => $player->name
@@ -45,14 +45,14 @@
 					$concurrentplayers += count($players);
 
 					$data[] = [
-						"id" => $server_row['server_id'],
-						"playercount" => $server_row['server_playercount'],
-						"maxplayercount" => $server_row['server_maxcount'],
+						"id" => $server_row['id'],
+						"playercount" => $server_row['playercount'],
+						"maxplayercount" => $server_row['maxcount'],
 						"players" => $players
 					];
 				}
 
-				$stmt_updateplayercount = $con->prepare("UPDATE `asset_places` SET `place_currently_playing` = ? WHERE `place_id` = ?");
+				$stmt_updateplayercount = $con->prepare("UPDATE `places` SET `currently_playing` = ? WHERE `id` = ?");
 				$stmt_updateplayercount->bind_param("ii", $concurrentplayers, $place->id);
 				$stmt_updateplayercount->execute();
 

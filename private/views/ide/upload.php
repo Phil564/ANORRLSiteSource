@@ -111,7 +111,7 @@
 					if($asset->type == AssetType::PLACE) {
 						$place = Place::FromID(intval($assetid));
 
-						if(($user != null && $asset->creator->id == $user->id) || ($place->teamcreate_enabled && (($user != null && $place->IsCloudEditor($user))  || (isset($_GET['access']) && $_GET['access'] == $access)))) {
+						if(($user != null && $asset->creator->id == $user->id) || ($place->teamcreate_enabled && (($user != null && $place->isCloudEditor($user))  || (isset($_GET['access']) && $_GET['access'] == $access)))) {
 							// If the user owns this asset, then allow publishing.
 							$result = AssetUploader::UpdateAsset($asset, $recieveddata, $asset->creator);
 

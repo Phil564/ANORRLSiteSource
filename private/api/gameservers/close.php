@@ -9,7 +9,7 @@
 		if($_GET['access'] == $access) {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
 			
-			$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `server_jobid` = ?");
+			$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `jobid` = ?");
 			$stmt_getactiveservers->bind_param("s", $_GET['jobID']);
 			$stmt_getactiveservers->execute();
 
@@ -20,7 +20,7 @@
 
 				if(!isset($_GET['dontcall'])) {
 					$data = json_encode([
-						"pid" => intval($row['server_pid'])
+						"pid" => intval($row['pid'])
 					]);
 
 					$ch = curl_init("http://$arbiter_ip/api/v1/gameserver/kill");
@@ -41,7 +41,7 @@
 					}
 				}
 
-				$stmt_createnewserver = $con->prepare("DELETE FROM `active_servers` WHERE `server_jobid` = ?;");
+				$stmt_createnewserver = $con->prepare("DELETE FROM `active_servers` WHERE `jobid` = ?;");
 				$stmt_createnewserver->bind_param("s", $_GET['jobID']);
 				$stmt_createnewserver->execute();
 			}

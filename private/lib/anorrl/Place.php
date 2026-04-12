@@ -24,7 +24,7 @@
 
 			if($place != null) {
 				$fetch_servers = Database::singleton()->run(
-					"SELECT * FROM `active_servers` WHERE `server_placeid` = :placeid AND `server_teamcreate` = 0;",
+					"SELECT * FROM `active_servers` WHERE `placeid` = :placeid AND `teamcreate` = 0;",
 					[ ":placeid" => $place->id ]
 				)->fetchAll(\PDO::FETCH_OBJ);
 
@@ -32,15 +32,15 @@
 
 				foreach($fetch_servers as $server_row) {
 					$fetch_players = Database::singleton()->run(
-						"SELECT COUNT(`session_id`) FROM `active_players` WHERE `session_serverid` = :serverid AND `session_status` = 1;",
+						"SELECT COUNT(`id`) FROM `active_players` WHERE `serverid` = :serverid AND `status` = 1;",
 						[ ":serverid" => $server_row->server_id ]
 					)->fetch(\PDO::FETCH_ASSOC);
 
-					$concurrentplayers += $fetch_players['COUNT(`session_id`)'];
+					$concurrentplayers += $fetch_players['COUNT(`id`)'];
 				}
 
 				$fetch_servers = Database::singleton()->run(
-					"UPDATE `asset_places` SET `place_currently_playing` = :playerscount WHERE `place_id` = :placeid",
+					"UPDATE `places` SET `currently_playing_count` = :playerscount WHERE `id` = :placeid",
 					[
 						":placeid" => $place->id,
 						":playerscount" => $concurrentplayers
@@ -70,7 +70,7 @@
 
 		public static function FromID(int $id): Place|null {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `asset_places` WHERE `place_id` = ?");
+			$stmt_getuser = $con->prepare("SELECT * FROM `places` WHERE `id` = ?");
 			$stmt_getuser->bind_param('i', $id);
 			$stmt_getuser->execute();
 			$result = $stmt_getuser->get_result();
@@ -83,39 +83,39 @@
 		}
 
 		function __construct($rowdata) {
-			parent::__construct(intval($rowdata['place_id']));
+			parent::__construct(intval($rowdata['id']));
 
 			$this->friends_only = $this->public;
-			$this->copylocked = boolval($rowdata['place_copylocked']);
-			$this->server_size = intval($rowdata['place_serversize']);
-			$this->visit_count = intval($rowdata['place_visit_count']);
-			$this->current_playing_count = intval($rowdata['place_currently_playing']);
-			$this->teamcreate_enabled = boolval($rowdata['place_teamcreate_enabled']);
+			$this->copylocked = boolval($rowdata['copylocked']);
+			$this->server_size = intval($rowdata['serversize']);
+			$this->visit_count = intval($rowdata['visit_count']);
+			$this->current_playing_count = intval($rowdata['currently_playing_count']);
+			$this->teamcreate_enabled = boolval($rowdata['teamcreate_enabled']);
 
-			$this->is_original = boolval($rowdata['place_original']);
-			$this->gears_enabled = boolval($rowdata['place_gears_enabled']);
+			$this->is_original = boolval($rowdata['original']);
+			$this->gears_enabled = boolval($rowdata['gears_enabled']);
 		}
 
-		function EnableTeamCreate() {
+		function enableTeamCreate() {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_enableteamcreate = $con->prepare('UPDATE `asset_places` SET `place_teamcreate_enabled` = 1 WHERE `place_id` = ?');
+			$stmt_enableteamcreate = $con->prepare('UPDATE `places` SET `teamcreate_enabled` = 1 WHERE `id` = ?');
 			$stmt_enableteamcreate->bind_param('i', $this->id);
 			$stmt_enableteamcreate->execute();
 
-			if(!$this->IsCloudEditor($this->creator)) {
-				$this->AddCloudEditor($this->creator);
+			if(!$this->isCloudEditor($this->creator)) {
+				$this->addCloudEditor($this->creator);
 			}
 		}
 
-		function DisableTeamCreate() {
+		function disableTeamCreate() {
 
 			$db = Database::singleton();
 
-			$db->run("UPDATE `asset_places` SET `place_teamcreate_enabled` = 0 WHERE `place_id` = :placeid", [":placeid" => $this->id]);
+			$db->run("UPDATE `places` SET `teamcreate_enabled` = 0 WHERE `id` = :placeid", [":placeid" => $this->id]);
 
 			if($this->teamcreate_enabled) {
 				$db->run(
-					"DELETE FROM `cloudeditors` WHERE `cloudeditor_userid` != :creator AND `cloudeditor_placeid` = :placeid;",
+					"DELETE FROM `cloudeditors` WHERE `userid` != :creator AND `placeid` = :placeid;",
 					[
 						":creator" => $this->creator->id,
 						":placeid" => $this->id
@@ -124,7 +124,7 @@
 
 				// rewrite to pdo later
 				include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-				$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `server_placeid` = ? AND `server_teamcreate` = 1");
+				$stmt_getactiveservers = $con->prepare("SELECT * FROM `active_servers` WHERE `placeid` = ? AND `teamcreate` = 1");
 				$stmt_getactiveservers->bind_param("i", $this->id);
 				$stmt_getactiveservers->execute();
 
@@ -133,10 +133,10 @@
 				if($result_getactiveservers->num_rows != 0) {
 					$row = $result_getactiveservers->fetch_assoc();
 
-					$jobID = $row['server_jobid'];
+					$jobID = $row['jobid'];
 
 					$data = json_encode([
-						"pid" => $row['server_pid']
+						"pid" => $row['pid']
 					]);
 
 					$arbiter_ip = \CONFIG->arbiter->location->private;
@@ -159,15 +159,15 @@
 						die(http_response_code(503));
 					}
 
-					$db->run("DELETE FROM `active_servers` WHERE `server_jobid` = :jobid;", [ ":jobid" => $jobID ]);
+					$db->run("DELETE FROM `active_servers` WHERE `jobid` = :jobid;", [ ":jobid" => $jobID ]);
 				}
 			}
 		}
 
-		function IsCloudEditor(User $user) {
+		function isCloudEditor(User $user) {
 			if($this->teamcreate_enabled) {
 				include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-				$stmt_checkiseditor = $con->prepare('SELECT * FROM `cloudeditors` WHERE `cloudeditor_userid` = ? AND `cloudeditor_placeid` = ?;');
+				$stmt_checkiseditor = $con->prepare('SELECT * FROM `cloudeditors` WHERE `userid` = ? AND `placeid` = ?;');
 				$stmt_checkiseditor->bind_param('ii', $user->id, $this->id);
 				$stmt_checkiseditor->execute();
 
@@ -176,28 +176,28 @@
 			return false;
 		}
 
-		function AddCloudEditor(User $user) {
-			if(!$this->IsCloudEditor($user)) {
+		function addCloudEditor(User $user) {
+			if(!$this->isCloudEditor($user)) {
 				include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-				$stmt_addeditor = $con->prepare('INSERT INTO `cloudeditors`(`cloudeditor_userid`, `cloudeditor_placeid`) VALUES (?, ?)');
+				$stmt_addeditor = $con->prepare('INSERT INTO `cloudeditors`(`userid`, `placeid`) VALUES (?, ?)');
 				$stmt_addeditor->bind_param('ii', $user->id, $this->id);
 				$stmt_addeditor->execute();
 			}	
 		}
 
-		function RemoveCloudEditor(User $user) {
-			if($this->IsCloudEditor($user) && $user->id != $this->creator->id) {
+		function removeCloudEditor(User $user) {
+			if($this->isCloudEditor($user) && $user->id != $this->creator->id) {
 				include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-				$stmt_addeditor = $con->prepare('DELETE FROM `cloudeditors` WHERE `cloudeditor_userid` = ? AND `cloudeditor_placeid` = ?;');
+				$stmt_addeditor = $con->prepare('DELETE FROM `cloudeditors` WHERE `userid` = ? AND `placeid` = ?;');
 				$stmt_addeditor->bind_param('ii', $user->id, $this->id);
 				$stmt_addeditor->execute();
 			}	
 		}
 
-		function GetCloudEditors() {
+		function getCloudEditors() {
 			if($this->teamcreate_enabled) {
 				include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-				$stmt_geteditors = $con->prepare('SELECT * FROM `cloudeditors` WHERE `cloudeditor_placeid` = ?;');
+				$stmt_geteditors = $con->prepare('SELECT `userid` FROM `cloudeditors` WHERE `placeid` = ?;');
 				$stmt_geteditors->bind_param('i', $this->id);
 				$stmt_geteditors->execute();
 
@@ -206,7 +206,7 @@
 				$result = [];
 
 				while($row = $result_geteditors->fetch_assoc()) {
-					$user = User::FromID(intval($row['cloudeditor_userid']));
+					$user = User::FromID(intval($row['userid']));
 
 					if($user && !$user->isBanned()) {
 						$result[] = $user;
@@ -218,7 +218,26 @@
 			return [];
 		}
 
-		function Visit(User|int $user) {
+		function updateVisitCount() {
+			$db = Database::singleton();
+
+			$visits = $db->run(
+				'SELECT * FROM `visits` WHERE `place` = :id',
+				[":id" => $this->id]
+			)->rowCount();
+
+			$db->run(
+				'UPDATE `places` SET `visit_count` = :visits WHERE `id` = :id',
+				[
+					":visits" => $visits,
+					":id" => $this->id
+				]
+			);
+
+			$this->visit_count = $visits;
+		}
+
+		function visit(User|int $user) {
 			$userid = $user;
 			if($user instanceof User) {
 				$userid = $user->id;
@@ -239,27 +258,19 @@
 
 				// Update
 
-				$stmt_visitcount = $con->prepare('SELECT * FROM `visits` WHERE `place` = ?;');
-				$stmt_visitcount->bind_param('i', $placeid);
-				$stmt_visitcount->execute();
-	
-				$visits = $stmt_visitcount->get_result()->num_rows;
+				$this->updateVisitCount();
 
-				if($visits > 100 && !$this->creator->hasProfileBadgeOf(ANORRLBadge::HOMESTEAD)) {
+				if($this->visit_count > 100) {
 					$this->creator->giveProfileBadge(ANORRLBadge::HOMESTEAD);
 				}
 
-				if($visits > 1000 && !$this->creator->hasProfileBadgeOf(ANORRLBadge::BRICKSMITH)) {
+				if($this->visit_count > 1000) {
 					$this->creator->giveProfileBadge(ANORRLBadge::BRICKSMITH);
 				}
-	
-				$stmt = $con->prepare('UPDATE `asset_places` SET `place_visit_count` = ? WHERE `place_id` = ?;');
-				$stmt->bind_param('ii', $visits, $placeid);
-				$stmt->execute();
 			}
 		}
 
-		function GetBadges(): array {
+		function getBadges(): array {
 			return [];
 		}
 	}

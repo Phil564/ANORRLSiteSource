@@ -214,7 +214,7 @@
 			
 			if($teamcreate) {
 				include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-				$stmt_checkiseditor = $con->prepare('SELECT * FROM `cloudeditors` WHERE `cloudeditor_userid` = ?;');
+				$stmt_checkiseditor = $con->prepare('SELECT * FROM `cloudeditors` WHERE `userid` = ?;');
 				$stmt_checkiseditor->bind_param('i', $this->id);
 				$stmt_checkiseditor->execute();
 
@@ -222,7 +222,7 @@
 
 				if($result_checkiseditor->num_rows != 0) {
 					while($row = $result_checkiseditor->fetch_assoc()) {
-						$place = Place::FromID(intval($row['cloudeditor_placeid']));
+						$place = Place::FromID(intval($row['placeid']));
 
 						if($place != null && $place->creator->id != $this->id) {
 							$teamcreatedplaces[] = $place;
@@ -235,7 +235,7 @@
 			foreach($grabbedplaces as $asset) {
 				$place = Place::FromID($asset->id);
 				if($place instanceof Place) {
-					if(($teamcreate && $place->teamcreate_enabled && $place->IsCloudEditor($this)) || (!$teamcreate && !$place->teamcreate_enabled)) {
+					if(($teamcreate && $place->teamcreate_enabled && $place->isCloudEditor($this)) || (!$teamcreate && !$place->teamcreate_enabled)) {
 						$result[] = $place;
 					}
 				}
@@ -246,16 +246,11 @@
 
 		function giveProfileBadge(ANORRLBadge $badge): void {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt = $con->prepare("SELECT * FROM `profilebadges` WHERE `badgeid` = ? AND `userid` = ?");
-			$ordinal = $badge->ordinal();
-			$stmt->bind_param('ii', $ordinal, $this->id);
-			$stmt->execute();
 
-			if($stmt->get_result()->num_rows == 0) {
+			if(!$this->hasProfileBadgeOf($badge)) {
 				$stmt = $con->prepare("INSERT INTO `profilebadges`(`badgeid`, `userid`) VALUES (?, ?)");
 				$ordinal = $badge->ordinal();
-				$admin_badge = $badge == ANORRLBadge::ADMINISTRATOR ? 1 : 0;
-				$stmt->bind_param('iii`', $ordinal, $this->id, $admin_badge);
+				$stmt->bind_param('ii`', $ordinal, $this->id);
 				$stmt->execute();
 			}
 		}
@@ -341,7 +336,7 @@
 
 			// this could DEF be done better.
 			if(count($excludedids) > 0) {
-				$processedids = "AND `asset_id` NOT IN (";
+				$processedids = "AND `id` NOT IN (";
 				foreach($excludedids as $id) {
 					$processedids .= $id.",";
 				}
@@ -357,14 +352,14 @@
 			}
 
 			if($creator_only) {
-				$sql_extra .= " AND `asset_creator` = ?";
+				$sql_extra .= " AND `creator` = ?";
 			}
 
 			if(!$show_all) {
-				$sql_extra .= " AND `asset_public` = 1";
+				$sql_extra .= " AND `public` = 1";
 			}
 			
-			$sql = "SELECT assets.* FROM `transactions`, `assets` WHERE `transactions`.`asset` = `assets`.`asset_id` AND `userid` = ? AND `asset_type` = ? AND `asset_name` LIKE ? $sql_extra ORDER BY `asset_lastedited` DESC";
+			$sql = "SELECT assets.* FROM `transactions`, `assets` WHERE `transactions`.`asset` = `assets`.`id` AND `userid` = ? AND `type` = ? AND `name` LIKE ? $sql_extra ORDER BY `lastedited` DESC";
 
 			if($page <= -1 || $count <= 0) {
 				$stmt_getassets = $con->prepare("$sql");
@@ -393,7 +388,7 @@
 
 			if($result->num_rows != 0) {
 				while($row = $result->fetch_assoc()) {
-					$result_array[] = Asset::FromID($row['asset_id']);
+					$result_array[] = Asset::FromID($row['id']);
 				}
 				return $result_array;
 			}
@@ -427,7 +422,7 @@
 
 			// this could DEF be done better.
 			if(count($excludedids) > 0) {
-				$processedids = "AND `asset_id` NOT IN (";
+				$processedids = "AND `id` NOT IN (";
 				foreach($excludedids as $id) {
 					$processedids .= $id.",";
 				}
@@ -438,14 +433,14 @@
 			}
 
 			if($creator_only) {
-				$sql_extra .= " AND `asset_creator` = ?";
+				$sql_extra .= " AND `creator` = ?";
 			}
 
 			if(!$show_all) {
-				$sql_extra .= " AND `asset_public` = 1";
+				$sql_extra .= " AND `public` = 1";
 			}
 			
-			$sql = "SELECT COUNT(`asset_id`) FROM `transactions`, `assets` WHERE `transactions`.`asset` = `assets`.`asset_id` AND `userid` = ? AND `asset_type` = ? AND `asset_name` LIKE ? $sql_extra ORDER BY `date` DESC";
+			$sql = "SELECT COUNT(`id`) FROM `transactions`, `assets` WHERE `transactions`.`asset` = `assets`.`id` AND `userid` = ? AND `type` = ? AND `name` LIKE ? $sql_extra ORDER BY `date` DESC";
 
 			$stmt_getassets = $con->prepare("$sql");
 				
@@ -460,7 +455,7 @@
 			$result = $stmt_getassets->get_result();
 			$row = $result->fetch_assoc();
 
-			return $row['COUNT(`asset_id`)'];
+			return $row['COUNT(`id`)'];
 		}
 
 		function getAllOwnedAssets(): array {
@@ -485,7 +480,7 @@
 
 		function getLatestAssetUploaded(): Asset|null {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `assets` WHERE `asset_creator` = ? ORDER BY `asset_id` DESC");
+			$stmt_getuser = $con->prepare("SELECT * FROM `assets` WHERE `creator` = ? ORDER BY `id` DESC");
 			$stmt_getuser->bind_param('i', $this->id);
 			$stmt_getuser->execute();
 
@@ -512,17 +507,17 @@
 			}
 			
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `inv_userid` = ? AND `inv_assetid` = ?;");
+			$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `userid` = ? AND `assetid` = ?;");
 			$stmt_checkinventory->bind_param('ii', $this->id, $assetid);
 			$stmt_checkinventory->execute();
 
 			$numberrows = $stmt_checkinventory->get_result()->num_rows;
 			if($numberrows > 1) {
-				$stmt_deleteitem = $con->prepare("DELETE FROM `inventory` WHERE `inv_userid` = ? AND `inv_assetid` = ?;");
+				$stmt_deleteitem = $con->prepare("DELETE FROM `inventory` WHERE `userid` = ? AND `assetid` = ?;");
 				$stmt_deleteitem->bind_param('ii', $this->id, $assetid);
 				$stmt_deleteitem->execute();
 
-				$stmt_additem = $con->prepare("INSERT INTO `inventory`(`inv_userid`, `inv_assetid`, `inv_assettype`) VALUES (?, ?, ?)");
+				$stmt_additem = $con->prepare("INSERT INTO `inventory`(`userid`, `assetid`, `assettype`) VALUES (?, ?, ?)");
 				$assettype = 0;
 
 				if($asset instanceof Asset) {
@@ -561,22 +556,22 @@
 				
 				if($item->type->wearable()) {
 					if($item->type->wearone()) {
-						$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `inv_userid` = ? AND `inv_assettype` = ?;");
+						$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `userid` = ? AND `assettype` = ?;");
 						$stmt_checkinventory->bind_param('ii', $this->id, $assettype);
 						$stmt_checkinventory->execute();
 
 						if($stmt_checkinventory->get_result()->num_rows == 0) {
-							$stmt_additem = $con->prepare("INSERT INTO `inventory`(`inv_userid`, `inv_assetid`, `inv_assettype`) VALUES (?, ?, ?)");
+							$stmt_additem = $con->prepare("INSERT INTO `inventory`(`userid`, `assetid`, `assettype`) VALUES (?, ?, ?)");
 							$assettype = $item->type->ordinal();
 							$stmt_additem->bind_param('iii', $this->id, $assetid, $assettype);
 							$stmt_additem->execute();
 						} else {
-							$stmt_replaceitem = $con->prepare("UPDATE `inventory` SET `inv_assetid` = ? WHERE `inv_userid` = ? AND `inv_assettype` = ?");
+							$stmt_replaceitem = $con->prepare("UPDATE `inventory` SET `assetid` = ? WHERE `userid` = ? AND `assettype` = ?");
 							$stmt_replaceitem->bind_param('iii', $assetid, $this->id, $assettype);
 							$stmt_replaceitem->execute();
 						}
 					} else {
-						/*$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `inv_userid` = ? AND `inv_assettype` = ?;");
+						/*$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `userid` = ? AND `assettype` = ?;");
 						$stmt_checkinventory->bind_param('ii', $this->id, $assettype);
 						$stmt_checkinventory->execute();
 
@@ -586,7 +581,7 @@
 							return ["error" => true, "reason" => "Too many fucking ".strtolower($item->type->label())."s on"];
 						}*/
 
-						$stmt_additem = $con->prepare("INSERT INTO `inventory`(`inv_userid`, `inv_assetid`, `inv_assettype`) VALUES (?, ?, ?)");
+						$stmt_additem = $con->prepare("INSERT INTO `inventory`(`userid`, `assetid`, `assettype`) VALUES (?, ?, ?)");
 						$assettype = $item->type->ordinal();
 						$stmt_additem->bind_param('iii', $this->id, $assetid, $assettype);
 						$stmt_additem->execute();
@@ -620,11 +615,11 @@
 
 				if($item->type->wearable()) {
 					if($item->type->wearone()) {
-						$stmt_deleteitem = $con->prepare("DELETE FROM `inventory` WHERE `inv_userid` = ? AND `inv_assettype` = ?;");
+						$stmt_deleteitem = $con->prepare("DELETE FROM `inventory` WHERE `userid` = ? AND `assettype` = ?;");
 						$stmt_deleteitem->bind_param('ii', $this->id, $assettype);
 						$stmt_deleteitem->execute();
 					} else {
-						$stmt_deleteitem = $con->prepare("DELETE FROM `inventory` WHERE `inv_userid` = ? AND `inv_assetid` = ?;");
+						$stmt_deleteitem = $con->prepare("DELETE FROM `inventory` WHERE `userid` = ? AND `assetid` = ?;");
 						$stmt_deleteitem->bind_param('ii', $this->id, $assetid);
 						$stmt_deleteitem->execute();
 					}
@@ -710,7 +705,7 @@
 				} else {
 					// remove from everyone... OMG WHY HAVEN'T YOU IMPLEMENTED THIS YET YOU FAT FUCK
 					Database::singleton()->run(
-						"DELETE FROM `inventory` WHERE `inv_assetid` = :id",
+						"DELETE FROM `inventory` WHERE `assetid` = :id",
 						[":id" => $id]
 					);
 
@@ -744,7 +739,7 @@
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
 
 			if($ordered) {
-				$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `inv_userid` = ? ORDER BY `inv_assetid`");
+				$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `userid` = ? ORDER BY `assetid`");
 				$stmt_checkinventory->bind_param('i', $this->id);
 				$stmt_checkinventory->execute();
 				$checkinventory_result = $stmt_checkinventory->get_result();
@@ -752,14 +747,14 @@
 			
 				if($checkinventory_result->num_rows != 0) {
 					while($row = $checkinventory_result->fetch_assoc()) {
-						$ids[] = $row['inv_assetid'];
+						$ids[] = $row['assetid'];
 					}
 				}
 
 				return $ids;
 			}
 
-			$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `inv_userid` = ?");
+			$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `userid` = ?");
 			$stmt_checkinventory->bind_param('i', $this->id);
 			$stmt_checkinventory->execute();
 			$checkinventory_result = $stmt_checkinventory->get_result();
@@ -767,7 +762,7 @@
 		
 			if($checkinventory_result->num_rows != 0) {
 				while($row = $checkinventory_result->fetch_assoc()) {
-					$ids[] = $row['inv_assetid'];
+					$ids[] = $row['assetid'];
 				}
 			}	
 
@@ -777,13 +772,13 @@
 		function getBodyColours() {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
 
-			$stmt_grabcolours = $con->prepare("SELECT * FROM `bodycolours` WHERE `colours_userid` = ?;");
+			$stmt_grabcolours = $con->prepare("SELECT * FROM `bodycolours` WHERE `userid` = ?;");
 			$stmt_grabcolours->bind_param('i', $this->id);
 			$stmt_grabcolours->execute();
 			$grabcolours_result = $stmt_grabcolours->get_result();
 
 			if($grabcolours_result->num_rows == 0) {
-				$stmt_createcolours = $con->prepare("INSERT INTO `bodycolours`(`colours_userid`) VALUES (?);");
+				$stmt_createcolours = $con->prepare("INSERT INTO `bodycolours`(`userid`) VALUES (?);");
 				$stmt_createcolours->bind_param('i', $this->id);
 				$stmt_createcolours->execute();
 
@@ -792,12 +787,12 @@
 			$colours = $grabcolours_result->fetch_assoc();
 
 			return [
-				"head" => $colours['colours_head'],
-				"torso" => $colours['colours_torso'],
-				"leftarm" => $colours['colours_leftarm'],
-				"rightarm" => $colours['colours_rightarm'],
-				"leftleg" => $colours['colours_leftleg'],
-				"rightleg" => $colours['colours_rightleg'],
+				"head" => $colours['head'],
+				"torso" => $colours['torso'],
+				"leftarm" => $colours['leftarm'],
+				"rightarm" => $colours['rightarm'],
+				"leftleg" => $colours['leftleg'],
+				"rightleg" => $colours['rightleg'],
 			];
 		}
 
@@ -806,7 +801,7 @@
 
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
 
-			$stmt_createcolours = $con->prepare("UPDATE `bodycolours` SET `colours_head` = ?, `colours_torso` = ?, `colours_leftarm` = ?, `colours_rightarm` = ?, `colours_leftleg` = ?,`colours_rightleg` = ? WHERE `colours_userid` = ?;");
+			$stmt_createcolours = $con->prepare("UPDATE `bodycolours` SET `head` = ?, `torso` = ?, `leftarm` = ?, `rightarm` = ?, `leftleg` = ?,`rightleg` = ? WHERE `userid` = ?;");
 			$stmt_createcolours->bind_param('iiiiiii', $head, $torso, $leftarm, $rightarm, $leftleg, $rightleg, $this->id);
 			$stmt_createcolours->execute();
 		}
@@ -1000,7 +995,7 @@
 			
 			$userGameDetails = $this->getUserGameDetails();
 			
-			if($userGameDetails != null && $this->getServerDetails($userGameDetails['session_serverid']) != null) {
+			if($userGameDetails != null && $this->getServerDetails($userGameDetails['serverid']) != null) {
 				$result = true;
 			}
 				
@@ -1015,7 +1010,7 @@
 		private function getUserGameDetails(): array|null {
 			include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-			$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `session_playerid` = ? AND `session_status` = 1;");
+			$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `playerid` = ? AND `status` = 1;");
 			$stmt_getsessiondetails->bind_param("i", $this->id);
 			$stmt_getsessiondetails->execute();
 
@@ -1031,7 +1026,7 @@
 		private function getServerDetails(string $serverID): array|null {
 			include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-			$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `server_id` = ?");
+			$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `id` = ?");
 			$stmt_getsessiondetails->bind_param("s", $serverID);
 			$stmt_getsessiondetails->execute();
 
@@ -1050,30 +1045,29 @@
 			$userGameDetails = $this->getUserGameDetails();
 
 			if($userGameDetails != null) {
-				$server_details = $this->getServerDetails($userGameDetails['session_serverid']);
+				$server_details = $this->getServerDetails($userGameDetails['serverid']);
 
 				if($server_details != null) {
-					$place = Place::FromID(intval($server_details['server_placeid']));
+					$place = Place::FromID(intval($server_details['placeid']));
 
 					if($place != null) {
-						$place_stubname = $place->getURLTitle();
 						$place_name = $place->name;
 						$place_id = $place->id;
 
 						if($place->public) {
-							if($server_details['server_teamcreate'] == 1) {
+							if($server_details['teamcreate'] == 1) {
 								return <<<EOT
-								[ In Team Create: <a href="/$place_stubname-place?id=$place_id">$place_name</a> ]
+								[ In Team Create: <a href="{$place->getUrl()}">$place_name</a> ]
 								EOT;
 							} else {
 								return <<<EOT
-								[ In Game: <a href="/$place_stubname-place?id=$place_id">$place_name</a> ]
+								[ In Game: <a href="{$place->getUrl()}">$place_name</a> ]
 								EOT;
 							}
 						}
 					}
 				} else {
-					$stmt_getsessiondetails = $con->prepare("DELETE FROM `active_players` WHERE `session_playerid` = ? AND `session_status` = 1;");
+					$stmt_getsessiondetails = $con->prepare("DELETE FROM `active_players` WHERE `playerid` = ? AND `status` = 1;");
 					$stmt_getsessiondetails->bind_param("i", $this->id);
 					$stmt_getsessiondetails->execute();
 				}
@@ -1202,8 +1196,24 @@
 		/**
 		 * Lowkey start using this more
 		 */
-		function getThumbsUrl(): string {
-			return "/thumbs/" . ($this->setprofilepicture ? "profile" : "headshot"). "?id=".$this->id;
+		function getThumbsUrl(int $size_x = -1, int $size_y = -1): string {
+			if(\SESSION)
+				$settings = \SESSION->settings;
+			else
+				$settings = UserSettings::Get();
+
+			$size_params = "";
+			if($size_x > 0 && $size_y <= 0)
+				$size_params = "&sxy=$size_x";
+		 	
+			else if($size_x > 0 && $size_y > 0)
+				$size_params = "&sx=$size_x&sy=$size_y";
+
+			return "/thumbs/".
+				($this->setprofilepicture ? 
+					($settings->headshots_enabled ? "headshot" : "profile")
+					: "headshot")
+				."?id=".$this->id . $size_params;
 		}
 
 		function getAccountAge(): int {

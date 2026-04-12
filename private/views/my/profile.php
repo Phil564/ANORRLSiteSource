@@ -130,9 +130,9 @@
 			<span>Here you can input the id of a sound asset and it'll just play when someone views your profile ig</span>
 			<?php if($bgm): ?>
 			<div style="border: 2px solid black; margin: 10px auto; width: 320px; text-align: center;">
-				<img src="/thumbs/?id=<?= $bgm->id ?>&sxy=320">
+				<img src="<?= $bgm->getThumbsUrl(320) ?>">
 				<div style="padding: 5px; background: #333;">
-					<a href="/<?= $bgm->getURLTitle() ?>-item?id=<?= $bgm->id ?>"><?= $bgm->name ?></a>
+					<a href="<?= $bgm->getUrl() ?>"><?= $bgm->name ?></a>
 				</div>
 			</div>
 			<?php endif ?>

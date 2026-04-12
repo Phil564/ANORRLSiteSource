@@ -13,6 +13,6 @@
 	if($place != null && $user != null && ($user->id == $place->creator->id || $user->isAdmin())) {
 		$userToAdd = User::FromID($usertoadd_id);
 		if($userToAdd != null)
-			$place->RemoveCloudEditor($userToAdd);
+			$place->removeCloudEditor($userToAdd);
 	}
 ?>

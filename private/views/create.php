@@ -139,7 +139,7 @@
 				<?php if($_SESSION['ANORRL$CreateAsset$Error']): ?>
 				<div id="ErrorTime">Error: <span id="Message"><?= $_SESSION['ANORRL$CreateAsset$Result'] ?></span></div>
 				<?php else: ?>
-				<div id="SuccessTime">Success! <span id="Message"><?= "Check it out <a href=\"/".Asset::FromID($_SESSION['ANORRL$CreateAsset$Result'])->getURLTitle()."-item?id=". $_SESSION['ANORRL$CreateAsset$Result']."\">here!</a>"?></span></div>
+				<div id="SuccessTime">Success! <span id="Message"><?= "Check it out <a href=\"/".Asset::FromID($_SESSION['ANORRL$CreateAsset$Result'])->getUrl()."\">here!</a>"?></span></div>
 				<?php endif ?>
 			<?php endif ?>
 			<style>

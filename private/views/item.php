@@ -17,27 +17,13 @@
 
 	if($asset != null) {
 
-		if($asset->notcatalogueable && $asset->type == AssetType::AUDIO) {
-			$urlname = $asset->relatedasset->getURLTitle();
-			$id = $asset->relatedasset->id;
-			die(header("Location: /$urlname-item?id=$id"));
-		}
-
-		$urlname = $asset->getURLTitle();
 		if($asset->getURLTitle() != $name) {
-			if($asset->type == AssetType::PLACE) {
-				die(header("Location: /$urlname-place?id=$id"));
-			}
-			die(header("Location: /$urlname-item?id=$id"));
-		} else {
-			if($asset->type == AssetType::PLACE) {
-				die(header("Location: /$urlname-place?id=$id"));
-			}
+			die(header("Location: {$asset->getUrl()}"));
 		}
 
 		if($asset->type == AssetType::AUDIO) {
 			include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-			$stmt = $con->prepare('SELECT * FROM `assets` WHERE `asset_relatedid` = ? AND `asset_type` = ?;');
+			$stmt = $con->prepare('SELECT * FROM `assets` WHERE `relatedid` = ? AND `type` = ?;');
 			$type = AssetType::AUDIO->ordinal();
 			$stmt->bind_param("ii", $id, $type);
 			$stmt->execute();
@@ -45,7 +31,7 @@
 			if($stmt_result->num_rows == 0) {
 				$audio_asset_id = $id;
 			} else {
-				$audio_asset_id = $stmt_result->fetch_assoc()['asset_id'];
+				$audio_asset_id = $stmt_result->fetch_assoc()['id'];
 			}
 		}
 
@@ -65,7 +51,7 @@
 					$_SESSION['ANORRL$Comment$Post$Error'] = $result['reason'];
 				}
 
-				die(header("Location: /$urlname-item?id=$id"));
+				die(header("Location: {$asset->getUrl()}"));
 			}
 
 			$comments = Comment::GetCommentsOn($asset);
@@ -104,10 +90,10 @@
 	$page->addMeta("description", htmlspecialchars(substr($asset->description, 0, 128), ENT_QUOTES));
 	$page->addMeta("og:type", "website");
 	$page->addMeta("og:site_name", "ANORRL");
-	$page->addMeta("og:url", "https://{$domain}/{$asset->getURLTitle()}-item?id={$asset->id}");
+	$page->addMeta("og:url", "https://{$domain}{$asset->getUrl()}");
 	$page->addMeta("og:title", htmlspecialchars($asset->name, ENT_QUOTES));
 	$page->addMeta("og:description", htmlspecialchars(substr($asset->description, 0, 128), ENT_QUOTES));
-	$page->addMeta("og:image", "https://{$domain}/thumbs/?id={$asset->id}");
+	$page->addMeta("og:image", "https://{$domain}{$asset->getThumbsUrl()}");
 
 	$page->loadHeader();
 
@@ -253,10 +239,10 @@
 	<div id="ItemDetails">
 		<div id="Content">
 			<?php if($asset->type == AssetType::AUDIO): ?>
-			<img src="/thumbs/?id=<?= $asset->id ?>&sxy=190&nocompress">
+			<img src="<?= $asset->getThumbsUrl(190) ?>&nocompress">
 			<audio src="/asset/?id=<?= $audio_asset_id ?>" controls>Your browser does not support HTML5 Audio</audio>
 			<?php else: ?>
-			<img src="/thumbs/?id=<?= $asset->id ?>&sxy=240&nocompress">
+			<img src="<?= $asset->getThumbsUrl(240) ?>&nocompress">
 			<?php endif ?>
 		</div>
 		<div id="Information">

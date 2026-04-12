@@ -9,7 +9,7 @@
 	function getSessionDetails(string $sessionID): array|null {
 		include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `session_id` = ?");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_players` WHERE `id` = ?");
 		$stmt_getsessiondetails->bind_param("s", $sessionID);
 		$stmt_getsessiondetails->execute();
 
@@ -25,7 +25,7 @@
 	function getServerDetails(string $serverID): array|null {
 		include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `server_id` = ?");
+		$stmt_getsessiondetails = $con->prepare("SELECT * FROM `active_servers` WHERE `id` = ?");
 		$stmt_getsessiondetails->bind_param("s", $serverID);
 		$stmt_getsessiondetails->execute();
 
@@ -114,8 +114,8 @@ else:
 
 	if($serverDetails != null && $sessionDetails != null) {
 
-		$player = User::FromID(intval($sessionDetails['session_playerid']));
-		$place = Place::FromID(intval($serverDetails['server_placeid']));
+		$player = User::FromID(intval($sessionDetails['playerid']));
+		$place = Place::FromID(intval($serverDetails['placeid']));
 		
 		if($player != null && !$player->isBanned() && $place != null) {
 
@@ -123,7 +123,7 @@ else:
 				UserUtils::SetCookies($player->security_key);
 			}
 
-			$serverport = $serverDetails['server_port'];	
+			$serverport = $serverDetails['port'];	
 
 			$joinscript = [
 				"ClientPort" => 0,

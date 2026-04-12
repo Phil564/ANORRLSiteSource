@@ -56,6 +56,7 @@
 			<tr>
 				<?php foreach($users as $user): 
 					// uh yeah.
+					// i hate you
 					$thumbs_type = $user->setprofilepicture ? ($settings->headshots_enabled ? "headshot" : "profile") : "headshot";
 				?>
 				<td>

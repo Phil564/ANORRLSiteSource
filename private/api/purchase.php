@@ -10,9 +10,9 @@
 
 
 	$user = SESSION->user;
-	if(!$user->isBanned() && isset($_POST['asset_id']) && isset($_POST['typatransaction'])) {
+	if(!$user->isBanned() && isset($_POST['id']) && isset($_POST['typatransaction'])) {
 		$type = TransactionType::index(intval($_POST['typatransaction']));
-		$asset = Asset::FromID(intval($_POST['asset_id']));
+		$asset = Asset::FromID(intval($_POST['id']));
 
 		if(!$asset)
 			die(json_encode(["error" => true, "message" => "Invalid purchase method."]));

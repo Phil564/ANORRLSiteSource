@@ -15,17 +15,17 @@
 		public \DateTime $postdate;
 
 		function __construct($rowdata) {
-			$this->id = strval($rowdata['comment_id']);
-			$this->poster = User::FromID($rowdata['comment_poster']);
+			$this->id = strval($rowdata['id']);
+			$this->poster = User::FromID($rowdata['poster']);
 			
-			if(str_starts_with($rowdata['comment_parent'], 'a!')) {
-				$this->parent = Asset::FromID(substr($rowdata['comment_parent'], 2));
+			if(str_starts_with($rowdata['parent'], 'a!')) {
+				$this->parent = Asset::FromID(substr($rowdata['parent'], 2));
 			} else {
-				$this->parent = User::FromID(substr($rowdata['comment_parent'], 2));
+				$this->parent = User::FromID(substr($rowdata['parent'], 2));
 			}
 
-			$this->contents = str_replace("<", "&lt;", str_replace(">", "&gt;", $rowdata['comment_content']));
-			$this->postdate = \DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['comment_postdate']);
+			$this->contents = str_replace("<", "&lt;", str_replace(">", "&gt;", $rowdata['content']));
+			$this->postdate = \DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['postdate']);
 		
 		}
 
@@ -72,7 +72,7 @@
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
 			
 			$id = self::GetRandomString();
-			$stmt = $con->prepare('SELECT * FROM `comments` WHERE `comment_id` = ?');
+			$stmt = $con->prepare('SELECT * FROM `comments` WHERE `id` = ?');
 			$stmt->bind_param('s', $id);
 			$stmt->execute();
 			$stmt->store_result();
@@ -88,7 +88,7 @@
 
 		static function GetLatestCommentFromUser(User $user): Comment|null {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `comments` WHERE `comment_poster` = ? ORDER BY `comment_postdate` DESC");
+			$stmt_getuser = $con->prepare("SELECT * FROM `comments` WHERE `poster` = ? ORDER BY `postdate` DESC");
 			$stmt_getuser->bind_param('i', $user->id);
 			$stmt_getuser->execute();
 			$result = $stmt_getuser->get_result();
@@ -148,7 +148,7 @@
 
 				if(!$error_check) {
 					include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-					$stmt = $con->prepare('INSERT INTO `comments`(`comment_id`, `comment_parent`, `comment_poster`, `comment_content`) VALUES (?, ?, ?, ?)');
+					$stmt = $con->prepare('INSERT INTO `comments`(`id`, `parent`, `poster`, `content`) VALUES (?, ?, ?, ?)');
 					$stmt->bind_param('ssss',  $comment_id, $parent_id, $user->id, $comment);
 					
 					$stmt->execute();
@@ -178,7 +178,7 @@
 			}
 
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `comments` WHERE `comment_parent` = ? ORDER BY `comment_postdate` DESC;");
+			$stmt_getuser = $con->prepare("SELECT * FROM `comments` WHERE `parent` = ? ORDER BY `postdate` DESC;");
 			$stmt_getuser->bind_param('s', $parent_id);
 			$stmt_getuser->execute();
 			$result = $stmt_getuser->get_result();

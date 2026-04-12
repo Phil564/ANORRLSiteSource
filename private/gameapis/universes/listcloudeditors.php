@@ -12,7 +12,7 @@
 		$place = Place::FromID(intval($universeId));
 
 		if($place != null && $place->teamcreate_enabled) {
-			$editorusers = $place->GetCloudEditors();
+			$editorusers = $place->getCloudEditors();
 
 			$editors = [];
 

@@ -15,23 +15,23 @@
 			if($user == null) 
 				return [];
 			
-			$query_filter = "AND `asset_public` = 1 AND `asset_nevershow` = 0";
+			$query_filter = "AND `public` = 1 AND `nevershow` = 0";
 			if($user->isAdmin()) {
-				$query_filter = "AND `asset_nevershow` = 0";
+				$query_filter = "AND `nevershow` = 0";
 			}
 			
 			$stmt_query = "%$query%";
 			$stmt_type = $type->ordinal();
 
 			if($page == -1 || $count == -1) {
-				$stmt_getuser = $con->prepare("SELECT * FROM `assets` WHERE `asset_name` LIKE ? AND `asset_type` = ? $query_filter");
+				$stmt_getuser = $con->prepare("SELECT * FROM `assets` WHERE `name` LIKE ? AND `type` = ? $query_filter");
 				$stmt_getuser->bind_param('si', $stmt_query, $stmt_type);
 				$stmt_getuser->execute();
 				// show all
 			} else {
 				$stmt_page = (($page-1)*$count);
 				
-				$stmt_getuser = $con->prepare("SELECT * FROM `assets` WHERE `asset_name` LIKE ? AND `asset_type` = ? $query_filter LIMIT ?, ?");
+				$stmt_getuser = $con->prepare("SELECT * FROM `assets` WHERE `name` LIKE ? AND `type` = ? $query_filter LIMIT ?, ?");
 				$stmt_getuser->bind_param('siii', $stmt_query, $stmt_type, $stmt_page, $count);
 				$stmt_getuser->execute();
 				// pagify
@@ -43,8 +43,8 @@
 
 			if($result->num_rows != 0) {
 				while($row = $result->fetch_assoc()) {
-					if($row['asset_type'] == AssetType::PLACE->ordinal()) {
-						$asset = Place::FromID($row['asset_id']);
+					if($row['type'] == AssetType::PLACE->ordinal()) {
+						$asset = Place::FromID($row['id']);
 					} else {
 						$asset = new Asset($row);
 					}
@@ -73,25 +73,25 @@
 			if($user == null) 
 				return [];
 			
-			$query_filter = "AND `asset_public` = 1 AND `asset_nevershow` = 0";
+			$query_filter = "AND `public` = 1 AND `nevershow` = 0";
 			if($user->isAdmin()) {
-				$query_filter = "AND `asset_nevershow` = 0";
+				$query_filter = "AND `nevershow` = 0";
 			}
 
-			$base_sql_query = "SELECT * FROM `assets` WHERE `asset_name` LIKE ? AND `asset_type` = ? $query_filter";
+			$base_sql_query = "SELECT * FROM `assets` WHERE `name` LIKE ? AND `type` = ? $query_filter";
 			if($type == AssetType::PLACE) {
-				$base_sql_query = "SELECT asset_places.* FROM `asset_places`, `assets` WHERE assets.asset_id = asset_places.place_id AND `asset_name` LIKE ? AND `asset_type` = ? $query_filter ".($_SESSION['ANORRL$Games$OriginalOnly'] ? " AND `place_original` = 1 " : "");
+				$base_sql_query = "SELECT asset_places.* FROM `places`, `assets` WHERE assets.asset_id = asset_places.place_id AND `name` LIKE ? AND `type` = ? $query_filter ".($_SESSION['ANORRL$Games$OriginalOnly'] ? " AND `original` = 1 " : "");
 			}
 			
 			$filter = match($filter) {
-				CatalogFilter::RecentlyUploaded => "ORDER BY `asset_created` DESC",
-				CatalogFilter::RecentlyUpdated  => "ORDER BY `asset_lastedited` DESC",
-				CatalogFilter::OldestUploaded   => "ORDER BY `asset_created` ASC",
-				CatalogFilter::OldestUpdated    => "ORDER BY `asset_lastedited` ASC",
-				CatalogFilter::MostSold         => "ORDER BY `asset_sales_count` DESC, `asset_lastedited` DESC",
-				CatalogFilter::MostFavourited   => "ORDER BY `asset_favourites_count` DESC, `asset_lastedited` DESC",
-				CatalogFilter::MostPopular      => "ORDER BY `place_currently_playing` DESC, `place_visit_count` DESC, `asset_lastedited` DESC",
-				CatalogFilter::MostVisited      => "ORDER BY `place_visit_count` DESC"
+				CatalogFilter::RecentlyUploaded => "ORDER BY `created` DESC",
+				CatalogFilter::RecentlyUpdated  => "ORDER BY `lastedited` DESC",
+				CatalogFilter::OldestUploaded   => "ORDER BY `created` ASC",
+				CatalogFilter::OldestUpdated    => "ORDER BY `lastedited` ASC",
+				CatalogFilter::MostSold         => "ORDER BY `sales_count` DESC, `lastedited` DESC",
+				CatalogFilter::MostFavourited   => "ORDER BY `favourites_count` DESC, `lastedited` DESC",
+				CatalogFilter::MostPopular      => "ORDER BY `currently_playing` DESC, `visit_count` DESC, `lastedited` DESC",
+				CatalogFilter::MostVisited      => "ORDER BY `visit_count` DESC"
 			};
 			
 			$stmt_query = "%$query%";
@@ -116,7 +116,7 @@
 			if($result->num_rows != 0) {
 				while($row = $result->fetch_assoc()) {
 					if($type == AssetType::PLACE) {
-						$asset = Place::FromID($row['place_id']);
+						$asset = Place::FromID($row['id']);
 					} else {
 						$asset = new Asset($row);
 					}
@@ -145,25 +145,25 @@
 			if($user == null) 
 				return [];
 			
-			$query_filter = "AND `asset_public` = 1 AND `asset_nevershow` = 0";
+			$query_filter = "AND `public` = 1 AND `nevershow` = 0";
 			if($user->isAdmin()) {
-				$query_filter = "AND `asset_nevershow` = 0";
+				$query_filter = "AND `nevershow` = 0";
 			}
 
-			$base_sql_query = "SELECT COUNT(`asset_id`) FROM `assets` WHERE `asset_name` LIKE ? AND `asset_type` = ? $query_filter";
+			$base_sql_query = "SELECT COUNT(`id`) FROM `assets` WHERE `name` LIKE ? AND `type` = ? $query_filter";
 			if($type == AssetType::PLACE) {
-				$base_sql_query = "SELECT COUNT(`place_id`) FROM `asset_places`, `assets` WHERE assets.asset_id = asset_places.place_id AND `asset_name` LIKE ? AND `asset_type` = ? $query_filter ".($_SESSION['ANORRL$Games$OriginalOnly'] ? " AND `place_original` = 1 " : "");
+				$base_sql_query = "SELECT COUNT(`id`) FROM `places`, `assets` WHERE assets.asset_id = asset_places.place_id AND `name` LIKE ? AND `type` = ? $query_filter ".($_SESSION['ANORRL$Games$OriginalOnly'] ? " AND `original` = 1 " : "");
 			}
 			
 			$filter = match($filter) {
-				CatalogFilter::RecentlyUploaded => "ORDER BY `asset_created` DESC",
-				CatalogFilter::RecentlyUpdated  => "ORDER BY `asset_lastedited` DESC",
-				CatalogFilter::OldestUploaded   => "ORDER BY `asset_created` ASC",
-				CatalogFilter::OldestUpdated    => "ORDER BY `asset_lastedited` ASC",
-				CatalogFilter::MostSold         => "ORDER BY `asset_sales_count` DESC, `asset_lastedited` DESC",
-				CatalogFilter::MostFavourited   => "ORDER BY `asset_favourites_count` DESC, `asset_lastedited` DESC",
-				CatalogFilter::MostPopular      => "ORDER BY `place_currently_playing` DESC, `place_visit_count` DESC, `asset_lastedited` DESC",
-				CatalogFilter::MostVisited      => "ORDER BY `place_visit_count` DESC"
+				CatalogFilter::RecentlyUploaded => "ORDER BY `created` DESC",
+				CatalogFilter::RecentlyUpdated  => "ORDER BY `lastedited` DESC",
+				CatalogFilter::OldestUploaded   => "ORDER BY `created` ASC",
+				CatalogFilter::OldestUpdated    => "ORDER BY `lastedited` ASC",
+				CatalogFilter::MostSold         => "ORDER BY `sales_count` DESC, `lastedited` DESC",
+				CatalogFilter::MostFavourited   => "ORDER BY `favourites_count` DESC, `lastedited` DESC",
+				CatalogFilter::MostPopular      => "ORDER BY `currently_playing` DESC, `visit_count` DESC, `lastedited` DESC",
+				CatalogFilter::MostVisited      => "ORDER BY `visit_count` DESC"
 			};
 			
 			$stmt_query = "%$query%";
@@ -190,10 +190,10 @@
 			}
 			
 			if($type == AssetType::PLACE) {
-				return $row['COUNT(`place_id`)'];
+				return $row['COUNT(`id`)'];
 			}
 			
-			return $row['COUNT(`asset_id`)'];
+			return $row['COUNT(`id`)'];
 		}
 		/*
 		SELECT COUNT(column_name)

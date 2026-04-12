@@ -48,7 +48,7 @@
 		 */
 		public static function FromID(int $id): Asset|null {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `assets` WHERE `asset_id` = ? LIMIT 1");
+			$stmt_getuser = $con->prepare("SELECT * FROM `assets` WHERE `id` = ? LIMIT 1");
 			$stmt_getuser->bind_param('i', $id);
 			$stmt_getuser->execute();
 			$result = $stmt_getuser->get_result();
@@ -62,28 +62,28 @@
 
 		function __construct(array|int $rowdata) {
 			if(is_array($rowdata)) {
-				$this->id = intval($rowdata['asset_id']);
-				$this->creator = User::FromID($rowdata['asset_creator']);
-				$this->type = AssetType::index(intval($rowdata['asset_type']));
-				$this->name = str_replace("<", "&lt;", str_replace(">", "&gt;", $rowdata['asset_name']));
-				$this->description = str_replace("<", "&lt;", str_replace(">", "&gt;", $rowdata['asset_description']));
-				$this->public = boolval($rowdata['asset_public']);
+				$this->id = intval($rowdata['id']);
+				$this->creator = User::FromID($rowdata['creator']);
+				$this->type = AssetType::index(intval($rowdata['type']));
+				$this->name = str_replace("<", "&lt;", str_replace(">", "&gt;", $rowdata['name']));
+				$this->description = str_replace("<", "&lt;", str_replace(">", "&gt;", $rowdata['description']));
+				$this->public = boolval($rowdata['public']);
 
-				$this->favourites_count = intval( $rowdata['asset_favourites_count']);
-				$this->comments_enabled = boolval($rowdata['asset_comments_enabled']);
+				$this->favourites_count = intval( $rowdata['favourites_count']);
+				$this->comments_enabled = boolval($rowdata['comments_enabled']);
 	
-				$this->onsale = boolval($rowdata['asset_onsale']);
-				$this->sales_count = intval($rowdata['asset_sales_count']);
+				$this->onsale = boolval($rowdata['onsale']);
+				$this->sales_count = intval($rowdata['sales_count']);
 
-				$this->lights = intval($rowdata['asset_lights']);
-				$this->cones = intval($rowdata['asset_cones']);
+				$this->lights = intval($rowdata['lights']);
+				$this->cones = intval($rowdata['cones']);
 
-				$this->notcatalogueable = boolval($rowdata['asset_nevershow']);
-				$this->relatedasset = Asset::FromID(intval($rowdata['asset_relatedid']));
-				$this->current_version = intval($rowdata['asset_currentversion']);
+				$this->notcatalogueable = boolval($rowdata['nevershow']);
+				$this->relatedasset = Asset::FromID(intval($rowdata['relatedid']));
+				$this->current_version = intval($rowdata['currentversion']);
 	
-				$this->last_updatetime = \DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['asset_lastedited']);
-				$this->created_at      = \DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['asset_created']);	
+				$this->last_updatetime = \DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['lastedited']);
+				$this->created_at      = \DateTime::createFromFormat("Y-m-d H:i:s", $rowdata['created']);	
 			} else {
 				// for extended classes
 				$asset_data = Asset::FromID($rowdata);
@@ -211,9 +211,14 @@
 			return $result;
 		}
 
+		function getURL() {
+			$typa = $this instanceof Place ? "place" : "item";
+			return "{$this->getURLTitle()}-{$typa}?id={$this->id}";
+		}
+
 		function getAllVersions(): array {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
-			$stmt_getuser = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_assetid` = ? ORDER BY `version_id` DESC");
+			$stmt_getuser = $con->prepare("SELECT * FROM `versions` WHERE `assetid` = ? ORDER BY `id` DESC");
 			$stmt_getuser->bind_param('i', $this->id);
 			$stmt_getuser->execute();
 
@@ -235,13 +240,13 @@
 
 		function getVersionID(): int {
 			include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-			$stmt = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_assetid` = ? ORDER BY `version_id`");
+			$stmt = $con->prepare("SELECT * FROM `versions` WHERE `assetid` = ? ORDER BY `id`");
 			$stmt->bind_param("i", $this->id);
 			$stmt->execute();
 
 			$result = $stmt->get_result();
 			$row = $result->fetch_assoc();
-			return $row["version_id"];
+			return $row['id'];
 		}
 
 		function getMD5HashCurrent(): string {
@@ -250,20 +255,20 @@
 
 		function getMD5Hash(int $version): string {
 			include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-			$stmt = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_id` = ?");
+			$stmt = $con->prepare("SELECT * FROM `versions` WHERE `id` = ?");
 			$stmt->bind_param("i", $version);
 			$stmt->execute();
 
 			$result = $stmt->get_result();
 			$row = $result->fetch_assoc();
-			return $row["version_md5sig"];
+			return $row['md5sig'];
 		}
 
 		function setVersion(AssetVersion|null $version) {
 			if($version != null && $version->asset->id == $this->id) {
 				if($version->sub_id != $this->current_version) {
 					include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-					$stmt = $con->prepare("UPDATE `assets` SET `asset_currentversion` = ? WHERE `asset_id` = ?");
+					$stmt = $con->prepare("UPDATE `assets` SET `currentversion` = ? WHERE `id` = ?");
 					$stmt->bind_param("ii", $version->sub_id, $this->id);
 					$stmt->execute();
 
@@ -284,7 +289,7 @@
 
 			if(!$this->hasUserFavourited($user)) {
 				Database::singleton()->run(
-					"INSERT INTO `favourites`(`fav_assetid`, `fav_userid`, `fav_assettype`) VALUES (:id, :uid, :type);",
+					"INSERT INTO `favourites`(`assetid`, `userid`, `assettype`) VALUES (:id, :uid, :type);",
 					[
 						":id" => $this->id,
 						":uid" => $userid,
@@ -300,12 +305,12 @@
 			$db = Database::singleton();
 
 			$favcount = $db->run(
-				"SELECT * FROM `favourites` WHERE `fav_assetid` = :id",
+				"SELECT * FROM `favourites` WHERE `assetid` = :id",
 				[":id" => $this->id]
 			)->rowCount();
 
 			$db->run(
-				"UPDATE `assets` SET `asset_favourites_count` = :favcount WHERE `asset_id` = :id",
+				"UPDATE `assets` SET `favourites_count` = :favcount WHERE `id` = :id",
 				[":id" => $this->id, ":favcount" => $favcount]
 			);
 		}
@@ -319,7 +324,7 @@
 
 			if($this->hasUserFavourited($user)) {
 				Database::singleton()->run(
-					"DELETE FROM `favourites` WHERE `fav_assetid` = :id AND `fav_userid` = :uid;",
+					"DELETE FROM `favourites` WHERE `assetid` = :id AND `userid` = :uid;",
 					[
 						":id" => $this->id,
 						":uid" => $userid
@@ -338,7 +343,7 @@
 				$userid = $user->id;
 			}
 
-			$stmt = $con->prepare("SELECT * FROM `favourites` WHERE `fav_assetid` = ? AND `fav_userid` = ?;");
+			$stmt = $con->prepare("SELECT * FROM `favourites` WHERE `assetid` = ? AND `userid` = ?;");
 			$stmt->bind_param("ii", $this->id, $userid);
 			$stmt->execute();
 
@@ -374,7 +379,7 @@
 
 			$salescount = $stmt->get_result()->num_rows;
 
-			$stmt = $con->prepare("UPDATE `assets` SET `asset_sales_count` = ? WHERE `asset_id` = ?");
+			$stmt = $con->prepare("UPDATE `assets` SET `sales_count` = ? WHERE `id` = ?");
 			$stmt->bind_param("ii", $salescount, $this->id);
 			$stmt->execute();
 		}
@@ -382,7 +387,7 @@
 		function getRelatedAssets() {
 			include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
 
-			$stmt = $con->prepare("SELECT `asset_id` FROM `assets` WHERE `asset_relatedid` = ?");
+			$stmt = $con->prepare("SELECT `id` FROM `assets` WHERE `relatedid` = ?");
 			$stmt->bind_param("i", $this->id);
 			$stmt->execute();
 			
@@ -391,7 +396,7 @@
 			$result = [];
 
 			while($row = $stmt_result->fetch_assoc()) {
-				$asset = Asset::FromID(intval($row['asset_id']));
+				$asset = Asset::FromID(intval($row['id']));
 				if($asset) {
 					$result[] = $asset;
 				}
@@ -444,7 +449,7 @@
 				if(file_exists($_SERVER['DOCUMENT_ROOT']."/../assets/thumbs/".AssetVersion::GetLatestVersionOf($this)->md5thumb)) {
 
 				} else {
-					$stmt = $con->prepare("UPDATE `asset_versions` SET `version_md5thumb` = 'placeholder' WHERE `version_id` = ?");
+					$stmt = $con->prepare("UPDATE `versions` SET `md5thumb` = 'placeholder' WHERE `id` = ?");
 					$stmt->bind_param('i', AssetVersion::GetLatestVersionOf($this)->id);
 					$stmt->execute();
 				}
@@ -455,7 +460,7 @@
 			if(\SESSION) {
 				if(\SESSION->user->isAdmin()) {
 					include $_SERVER['DOCUMENT_ROOT']."/private/connection.php";
-					$stmt = $con->prepare('DELETE FROM `inventory` WHERE `inv_assetid` = ?');
+					$stmt = $con->prepare('DELETE FROM `inventory` WHERE `assetid` = ?');
 					$stmt -> bind_param("i", $id);
 					$stmt->execute();
 
@@ -472,18 +477,18 @@
 					$stmt -> bind_param("i", $id);
 					$stmt->execute();
 
-					$stmt = $con->prepare('DELETE FROM `favourites` WHERE `fav_assetid` = ?');
+					$stmt = $con->prepare('DELETE FROM `favourites` WHERE `assetid` = ?');
 					$stmt -> bind_param("i", $id);
 					$stmt->execute();
 					
 					$this->checkAndDeleteFiles();
 
-					$stmt = $con->prepare('DELETE FROM `assets` WHERE `asset_id` = ?');
+					$stmt = $con->prepare('DELETE FROM `assets` WHERE `id` = ?');
 					$stmt -> bind_param("i", $id);
 					$stmt->execute();
 
 					if($asset->type == AssetType::PLACE) {
-						$stmt = $con->prepare('DELETE FROM `asset_places` WHERE `place_id` = ?');
+						$stmt = $con->prepare('DELETE FROM `places` WHERE `id` = ?');
 						$stmt -> bind_param("i", $id);
 						$stmt->execute();
 					}*/
@@ -556,7 +561,7 @@
 		private function checkAndDeleteFiles() {
 			include $_SERVER["DOCUMENT_ROOT"]."/private/connection.php";
 			if($asset != null) {
-				$stmt = $con->prepare("SELECT * FROM `assets` WHERE `asset_id` = ? OR `asset_relatedid` = ?;");
+				$stmt = $con->prepare("SELECT * FROM `assets` WHERE `id` = ? OR `relatedid` = ?;");
 				$stmt->bind_param("ii", $this->id, $this->id);
 				$stmt->execute();
 
@@ -564,13 +569,13 @@
 
 				$ids = [];
 				while($row = $result->fetch_assoc()) {
-					$ids[] = $row['asset_id'];
+					$ids[] = $row['id'];
 				}
 
 				$md5s = [];
 
 				foreach($ids as $key => $value) {
-					$stmt = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_assetid` = ? ORDER BY `version_id` DESC;");
+					$stmt = $con->prepare("SELECT * FROM `versions` WHERE `assetid` = ? ORDER BY `id` DESC;");
 					$stmt->bind_param("i", $value);
 					$stmt->execute();
 
@@ -578,12 +583,12 @@
 					if($result->num_rows != 0) {
 						$row = $result->fetch_assoc();
 
-						$md5s["$value"] = $row['version_md5sig'];
+						$md5s["$value"] = $row['md5sig'];
 					}
 				}
 
 				foreach($md5s as $key => $value) {
-					$stmt = $con->prepare("SELECT * FROM `asset_versions` WHERE `version_md5sig` = ? AND `version_assetid` != ? ORDER BY `version_id` DESC;");
+					$stmt = $con->prepare("SELECT * FROM `versions` WHERE `md5sig` = ? AND `assetid` != ? ORDER BY `id` DESC;");
 					$stmt->bind_param("si", $value, $key);
 					$stmt->execute();
 
@@ -601,6 +606,17 @@
 					}
 				}
 			}
+		}
+
+		function getThumbsUrl(int $size_x = -1, int $size_y = -1): string {
+			$size_params = "";
+			if($size_x > 0 && $size_y <= 0)
+				$size_params = "&sxy=$size_x";
+		 	
+			else if($size_x > 0 && $size_y > 0)
+				$size_params = "&sx=$size_x&sy=$size_y";
+
+			return "/thumbs/?id=" . $this->id . $size_params;
 		}
 
 	}
