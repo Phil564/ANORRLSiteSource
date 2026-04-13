@@ -8,8 +8,9 @@
 	function route($method, $path, $file) {
 		global $router;
 		$router->map($method, $path, function(...$params) use ($path, $file) {
-			if(!isset($_COOKIE['ANORRL$Hidden$Cookie$yaya']) && $path != "/goodbye") {
-				die(header("Location: /goodbye"));
+			if(!isset($_COOKIE['ANORRL$Hidden$Cookie$yaya'])) {
+				if($path != "/goodbye")
+					die(header("Location: /goodbye"));
 			} else {
 				// yeah i just dont feel like it
 				if(
