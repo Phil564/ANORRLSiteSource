@@ -73,7 +73,7 @@
 				justify-content: center;
 				align-items: center;
 				backdrop-filter: blur(10px);
-				opacity: 1;
+				opacity: 0;
 			}
 
 			#LoadingScreen p[caption] {
