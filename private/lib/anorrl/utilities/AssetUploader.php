@@ -200,8 +200,8 @@
 						":md5" => $md5
 					]
 				);
-
-				if($exec->errorCode()) {
+				$error = $exec->errorCode();
+				if($error) {
 					if(filesize($filepath) == 0)
 						unlink($filepath);
 
@@ -210,7 +210,7 @@
 						[":aid" => $id]
 					);
 
-					return INTERNALSQLERROR;
+					return ["error" => true, "reason" => "Something went wrong idfk bitch about it to grace... ($error)"];
 				}
 			}
 
