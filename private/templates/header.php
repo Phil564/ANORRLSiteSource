@@ -69,7 +69,6 @@
 				font-size: 16px;
 				justify-content: center;
 				align-items: center;
-				transition: opacity 0.75s;
 				backdrop-filter: blur(10px);
 				opacity: 0;
 			}
@@ -89,8 +88,6 @@
 			function setVisible(element, visible) {
 				if(element == "#LoadingScreen")
 					$(element).css("opacity", visible ? 1 : 0);
-				else
-					$(element).css("display", visible ? "block" : "none");
 			}
 
 			// do loading screen if the page hasn't loaded in a second.
@@ -100,24 +97,25 @@
 
 			$(window).load(function() {
 				hasLoaded = true;
-				setVisible("#Container", true);
+				$("#LoadingScreen").css("transition", "opacity 0.75s");
 				if(initiateLoading) {
 					// mom im a genius
 					wait(200).then(() => {
-						$("#LoadingScreen").css("opacity", "0");
+						setVisible("#LoadingScreen", false);
 						$("#LoadingScreen").css("pointer-events", "none");
 						
 					});
 					wait(1500).then(() => {
-						setVisible('#LoadingScreen', false);
+						$("#LoadingScreen").remove();
 					});
 				} else {
-					$("#LoadingScreen").css("display", "none");
+					$("#LoadingScreen").remove();
 				}
 			});
 
 			wait(500).then(() => {
 				if(!hasLoaded) {
+					$("#LoadingScreen").css("transition", "opacity 0.25s");
 					setVisible('#LoadingScreen', true);
 					initiateLoading = true;
 				}
