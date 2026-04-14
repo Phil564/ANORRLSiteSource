@@ -85,14 +85,13 @@
 	$page->addStylesheet("/css/new/stuff.css?v=2");
 	$page->addStylesheet("/css/new/forms.css?v=1");
 
-	$page->addScript("/js/create.js?t=1776186351");
+	$page->addScript("/js/create.js?t=1776187959");
 	$page->loadHeader();
 ?>
 <div class="Asset" template>
 	<a id="NameAndThumbs">
 		<img src="">
-		<div id="Pricing">
-		</div>
+		<div id="Pricing"></div>
 		<span>AssetName</span>
 	</a>
 </div>
@@ -125,6 +124,40 @@
 
 	.Window table td {
 		vertical-align: middle !important;
+	}
+
+	.Window ul {
+		margin-bottom: 0px;
+	}
+
+	.Window li {
+		padding: 5px;
+		border-bottom: 2px solid black;
+	}
+
+	.Window li:nth-child(even) {
+		background: #0a0a0a;
+	}
+
+	.Window li:last-child {
+		border: none;
+	}
+
+	.Window[id] {
+		margin-bottom: 10px;
+	}
+
+	.Window ul {
+		list-style: none;
+		padding-left: 0px;
+		background: #1a1a1a;
+		border: 2px solid black;
+		margin-top: 0px;
+	}
+
+	.Window .Number {
+		margin: 0px 5px;
+		margin-right: 10px;
 	}
 </style>
 <div id="StuffContainer">
@@ -164,43 +197,6 @@
 				<div id="SuccessTime">Success! <span id="Message"><?= "Check it out <a href=\"/".Asset::FromID($_SESSION['ANORRL$CreateAsset$Result'])->getUrl()."\">here!</a>"?></span></div>
 				<?php endif ?>
 			<?php endif ?>
-			<style>
-
-
-				.Window ul {
-					margin-bottom: 0px;
-				}
-
-				.Window li {
-					padding: 5px;
-					border-bottom: 2px solid black;
-				}
-
-				.Window li:nth-child(even) {
-					background: #0a0a0a;
-				}
-
-				.Window li:last-child {
-					border: none;
-				}
-
-				.Window[id] {
-					margin-bottom: 10px;
-				}
-
-				.Window ul {
-					list-style: none;
-					padding-left: 0px;
-					background: #1a1a1a;
-					border: 2px solid black;
-					margin-top: 0px;
-				}
-
-				.Window .Number {
-					margin: 0px 5px;
-					margin-right: 10px;
-				}
-			</style>
 
 			<div class="Window" id="HatUploadRules" style="width: 100%;">
 				<div id="Name">Hat Uploading Rules</div>
@@ -288,10 +284,20 @@
 
 				
 			</form>
-
+			<script>
+				function toggleTemplate() {
+					if($("#ShowHideTemplate").parent().parent().find("#Contents").is(":visible")) {
+						$("#ShowHideTemplate").parent().parent().find("#Contents").css("display", "none");
+						$("#ShowHideTemplate").html("(Show)");
+					} else {
+						$("#ShowHideTemplate").parent().parent().find("#Contents").css("display", "block");
+						$("#ShowHideTemplate").html("(Hide)");
+					}
+				}
+			</script>
 			<div class="Window" style="display: none; margin: 0 auto; margin-top: 10px; margin-bottom: 0px;" id="ShirtPantsTemplate">
-				<div id="Name"></div>
-				<div id="Contents">
+				<div id="Name" style="min-width: 328px;"><span id="Title"></span><a id="ShowHideTemplate" href="javascript:toggleTemplate()">(Show)</a></div>
+				<div id="Contents" style="display: none;">
 					<a download="" href="" title="Click to download!">
 						<img alt="Click to download!" src="" height="300">
 					</a>

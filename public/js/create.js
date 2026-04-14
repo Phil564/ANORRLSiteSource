@@ -114,14 +114,14 @@ ANORRL.Create = {
 			var template_image_path = "/images/"+template_name+".png";
 			
 			var template_window = $(".Window#ShirtPantsTemplate");
-			var template_link = template_window.find("a");
+			var template_link = template_window.find("#Contents a");
 			var template_image = template_link.find("img");
 			
 			template_link.attr("download", template_name+".png");
 			template_link.attr("href", template_image_path);
 			template_image.attr("src", template_image_path);
 
-			template_window.find("#Name").html(categorylabel+" Template");
+			template_window.find("#Name > #Title").html(categorylabel+" Template");
 			template_window.css("display", "block");
 		} else {
 			$(".Window#ShirtPantsTemplate").css("display", "none");
