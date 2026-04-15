@@ -334,7 +334,7 @@
 
 			// this could DEF be done better.
 			if(count($excludedids) > 0) {
-				$processedids = "AND `id` NOT IN (";
+				$processedids = "AND `assets`.`id` NOT IN (";
 				foreach($excludedids as $id) {
 					$processedids .= $id.",";
 				}
