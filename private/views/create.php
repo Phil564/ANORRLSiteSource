@@ -17,13 +17,11 @@
 		"tshirts",
 		"pants",
 		"gears",
-
 		"audio",
 		"decals",
 		"models",
 		"meshes",
 		"animations",
-
 		"images",
 		"lua",
 	];

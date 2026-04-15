@@ -51,7 +51,7 @@
 					}
 
 					if($error) {
-						if(!($_SERVER['HTTP_USER_AGENT'] == "Roblox/WinInet" || $_SERVER['HTTP_USER_AGENT'] == "Roblox/WinHttp"))
+						if(!($_SERVER['HTTP_USER_AGENT'] == "ANORRL/WinInet" || $_SERVER['HTTP_USER_AGENT'] == "ANORRL/WinHttp"))
 							die(http_response_code(503));
 					}
 				}
@@ -68,10 +68,10 @@
 						die(file_get_contents($_SERVER['DOCUMENT_ROOT']."/private/templates/assets/nothing.rbxm"));
 					}
 					
-					$blacklist = ["MeshId", "Script", "Remote", "Service", "Model"];
+					/*$blacklist = ["MeshId", "Script", "Remote", "Service", "Model"];
 					$whitelist = ["Keyframe", "Animation"];
 					
-					/*foreach($whitelist as $white) {
+					foreach($whitelist as $white) {
 						if(strpos($contents, $white) !== false) {
 							foreach($blacklist as $black) {
 								if(strpos($contents, $black) !== false && (intval($_GET['serverplaceid']) != 0 && $asset->type != AssetType::HAT && $asset->type != AssetType::MODEL && !(intval($_GET['serverplaceid']) == 0 && $asset->type == AssetType::GEAR))) { // hope that model whitelist aint gonna bite my ass
