@@ -1,12 +1,12 @@
 body {
-	background: url('/images/bkg.png');
+	background: url('/public/images/bkg.png');
 	margin: 0px;
 	font-family: Arial,Helvetica,sans-serif;
 	font-size: 14px;
 }
 
 #Header {
-	background-image: url('/images/ide/cardboard.png?v=4');
+	background-image: url('/public/images/ide/cardboard.png?v=4');
 	text-align: center;
 	height: 72px;
 }
@@ -16,7 +16,7 @@ body {
 }
 
 #Separator {
-	background-image: url('/images/header/navbar.jpg');
+	background-image: url('/public/images/header/navbar.jpg');
 	background-size: 46px;
 	width: 100%;
 	border: 6px solid black;
@@ -27,7 +27,7 @@ body {
 }
 
 #SidewaySeparator {
-	background-image: url('/images/header/navbar_sideways.jpg');
+	background-image: url('/public/images/header/navbar_sideways.jpg');
 	background-size: 30px;
 	width: 30px;
 	border: 6px solid black;

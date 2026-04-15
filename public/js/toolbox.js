@@ -325,7 +325,7 @@ function makeAssetVoteable(n) {
 			window.setTimeout(function () {
 				$("#ToolboxItems").is(":empty") &&
 					$("#ToolboxItems").append(
-						"<div style='text-align: center;margin-top: 25px;'><img src='/images/ProgressIndicator4.gif' alt='" +
+						"<div style='text-align: center;margin-top: 25px;'><img src='/public/images/ProgressIndicator4.gif' alt='" +
 							ClientToolbox.Resources.loading +
 							"' /></div>"
 					);
@@ -426,7 +426,7 @@ function makeAssetVoteable(n) {
 			window.setTimeout(function () {
 				$("#ToolboxItems").is(":empty") &&
 					$("#ToolboxItems").append(
-						"<div style='text-align: center;margin-top: 25px;'><img src='/images/ProgressIndicator4.gif' alt='" +
+						"<div style='text-align: center;margin-top: 25px;'><img src='/public/images/ProgressIndicator4.gif' alt='" +
 							ClientToolbox.Resources.loading +
 							"' /></div>"
 					);
@@ -459,7 +459,7 @@ function makeAssetVoteable(n) {
 				e +
 				"' id='img_" +
 				o +
-				"' src='/images/unavailable.jpg' border='0px' style='height:62px;width:60px;' onerror='return Roblox.Controls.Image.OnError(this)'/>"),
+				"' src='/public/images/unavailable.jpg' border='0px' style='height:62px;width:60px;' onerror='return Roblox.Controls.Image.OnError(this)'/>"),
 			n.IsEndorsed &&
 				(t +=
 					"<img class='endorsed-icon' src='" +

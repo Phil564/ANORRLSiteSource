@@ -151,7 +151,7 @@
 		<?php if($this->bad_apple): ?>
 		<style>
 			body {
-				background: url('/images/badapple.gif') !important;
+				background: url('/public/images/badapple.gif') !important;
 			}
 		</style>
 		<?php endif ?>

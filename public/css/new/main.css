@@ -195,7 +195,7 @@ a:hover {
 }
 
 #Header #LogoutSign {
-	background: url('/images/sign_stop.png') round; /* Practically useless in ie (overwritten by filters) */
+	background: url('/public/images/sign_stop.png') round; /* Practically useless in ie (overwritten by filters) */
 	transform: rotate(3deg);
 	position: relative;
 	float: right;
