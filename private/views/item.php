@@ -102,6 +102,10 @@
 	if($user == null) {
 		die();
 	}
+
+
+	$linktype = strtolower($asset->type->label());
+	$plural_linktype = !str_ends_with($linktype, "s") ? $linktype."s" : $linktype;
 ?>
 <style>
 	h2, h3, h4 {
@@ -146,7 +150,7 @@
 <?php if($asset->onsale): ?>
 <div id="PurchasePanel" style="display: none">
 	<div id="ModalPopup" data-assetid="<?= $asset->id ?>">
-		<h3>Purchase this <?= strtolower($asset->type->label()) ?>??</h3>
+		<h3>Purchase this <?= $linktype ?>??</h3>
 
 		<div id="PurchaseFreeItem">
 			<p>
@@ -184,11 +188,11 @@
 			</p>
 			<?php if($asset->type->wearable()): ?>
 			<p>
-				<input type="submit" value="Try it on your character!" onclick="window.location.href='/my/character#<?= strtolower($asset->type->label()) ?>'; return false;" class="MediumButton" style="width:100%;" />
+				<input type="submit" value="Try it on your character!" onclick="window.location.href='/my/character#<?= $plural_linktype ?>'; return false;" class="MediumButton" style="width:100%;" />
 			</p>
 			<?php else: ?>
 			<p>
-				<input type="submit" value="Check it out in your inventory!" onclick="window.location.href='/my/stuff#<?= strtolower($asset->type->label()) ?>'; return false;" class="MediumButton" style="width:100%;" />
+				<input type="submit" value="Check it out in your inventory!" onclick="window.location.href='/my/stuff#<?= $plural_linktype ?>'; return false;" class="MediumButton" style="width:100%;" />
 			</p>
 			<?php endif ?>
 			<p>
@@ -238,7 +242,7 @@
 				<div id="NotOnSale">You need to be logged in to purchase this!</div>
 			<?php else: ?>
 				<?php if(!$asset->isUsable()): ?>
-					<div id="NotOnSale">This <?= strtolower($asset->type->label()) ?> is broken and needs to be republished.</div>
+					<div id="NotOnSale">This <?= $linktype ?> is broken and needs to be republished.</div>
 				<?php else: ?>
 					<?php if($asset->onsale): ?>
 						<?php if(!$is_bought): ?>
@@ -287,7 +291,7 @@
 					</ul>
 				</div>
 			<?php else: ?>
-				<div id="CommentsDisabled">Aw man! No one bothered to take this <?= strtolower($asset->type->label()) ?> yet!</div>	
+				<div id="CommentsDisabled">Aw man! No one bothered to take this <?= $linktype ?> yet!</div>	
 			<?php endif ?>
 		</div>
 	</div>
