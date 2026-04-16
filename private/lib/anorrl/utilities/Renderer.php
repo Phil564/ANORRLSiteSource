@@ -5,11 +5,10 @@
 	use anorrl\utilities\Arbiter;
 
 	class Renderer {
-		public static bool $cantuserenderer = \CONFIG->arbiter->disabled;
 
 		public static function RenderPlayer(int $id = 0) {
 
-			if(self::$cantuserenderer) {
+			if(\CONFIG->arbiter->disabled) {
 				return null;
 			}
 			
@@ -40,7 +39,7 @@
 				return null;
 			}
 
-			if(self::$cantuserenderer) {
+			if(\CONFIG->arbiter->disabled) {
 				return null;
 			}
 
@@ -58,7 +57,7 @@
 
 		public static function RenderMesh(int $id = 0) {
 
-			if(self::$cantuserenderer) {
+			if(\CONFIG->arbiter->disabled) {
 				return null;
 			}
 
@@ -73,7 +72,7 @@
 
 		public static function RenderPlace(int $id = 0) {
 
-			if(self::$cantuserenderer) {
+			if(\CONFIG->arbiter->disabled) {
 				return null;
 			}
 
@@ -88,7 +87,7 @@
 
 		public static function RenderModel(int $id = 0) {
 
-			if(self::$cantuserenderer) {
+			if(\CONFIG->arbiter->disabled) {
 				return null;
 			}
 
