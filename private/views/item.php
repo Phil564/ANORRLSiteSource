@@ -79,6 +79,8 @@
 
 	$header_data = $asset;
 
+	$sales = $asset->getSales();
+
 	$page = new Page(htmlspecialchars($asset->name, ENT_QUOTES));
 	$page->addStylesheet("/css/new/item/item.css?v=2");
 	$page->addStylesheet("/css/new/comments.css?v=1");

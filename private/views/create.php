@@ -58,7 +58,7 @@
 				$description = trim($_POST['ANORRL$CreateAsset$Description']);
 				$public = isset($_POST['ANORRL$CreateAsset$Public']);
 				$comments_enabled = isset($_POST['ANORRL$CreateAsset$CommentsEnabled']);
-				$on_sale = isset($_POST['ANORRL$CreateAsset$OnSale']);
+				$on_sale = isset($_POST['ANORRL$CreateAsset$Purchasable']);
 
 				$result = AssetUploader::UploadAsset($_FILES['ANORRL$CreateAsset$File'], $types[$type], $name, $description, $public, $on_sale, $comments_enabled);
 				
@@ -205,6 +205,13 @@
 		user-select: none;
 	}
 	
+	#StuffContainer h4 {
+		margin: 0px;
+		width: 100%;
+		padding: 5px 0px;
+		margin-bottom: 10px;
+		text-align: center;
+	}
 </style>
 <script>
 	$(function() {
@@ -219,8 +226,9 @@
 		<marquee scrollamount="20" behavior="alternate" style="display: block;margin-top: -33px;z-index: 9;" direction="left">Creation Panel</marquee>
 	</h1>
 	<div id="StuffNavigation">	
-		<h4>Categories</h4>						
+								
 		<ul>
+			<h4>Accessories</h4>
 			<li data_category="8" ><a>Hats</a></li>
 			<li data_category="18"><a>Faces</a></li>
 			<li data_category="11"><a>Shirts</a></li>
@@ -228,6 +236,7 @@
 			<li data_category="12"><a>Pants</a></li>
 			<li data_category="19"><a>Gears</a></li>
 			<hr>
+			<h4>Development</h4>
 			<li data_category="13"><a>Decals</a></li>
 			<li data_category="3"><a>Audio</a></li>
 			<li data_category="4"><a>Meshes</a></li>
@@ -236,7 +245,7 @@
 			
 			<?php if($user->isAdmin()): ?>
 			<hr>
-			
+			<h4>Admin</h4>
 			<li data_category="1"><a>Images</a></li>
 			<li data_category="5"><a>Lua</a></li>
 			<?php endif ?>
