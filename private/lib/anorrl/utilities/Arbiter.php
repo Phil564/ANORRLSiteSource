@@ -34,8 +34,6 @@
 				$endpoint = substr($endpoint, 1);
 				
 			$ch = curl_init("http://{$this->location}:{$this->port}{$this->api_prefix}$endpoint");
-
-			error_log("http://{$this->location}:{$this->port}{$this->api_prefix}$endpoint");
 			
 			curl_setopt_array($ch, [
 				CURLOPT_RETURNTRANSFER => true,
@@ -51,12 +49,8 @@
 
 			$response = curl_exec($ch);
 
-			error_log($response === false ? "response failed" : "response worked");
-
 			if ($response === false)
 				return null;
-			
-			error_log($response . " code: " . (curl_getinfo($ch,CURLINFO_HTTP_CODE)));
 
 			$json = json_decode($response);
 
@@ -72,9 +66,8 @@
 				
 			$ch = curl_init("http://{$this->location}:{$this->port}{$this->api_prefix}$endpoint");
 
-			error_log("http://{$this->location}:{$this->port}{$this->api_prefix}$endpoint");
-			
 			curl_setopt_array($ch, [
+				CURLOPT_HTTPGET => true,
 				CURLOPT_RETURNTRANSFER => true,
 				CURLOPT_HTTPHEADER => [
 					"Authorization: Bearer {$this->token}",
@@ -86,12 +79,8 @@
 
 			$response = curl_exec($ch);
 
-			error_log($response === false ? "response failed" : "response worked");
-
 			if ($response === false)
 				return null;
-			
-			error_log($response . " code: " . (curl_getinfo($ch,CURLINFO_HTTP_CODE)));
 
 			$json = json_decode($response);
 
@@ -102,7 +91,7 @@
 		}
 
 		public function getAllJobs(int $size = 50): array {
-			$jobs = $this->request("getalljobs?limit=$size");
+			$jobs = $this->requestGET("getalljobs?limit=$size");
 
 			if(!$jobs)
 				return [];
@@ -113,9 +102,6 @@
 		public function getGSMJob(string $jobid): GSMJob|null {
 
 			$job = $this->requestGET("job/$jobid");
-			ob_clean();
-			print_r($job);
-			error_log(ob_get_clean());
 			if(!$job)
 				return null;
 
@@ -126,13 +112,13 @@
 			
 			// cba!
 			return new GSMJob(
-				$job->JobId,
-				$job->Port,
-				$job->PlaceId,
-				$job->Pid,
+				$job->jobId,
+				$job->port,
+				$job->placeId,
+				$job->pid,
 				new \DateTime(),
 				new \DateTime(),
-				$job->Alive
+				$job->alive
 			);
 		}
 
