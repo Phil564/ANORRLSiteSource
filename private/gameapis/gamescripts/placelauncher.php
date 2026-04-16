@@ -228,7 +228,7 @@
 
 						$serverid = getRandomString();
 						$jobID = $gsr->jobId;
-						$port = $gsr->fakeahport;
+						$port = $gsr->port;
 						$pid = $gsr->pid;
 
 						$strPort = strval($port);
@@ -306,7 +306,7 @@
 
 						$serverid = getRandomString();
 						$jobid = $gsr->jobId;
-						$port = $gsr->fakeahport;
+						$port = $gsr->port;
 						$pid = $gsr->pid;
 						$strPort = strval($port);
 						
@@ -412,7 +412,7 @@
 
 						$serverid = getRandomString();
 						$jobID = $gsr->jobId;
-						$port = $gsr->fakeahport;
+						$port = $gsr->port;
 						$pid = $gsr->pid;
 						$strPort = strval($port);
 
