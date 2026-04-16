@@ -81,8 +81,8 @@
 
 		private static function GetRender(int $id, AssetType $type): string|null {
 			return match($type) {
-				AssetType::SHIRT => Renderer::RenderPlayer($id),
-				AssetType::PANTS => Renderer::RenderPlayer($id),
+				AssetType::SHIRT => Renderer::RenderClothing($id),
+				AssetType::PANTS => Renderer::RenderClothing($id),
 				AssetType::PLACE => Renderer::RenderPlace($id),
 				AssetType::MESH => Renderer::RenderMesh($id),
 				AssetType::MODEL => Renderer::RenderModel($id),

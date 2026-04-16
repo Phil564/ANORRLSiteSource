@@ -6,114 +6,55 @@
 
 	class Renderer {
 
-		public static function RenderPlayer(int $id = 0) {
-
+		private static function DoRender(string $type, array $data) {
 			if(\CONFIG->arbiter->disabled) {
 				return null;
 			}
 			
-			$data = Arbiter::singleton()->request(
-				"avatar-render",
+			$data = Arbiter::singleton()->request("$type-render", $data);
+
+			if(!$data)
+				return null;
+
+			if(!isset($data->base64))
+				return null;
+
+			return $data->base64;
+		}
+
+
+		public static function RenderClothing(int $id = 0) {
+			return self::DoRender(
+				"avatar",
 				[
 					"UserId" => $id,
 					"IsHeadshot" => false,
 					"IsClothing" => true
 				]
 			);
-
-			if(!$data)
-				return null;
-
-			if(!isset($data->base64))
-				return null;
-
-			return $data->base64;
 		}
 
 		public static function RenderUser(int $id = 0, bool $headshot = false) {
-			if($id == 0) {
-				return null;
-			}
-			
-			$user = User::FromID($id);
-
-			if($user == null) {
-				return null;
-			}
-
-			if(\CONFIG->arbiter->disabled) {
-				return null;
-			}
-
-			$data = Arbiter::singleton()->request(
-				"avatar-render",
+			return User::Exists($id) ? self::DoRender(
+				"avatar",
 				[
 					"UserId" => $id,
-					"IsHeadshot" => $headshot,
-					"IsClothing" => false
+					"IsHeadshot" => false,
+					"IsClothing" => true
 				]
-			);
-
-			if(!$data)
-				return null;
-
-			if(!isset($data->base64))
-				return null;
-
-			return $data->base64;
+			) : null;
 		}
 
 		public static function RenderMesh(int $id = 0) {
-
-			if(\CONFIG->arbiter->disabled) {
-				return null;
-			}
-
-			$data = Arbiter::singleton()->request("mesh-render", ["MeshId" => $id]);
-
-			if(!$data) {
-				return null;
-			}
-
-			if(!isset($data->base64))
-				return null;
-
-			return $data->base64;
+			return self::DoRender("mesh", ["MeshId" => $id]);
 		}
 
 		public static function RenderPlace(int $id = 0) {
-
-			if(\CONFIG->arbiter->disabled) {
-				return null;
-			}
-
-			$data = Arbiter::singleton()->request("place-render", ["PlaceId" => $id]);
-
-			if(!$data) {
-				return null;
-			}
-
-			if(!isset($data->base64))
-				return null;
-
-			return $data->base64;
+			return self::DoRender("place", ["PlaceId" => $id]);
 		}
 
 		public static function RenderModel(int $id = 0) {
-
-			if(\CONFIG->arbiter->disabled) {
-				return null;
-			}
-
-			$data = Arbiter::singleton()->request("model-render", ["AssetId" => $id]);
-
-			if(!$data)
-				return null;
-
-			if(!isset($data->base64))
-				return null;
-
-			return $data->base64;
+			return self::DoRender("model", ["AssetId" => $id]);
 		}
 	}
 ?>

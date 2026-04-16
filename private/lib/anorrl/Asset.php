@@ -395,7 +395,7 @@
 			$type = $this->type;
 
 			if($type == AssetType::SHIRT || $type == AssetType::PANTS) {
-				$render = Renderer::RenderPlayer($id);	
+				$render = Renderer::RenderClothing($id);	
 			} else if($type == AssetType::PLACE) {
 				$render = Renderer::RenderPlace($id);
 			} else if($type == AssetType::MESH) {
@@ -403,7 +403,7 @@
 			} else if($type == AssetType::MODEL || $type == AssetType::HAT || $type == AssetType::GEAR) {
 				$render = Renderer::RenderModel($id);
 			} else if($type == AssetType::TORSO) {
-				$render = Renderer::RenderPlayer($id);
+				$render = Renderer::RenderClothing($id);
 			}
 
 			if($render != null) {
