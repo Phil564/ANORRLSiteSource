@@ -24,10 +24,10 @@
 			if(!$data)
 				return null;
 
-			if(!isset($data['base64']))
+			if(!isset($data->base64))
 				return null;
 
-			return $data['base64'];
+			return $data->base64;
 		}
 
 		public static function RenderUser(int $id = 0, bool $headshot = false) {
@@ -57,10 +57,10 @@
 			if(!$data)
 				return null;
 
-			if(!isset($data['base64']))
+			if(!isset($data->base64))
 				return null;
 
-			return $data['base64'];
+			return $data->base64;
 		}
 
 		public static function RenderMesh(int $id = 0) {
@@ -75,10 +75,10 @@
 				return null;
 			}
 
-			if(!isset($data['base64']))
+			if(!isset($data->base64))
 				return null;
 
-			return $data['base64'];
+			return $data->base64;
 		}
 
 		public static function RenderPlace(int $id = 0) {
@@ -93,10 +93,10 @@
 				return null;
 			}
 
-			if(!isset($data['base64']))
+			if(!isset($data->base64))
 				return null;
 
-			return $data['base64'];
+			return $data->base64;
 		}
 
 		public static function RenderModel(int $id = 0) {
@@ -110,10 +110,10 @@
 			if(!$data)
 				return null;
 
-			if(!isset($data['base64']))
+			if(!isset($data->base64))
 				return null;
 
-			return $data['base64'];
+			return $data->base64;
 		}
 	}
 ?>
