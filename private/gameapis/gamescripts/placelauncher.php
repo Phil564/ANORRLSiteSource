@@ -76,7 +76,7 @@
 			
 			return $server;
 		} catch(Exception $e) {
-			error_log("Failed to start gameserver {$e->getMessage()}");
+			error_log("Failed to start gameserver");
 			errorOut(1);
 		}
 	}
@@ -102,7 +102,6 @@
 			$user = UserUtils::RetrieveUser();
 
 			if(!$user) {
-				error_log("User is not existing ahh");
 				errorOut(1);
 			}
 				
@@ -110,7 +109,6 @@
 				$place = Place::FromID(intval($_GET['placeId']));
 
 				if(!$place) {
-					error_log("Place was null");
 					errorOut(1);
 				}
 				if($user->isInAGame()) {
@@ -131,7 +129,6 @@
 				$server = GameServer::Get($_GET['serverId']);
 
 				if(!$server) {
-					error_log("Server was null");
 					errorOut(1);
 				}
 
