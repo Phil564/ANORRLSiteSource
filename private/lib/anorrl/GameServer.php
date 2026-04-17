@@ -175,6 +175,13 @@
 					":id" => $this->id
 				]
 			);
+
+			Database::singleton()->run(
+				"DELETE FROM `active_players` WHERE `serverid` = :id",
+				[
+					":id" => $this->id
+				]
+			);
 		}
 
 	}
