@@ -19,6 +19,8 @@
 
 					$sessions = $server->getSessions();
 
+					$players = [];
+
 					foreach($sessions as $session) {
 						$player = $session->player;
 						$players[] = [
