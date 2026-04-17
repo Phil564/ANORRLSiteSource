@@ -132,27 +132,33 @@
 	})
 	
 	<?php if($is_creator): ?>
-		var rendering = false;
-		function Render() {
-			if(rendering) {
-				return;
-			}
+	var rendering = false;
+	function Render() {
+		if(rendering) {
+			return;
+		}
 
-			rendering = true;
-			window.alert("Committing render! (Press ok to continue)");
-			$("#RenderButton").html("Rendering...");
-			$.post( "/Admin/components/assetstuff", { id: <?= $asset->id ?>, type: "render" }).done(function( data ) {
+		rendering = true;
+		window.alert("Committing render! (Press ok to continue)");
+		$("#RenderButton").html("Rendering...");
+		$.post( "/api/asset/render", { id: <?= $asset->id ?> }).done(function( data ) {
+			if(data['error']) {
+				window.alert(data['reason']);
+			}
+			window.location.reload();
+		});
+	}
+	
+	function Delete() {
+		if(window.confirm("Are you sure you want to delete this??")) {
+			$.post( "/api/asset/delete", { id: <?= $asset->id ?> }).done(function( data ) {
+				if(data['error']) {
+					window.alert(data['reason']);
+				}
 				window.location.reload();
 			});
 		}
-
-		function Delete() {
-			if(window.confirm("Are you sure you want to delete this??")) {
-				$.post( "/Admin/components/assetstuff", { id: <?= $asset->id ?>, type: "delete" }).done(function( data ) {
-					window.location.reload();
-				});
-			}
-		}
+	}
 	<?php endif ?>
 </script>
 <div id="ItemContainer">

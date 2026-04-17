@@ -105,8 +105,6 @@
 	route('GET',      '/users/[i:id]/following', '/private/views/users/following.php');
 	route('GET',      '/users/[i:id]/friends', '/private/views/users/friends.php');
 
-	route('GET|POST', '/Admin/components/assetstuff', '/private/api/assetstuff.php');
-
 	route('GET',      '/thumbs/profile', '/private/thumbs/profile.php');
 	route('GET',      '/thumbs/player', '/private/thumbs/player.php');
 	route('GET',      '/thumbs/headshot', '/private/thumbs/headshot.php');
@@ -148,6 +146,9 @@
 	route_api('GET|POST', 'gameservers/removeplayer');
 	route_api('GET|POST', 'gameservers/validateplayer');
 	route_api('GET|POST', 'gameservers/renewlease');
+
+	route_api('GET|POST', 'asset/render');
+	route_api('GET|POST', 'asset/delete');
 
 	// game apis
 	route('GET',      '/asset/', '/private/gameapis/assetdeliverer.php');

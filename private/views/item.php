@@ -123,14 +123,20 @@
 		rendering = true;
 		window.alert("Committing render! (Press ok to continue)");
 		$("#RenderButton").html("Rendering...");
-		$.post( "/Admin/components/assetstuff", { id: <?= $asset->id ?>, type: "render" }).done(function( data ) {
+		$.post( "/api/asset/render", { id: <?= $asset->id ?> }).done(function( data ) {
+			if(data['error']) {
+				window.alert(data['reason']);
+			}
 			window.location.reload();
 		});
 	}
 	
 	function Delete() {
 		if(window.confirm("Are you sure you want to delete this??")) {
-			$.post( "/Admin/components/assetstuff", { id: <?= $asset->id ?>, type: "delete" }).done(function( data ) {
+			$.post( "/api/asset/delete", { id: <?= $asset->id ?> }).done(function( data ) {
+				if(data['error']) {
+					window.alert(data['reason']);
+				}
 				window.location.reload();
 			});
 		}
