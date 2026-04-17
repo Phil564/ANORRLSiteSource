@@ -5,11 +5,14 @@
 	use anorrl\utilities\ByteReader;
 	use anorrl\utilities\ByteWriter;
 
-	class MeshConverter {
+	class Mesh {
+		private $vertices = [];
+		private $normals = [];
+		private $uvs = [];
+		private $faces = [];
+		public $loaded = false;
 
-
-		public static function ConvertFromOBJ(string $contents): array {
-
+		function LoadFromOBJ(string $contents): array {
 			if(
 				str_contains("v ", $contents) && 
 				str_contains("vn ", $contents) && 
@@ -22,7 +25,7 @@
 		}
 
 		/**
-		 * Converts a newer roblox mesh to version 2.00
+		 * Converts a loads a newer roblox mesh to the Mesh class
 		 * 
 		 * Supports:
 		 * - v3.00
@@ -32,9 +35,9 @@
 		 * - v5.00
 		 * 
 		 * @param string $contents
-		 * @return array{error: bool, mesh: string|array{error: bool, reason: string}}
+		 * @return array{error: bool, reason: string}}
 		 */
-		public static function Convert(string $contents): array {
+		function LoadFromFileMesh(string $contents): array {
 			$reader = new ByteReader();
 			$reader->buffer = $contents;
 
@@ -164,56 +167,59 @@
 
 					$facesLength = ($lods[1] * 3) - ($lods[0] * 3);
 					$actualFaces = array_slice($faces, $lods[0] * 3, $lods[1] * 3);
-
-					// Encode + optimize vertex and face data (trust me, this DOES make a difference)
-					$vertexArray = [];
-					$faceArray = [];
-
-					for($faceIndex = 0; $faceIndex < $facesLength; $faceIndex) {
-						$oldVertexIndex = $actualFaces[$faceIndex];
-
-						$writer = new ByteWriter();
-						$writer->FloatLE($vertices[$oldVertexIndex * 3]);
-						$writer->FloatLE($vertices[$oldVertexIndex * 3 + 1]);
-						$writer->FloatLE($vertices[$oldVertexIndex * 3 + 2]);
-						$writer->FloatLE($normals[$oldVertexIndex * 3]);
-						$writer->FloatLE($normals[$oldVertexIndex * 3 + 1]);
-						$writer->FloatLE($normals[$oldVertexIndex * 3 + 2]);
-						$writer->FloatLE($uvs[$oldVertexIndex * 2]);
-						$writer->FloatLE(1 - $uvs[$oldVertexIndex * 2 + 1]);
-						$writer->FloatLE(0);
-
-						$newVertexIndex = array_search($writer->buffer, $vertexArray);
-
-						if ($newVertexIndex == false) {
-							$newVertexIndex = array_push($vertexArray, $writer->buffer) - 1;
-						}
-
-						array_push($faceArray, pack("V", $newVertexIndex));
-
-						$faceIndex++;
-					}
-
-					$writer = new ByteWriter();
-					$writer->String("version 2.00\n");
-					// FileMeshHeaderV2
-					$writer->UInt16LE(2+1*2+4*2);             // ushort sizeof_FileMeshHeaderV2
-					$writer->Byte(4*9);                       // byte sizeof_FileMeshVertex
-					$writer->Byte(4*3);                       // byte sizeof_FileMeshFace
-					$writer->UInt32LE(count($vertexArray));   // uint numVerts
-					$writer->UInt32LE(count($faceArray) / 3); // uint numFaces
-					// Verts
-					$writer->String(implode($vertexArray));
-					// Faces
-					$writer->String(implode($faceArray));
-
+					$this->loaded = true;
 					return ["error" => false, "mesh" => $writer->buffer];
 				default:
 					return ["error" => true, "reason" => "Invalid mesh version found. [ $version ]"];
 			}
+			return ["error" => true, "reason" => "Mesh failed to load I guess."];
+		}
 
-			return ["error" => true, "reason" => "Mesh failed to convert I guess."];
-			
+		function SaveAsMeshV2() {
+			if (!$this->loaded) return false;
+
+			// Encode + optimize vertex and face data (trust me, this DOES make a difference)
+			$vertexArray = [];
+			$faceArray = [];
+
+			for($faceIndex = 0; $faceIndex < count($this->faces); $faceIndex) {
+				$oldVertexIndex = $this->faces[$faceIndex];
+
+				$writer = new ByteWriter();
+				$writer->FloatLE($this->vertices[$oldVertexIndex * 3]);
+				$writer->FloatLE($this->vertices[$oldVertexIndex * 3 + 1]);
+				$writer->FloatLE($this->vertices[$oldVertexIndex * 3 + 2]);
+				$writer->FloatLE($this->normals[$oldVertexIndex * 3]);
+				$writer->FloatLE($this->normals[$oldVertexIndex * 3 + 1]);
+				$writer->FloatLE($this->normals[$oldVertexIndex * 3 + 2]);
+				$writer->FloatLE($this->uvs[$oldVertexIndex * 2]);
+				$writer->FloatLE(1 - $this->uvs[$oldVertexIndex * 2 + 1]);
+				$writer->FloatLE(0);
+
+				$newVertexIndex = array_search($writer->buffer, $vertexArray);
+
+				if ($newVertexIndex == false) {
+					$newVertexIndex = array_push($vertexArray, $writer->buffer) - 1;
+				}
+
+				array_push($faceArray, pack("V", $newVertexIndex));
+
+				$faceIndex++;
+			}
+
+			$writer = new ByteWriter();
+			$writer->String("version 2.00\n");
+			// FileMeshHeaderV2
+			$writer->UInt16LE(2+1*2+4*2);             // ushort sizeof_FileMeshHeaderV2
+			$writer->Byte(4*9);                       // byte sizeof_FileMeshVertex
+			$writer->Byte(4*3);                       // byte sizeof_FileMeshFace
+			$writer->UInt32LE(count($vertexArray));   // uint numVerts
+			$writer->UInt32LE(count($faceArray) / 3); // uint numFaces
+			// Verts
+			$writer->String(implode($vertexArray));
+			// Faces
+			$writer->String(implode($faceArray));
+			return $writer->buffer;
 		}
 	}
 ?>

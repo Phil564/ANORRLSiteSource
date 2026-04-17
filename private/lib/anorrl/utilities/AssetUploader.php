@@ -390,10 +390,11 @@
 					}
 
 					if(!self::IsSupportedMesh($data)) {
-						$mesh_result = MeshConverter::Convert($data);
+						$mesh = new Mesh();
+						$mesh_result = $mesh->LoadFromFileMesh($data);
 
 						if(!$mesh_result['error'])
-							$data = $mesh_result['mesh'];
+							$data = $mesh->SaveAsMeshV2();
 						else
 							return $mesh_result;
 					}
@@ -546,15 +547,12 @@
 									imagecopy($image, $original_image, 0, 0, 0, 0, $width, $height);
 									imagesavealpha($image, true);
 
+									$new_width = 420;
+									$new_height = 420;
 									if($width > $height) {
-										$new_width = 420;
 										$new_height = -1;
 									} else if($width < $height) {
 										$new_width = -1;
-										$new_height = 420;
-									} else {
-										$new_width = 420;
-										$new_height = 420;
 									}
 
 									$resultimage = imagescale($image, $new_width, $new_height);
@@ -703,10 +701,11 @@
 								}
 
 								if(!self::IsSupportedMesh($data)) {
-									$mesh_result = MeshConverter::Convert($data);
+									$mesh = new Mesh();
+									$mesh_result = $mesh->LoadFromFileMesh($data);
 
 									if(!$mesh_result['error'])
-										$data = $mesh_result['mesh'];
+										$data = $mesh->SaveAsMeshV2();
 									else
 										return $mesh_result;
 								}

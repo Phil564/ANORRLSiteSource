@@ -2,7 +2,7 @@
 	use anorrl\Asset;
 	use anorrl\Place;
 	use anorrl\enums\AssetType;
-	use anorrl\utilities\MeshConverter;
+	use anorrl\utilities\Mesh;
 
 	if(!isset($_GET['id']) && !isset($_GET['ID']) && !isset($_GET['Id'])) {
 		die(http_response_code(500));
@@ -95,15 +95,16 @@
 	} else {
 		$roblosec = CONFIG->asset->roblosec;
 		if(CONFIG->asset->canforward && strlen(trim($roblosec)) != 0) {
-			
+			$rbxAssetPath = $_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id;
 
 			if(isset($_GET['version'])) {
 				$version = intval($_GET['version']);
+				$rbxAssetPath = $rbxAssetPath."_".$version;
 			}
 
-			if(!file_exists($_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id.(isset($_GET['version']) ?  "_".$version : ""))) {
+			if(!file_exists($rbxAssetPath)) {
 				$url = "https://assetdelivery.roblox.com/v1/asset/?id=".$id.(isset($_GET['version']) ? '&version='.$version : "");
-				$ch = curl_init ($url);
+				$ch = curl_init($url);
 				curl_setopt($ch, CURLOPT_HTTPHEADER, ["Cookie: .ROBLOSECURITY=$roblosec"]);
 				curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -118,39 +119,32 @@
 					$output = gzdecode($output);
 					$mimetype = checkMimeType($output);
 				}
-				
+
 				if(str_contains($mimetype, "json")) {
 					$contents = "";
 
-					if(!isset($_GET['version'])) {
-						file_put_contents($_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id, $contents);
-					} else {
-						file_put_contents($_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id."_".$version, $contents);
-					}
+					file_put_contents($rbxAssetPath, $contents);
 
 					echo "Unauthorised access to this roblox asset!";
 					die(http_response_code(500));
 				} else {
 					header("Content-Type: $mimetype");
 
-					$contents = str_replace("www.roblox.com", $domain, $output);
+					$contents = str_replace("www.roblox.com", $domain, $output); // note: needs to be exact length for binary place/model files to work properly
 
-					if(str_starts_with($contents, "version "))
-						$mesh_result = MeshConverter::Convert($contents);
+					if(str_starts_with($contents, "version ")) {
+						$mesh = new Mesh();
+						$mesh_result = $mesh->LoadFromFileMesh($contents);
+
 						if(!$mesh_result['error'])
-							$contents = $mesh_result['mesh'];
-						// todo: do something with $mesh_result['reason']
-
-					if(!isset($_GET['version'])) {
-						file_put_contents($_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id, $contents);
-					} else {
-						file_put_contents($_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id."_".$version, $contents);
+							$contents = $mesh->SaveAsMeshV2();
 					}
+
+					file_put_contents($rbxAssetPath, $contents);
 				}
-				
 			} else {
 				if($id > 10420) {
-					$contents = file_get_contents($_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id.(isset($_GET['version']) ?  "_".$version : ""));
+					$contents = file_get_contents($rbxAssetPath);
 					$mimetype = checkMimeType($contents);
 					
 					if($mimetype == "application/gzip") {
@@ -160,18 +154,17 @@
 					header("Content-Type: $mimetype");
 					if(str_contains(checkMimeType($contents), "json")) {
 						echo "Unauthorised access to this roblox asset!";
-						file_put_contents($_SERVER['DOCUMENT_ROOT']."/../assets/rbx_".$id.(isset($_GET['version']) ?  "_".$version : ""), "");
+						file_put_contents($rbxAssetPath, "");
 						die(http_response_code(500));
 					}
 				} else {
 					http_response_code(404);
 					die("Asset not found!");
 				}
-				
 			}
 
 			Header('Content-Disposition: attachment; filename="rbx_'.$id.'"');
-			echo $contents;	
+			echo $contents;
 		
 		} else {
 			http_response_code(404);
