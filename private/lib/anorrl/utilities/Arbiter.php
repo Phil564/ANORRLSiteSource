@@ -85,6 +85,8 @@
 			if ($response === false)
 				return null;
 
+			error_log($response);
+
 			$json = json_decode($response);
 
 			if (!$json)
