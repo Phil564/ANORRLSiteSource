@@ -276,7 +276,7 @@
 		<div id="InfoBox" content="Servers" style="display:none">
 			
 
-			<div class="Window" style="margin: 0 auto;">
+			<div class="Window" style="margin: 0 auto; width: 100%">
 				<div id="Name">Servers<?php if($user): ?> <button onclick="ANORRL.PlaceLauncher.GrabGameservers(<?= $id ?>);">Refresh</button><?php endif ?></div>
 				<div id="Contents">
 					<div id="ServersBox">
