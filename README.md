@@ -3,6 +3,8 @@ also known as ANotherOldRobloxRevivalLol
 
 This uses the [ANRSAL](https://github.com/unc-nnected/ANotherRccServiceArbiterLol/) project (created by [Aria](https://github.com/unc-nnected)) as to render and start gameservers so please use that when hosting this source!
 
+However, there is a custom version of the arbiter [here](https://github.com/anorrl/arbiter) that is forked from ANRSAL.
+
 this is a FOSS project, you can submit issues and pull requests.
 
 ## .info
