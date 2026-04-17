@@ -1,15 +1,19 @@
 <?php
 	use anorrl\GameServer;
-
-	$access = CONFIG->asset->key;
+	use anorrl\utilities\Arbiter;
 
 	if(isset($_GET['access']) && isset($_GET['jobID'])) {
-		if($_GET['access'] == $access) {
+		if($_GET['access'] == CONFIG->asset->key) {
 			$gameserver = GameServer::GetFromJobID($_GET['jobID']);
 
 			if($gameserver) {
 				$gameserver->destroy();
 				die();
+			} else {
+				$job = Arbiter::singleton()->getGSMJob($_GET['jobID']);
+
+				if($job) 
+					Arbiter::singleton()->request("gameserver/kill", ["pid" => $job->pid]);
 			}
 		}
 	}

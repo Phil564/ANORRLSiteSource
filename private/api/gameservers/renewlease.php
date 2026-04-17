@@ -1,5 +1,6 @@
 <?php
 	use anorrl\GameServer;
+	use anorrl\utilities\Arbiter;
 
 	if(isset($_GET['access']) && isset($_GET['jobID'])) {
 		if($_GET['access'] == CONFIG->asset->key) {
@@ -8,6 +9,11 @@
 			if($gameserver) {
 				$gameserver->renewLease();
 				die();
+			} else {
+				$job = Arbiter::singleton()->getGSMJob($_GET['jobID']);
+
+				if($job) 
+					Arbiter::singleton()->request("gameserver/kill", ["pid" => $job->pid]);
 			}
 		}
 	}

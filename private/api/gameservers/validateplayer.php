@@ -8,7 +8,7 @@
 
 			$user = User::FromID(intval($_GET['userID']));
 
-			if($gameserver != null && $user && !$user->isBanned()) {
+			if($gameserver && $user && !$user->isBanned()) {
 				$gameserver->addPlayer($user);
 
 				die("OK");
