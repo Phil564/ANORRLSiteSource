@@ -12,8 +12,20 @@
 
 	$user = User::FromID($userid);
 
+	$emotes = [];
+
+	foreach($user->getOwnedAssets(AssetType::ANIMATION) as $emote) {
+		$emotes[] = [
+			"id" => $emote->id,
+			"name" => $emote->name,
+			"version" => $emote->current_version,
+			"versionid" => $emote->getLatestVersionDetails()->id,
+		];
+	}
+
 	die(json_encode([
-		"emotes" => $user->getOwnedAssets(AssetType::ANIMATION)
+		"success" => true,
+		"emotes" => $emotes
 	]));
 
 ?>
