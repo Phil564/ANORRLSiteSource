@@ -28,6 +28,7 @@
 		case RIGHTLEG;
 		case PACKAGE;
 		case GAMEPASS;
+		case EMOTE;
 		/**
 		 * This is only for stuff api lol
 		 */
@@ -58,6 +59,7 @@
 				31 => AssetType::RIGHTLEG,
 				32 => AssetType::PACKAGE,
 				34 => AssetType::GAMEPASS,
+				61 => AssetType::EMOTE,
 				99 => AssetType::BODYPARTS
 			};
 		}
@@ -87,6 +89,7 @@
 				AssetType::RIGHTLEG 	=> 31,
 				AssetType::PACKAGE      => 32,
 				AssetType::GAMEPASS     => 34,
+				AssetType::EMOTE		=> 61,
 				AssetType::BODYPARTS    => 99
 			};
 		}
@@ -105,6 +108,7 @@
 				AssetType::LEFTARM 		=> true,
 				AssetType::LEFTLEG 		=> true,
 				AssetType::RIGHTLEG 	=> true,
+				AssetType::EMOTE 		=> true,
 				default => false
 			};
 		}
@@ -150,6 +154,7 @@
 				AssetType::RIGHTLEG 	=> "Right Leg",
 				AssetType::PACKAGE      => "Package",
 				AssetType::GAMEPASS     => "Gamepass",
+				AssetType::EMOTE		=> "Emote",
 			};
 		}
 
