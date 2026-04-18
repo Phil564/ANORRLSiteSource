@@ -40,12 +40,33 @@ ANORRL.PlaceLauncher  = {
 			if(data == "") {
 				alert("You need to be logged in to play!");
 				return;
-			} else if(!data.startsWith("anorrl-")) {
+			} else if(!data.startsWith("anorrl-player")) {
 				alert(data);
 				return;
 			}
 			window.open(data, "_self");
+
+			$("#LaunchingGameContainer").css("opacity", 1);
+			$("#LaunchingGameContainer").css("pointer-events", "all");
+
+			// im sorry
+			window.setTimeout(function() {
+				$("#LoadingAreaContainer").css("display", "none");
+				$("#DownloadClientContainer").css("display", "inline");
+
+				window.setTimeout(function() {
+					$("#LaunchingGameContainer").css("opacity", 0);
+					$("#LaunchingGameContainer").css("pointer-events", "none");
+					
+					window.setTimeout(function() {
+						$("#LoadingAreaContainer").css("display", "inline");
+						$("#DownloadClientContainer").css("display", "none");
+					}, 1000);
+				}, 5000);
+			}, 2500);
 		});
+
+		
 	},
 
 	EditPlace: function(placeId) {
@@ -53,11 +74,30 @@ ANORRL.PlaceLauncher  = {
 			if(data == "") {
 				alert("You need to be logged in to play!");
 				return;
-			} else if(!data.startsWith("anorrl-")) {
+			} else if(!data.startsWith("anorrl-studio")) {
 				alert(data);
 				return;
 			}
 			window.open(data, "_self");
+
+			$("#LaunchingGameContainer").css("opacity", 1);
+			$("#LaunchingGameContainer").css("pointer-events", "all");
+
+			// im sorry
+			window.setTimeout(function() {
+				$("#LoadingAreaContainer").css("display", "none");
+				$("#DownloadStudioContainer").css("display", "inline");
+
+				window.setTimeout(function() {
+					$("#LaunchingGameContainer").css("opacity", 0);
+					$("#LaunchingGameContainer").css("pointer-events", "none");
+					
+					window.setTimeout(function() {
+						$("#LoadingAreaContainer").css("display", "inline");
+						$("#DownloadStudioContainer").css("display", "none");
+					}, 1000);
+				}, 5000);
+			}, 2500);
 		});
 	},
 	
@@ -86,11 +126,30 @@ ANORRL.PlaceLauncher  = {
 				if(data == "") {
 					alert("You need to be logged in to play!");
 					return;
-				} else if(!data.startsWith("anorrl-")) {
+				} else if(!data.startsWith("anorrl-player")) {
 					alert(data);
 					return;
 				}
 				window.open(data, "_self");
+
+				$("#LaunchingGameContainer").css("opacity", 1);
+				$("#LaunchingGameContainer").css("pointer-events", "all");
+
+				// im sorry
+				window.setTimeout(function() {
+					$("#LoadingAreaContainer").css("display", "none");
+					$("#DownloadClientContainer").css("display", "inline");
+
+					window.setTimeout(function() {
+						$("#LaunchingGameContainer").css("opacity", 0);
+						$("#LaunchingGameContainer").css("pointer-events", "none");
+						
+						window.setTimeout(function() {
+							$("#LoadingAreaContainer").css("display", "inline");
+							$("#DownloadClientContainer").css("display", "none");
+						}, 1000);
+					}, 5000);
+				}, 2500);
 			});
 		});
 

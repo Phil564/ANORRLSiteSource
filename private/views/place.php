@@ -72,10 +72,11 @@
 	$page->addStylesheet("/css/new/item/place.css?v=4");
 	$page->addStylesheet("/css/new/my/home.css?v=2");
 	$page->addStylesheet("/css/new/window.css");
+	$page->addStylesheet("/css/new/placelauncher.css?");
 	
 
 	$page->addScript("/js/item.js?t=1776186351");
-	$page->addScript("/js/placelauncher.js?t=1776434501");
+	$page->addScript("/js/placelauncher.js?t=1776506477");
 
 	$page->addMeta("title", htmlspecialchars($asset->name, ENT_QUOTES));
 	$page->addMeta("description", htmlspecialchars(substr($asset->description, 0, 128), ENT_QUOTES));
@@ -162,6 +163,33 @@
 	}
 	<?php endif ?>
 </script>
+
+<div id="LaunchingGameContainer">
+	<div class="Window">
+		<div id="Name">ANORRL</div>
+		<div id="Contents" style="padding: 20px;">
+			<div id="LoadingAreaContainer">
+				<div id="RunningGuy">
+					<img src="/public/images/ProgressIndicator4White.gif" width="100">
+				</div>
+				<p id="LaunchingTextContainer">
+					<span id="LaunchingText">ANORRL is launching!</span>
+					<img src="/public/images/spinner16x16.gif">
+				</p>
+				<p id="LauncherQuote">Have you checked the oven recently?</p>
+			</div>
+			<div id="DownloadClientContainer" style="display: none">
+				<img src="/public/images/download/client.png" width="100">
+				<p>You should probably <a href="/download">download</a> the client if you haven't already...</p>
+			</div>
+			<div id="DownloadStudioContainer" style="display: none">
+				<img src="/public/images/download/studio.png" width="100">
+				<p>You should probably <a href="/download">download</a> the studio if you haven't already...</p>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div id="ItemContainer">
 	<h4>ANORRL <?= $asset->type->label(); ?></h4>
 	<h2><a class="FavouriteButton" href="#" data-assetid="<?= $asset->id ?>" <?= $is_favourited ? 'favourited="true"' : "" ?>></a><?= $asset->name ?></h2>

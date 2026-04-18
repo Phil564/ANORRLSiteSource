@@ -59,9 +59,11 @@
 	$page->addStylesheet("/css/new/stuff.css?v=2");
 	$page->addStylesheet("/css/new/comments.css");
 	$page->addStylesheet("/css/new/my/profile.css?v=14");
-	$page->addStylesheet("/users/{$get_user->id}/css?t=".time());
+	$page->addStylesheet("/users/{$get_user->id}/css?t=".time(), false);
+	$page->addStylesheet("/css/new/window.css");
+	$page->addStylesheet("/css/new/placelauncher.css?");
 
-	$page->addScript("/js/placelauncher.js?t=1776434501");
+	$page->addScript("/js/placelauncher.js?t=1776506477");
 	$page->addScript("/js/user.js?t=1776011774");
 
 	$page->loadHeader();
@@ -81,6 +83,31 @@
 		}
 	}
 </script>
+<div id="LaunchingGameContainer">
+	<div class="Window">
+		<div id="Name">ANORRL</div>
+		<div id="Contents" style="padding: 20px;">
+			<div id="LoadingAreaContainer">
+				<div id="RunningGuy">
+					<img src="/public/images/ProgressIndicator4White.gif" width="100">
+				</div>
+				<p id="LaunchingTextContainer">
+					<span id="LaunchingText">ANORRL is launching!</span>
+					<img src="/public/images/spinner16x16.gif">
+				</p>
+				<p id="LauncherQuote">Have you checked the oven recently?</p>
+			</div>
+			<div id="DownloadClientContainer" style="display: none">
+				<img src="/public/images/download/client.png" width="100">
+				<p>You should probably <a href="/download">download</a> the client if you haven't already...</p>
+			</div>
+			<div id="DownloadStudioContainer" style="display: none">
+				<img src="/public/images/download/studio.png" width="100">
+				<p>You should probably <a href="/download">download</a> the studio if you haven't already...</p>
+			</div>
+		</div>
+	</div>
+</div>
 <?php if($bgm != null && $settings->profile_music_enabled): ?>
 <audio id="bgm" loop muted volume="0.25"> <!-- autoplay m.i.a -->
 	<source src="/asset/?id=<?= $bgm->getAssetIDSafe() ?>">

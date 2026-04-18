@@ -136,7 +136,7 @@
 						"author" => [
 							"name" => "ANORRL",
 							"url" => "https://$domain/",
-							"icon_url" => "https://$domain/images/download/2016client.png"
+							"icon_url" => "https://$domain/public/images/download/client.png"
 						],
 						"thumbnail" => [
 							"url" => "https://$domain{$asset->getThumbsUrl()}"
