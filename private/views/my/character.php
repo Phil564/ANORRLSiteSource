@@ -3,7 +3,7 @@
 
 	$page = new Page("Your Character", "my/character");
 	$page->addScript("/js/core/jquery-modal.js");
-	$page->addScript("/js/character.js?t=1776253537");
+	$page->addScript("/js/character.js?t=1776537578");
 
 	$page->addStylesheet("/css/new/stuff.css?v=2");
 	$page->addStylesheet("/css/new/my/character.css");
@@ -39,7 +39,7 @@
 				</div>
 				<hr>
 				<div>
-					<a data_category="32">Packages</a>
+					<a data_category="61">Emotes</a>
 					<a data_category="17">Heads</a>
 					<a data_category="27">Torsos</a>
 					<a data_category="29">Left Arms</a>

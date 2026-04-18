@@ -25,7 +25,8 @@
 		"animations",
 		"images",
 		"lua",
-		"body"
+		"body",
+		"emotes"
 	];
 
 	$types = [
@@ -42,8 +43,7 @@
 		"lua" => AssetType::LUA,
 		"hats" => AssetType::HAT,
 		"animations" => AssetType::ANIMATION,
-
-
+		"emotes" => AssetType::EMOTE,
 	];
 
 	if(!in_array($type, $validtypes))
@@ -102,7 +102,7 @@
 	$page->addStylesheet("/css/new/forms.css?v=1");
 	$page->addStylesheet("/css/new/window.css");
 
-	$page->addScript("/js/create.js?t=1776449023");
+	$page->addScript("/js/create.js?t=1776537578");
 	$page->loadHeader();
 ?>
 <div class="Asset" template>
@@ -187,6 +187,7 @@
 			<li data_category="12"><a>Pants</a></li>
 			<li data_category="19"><a>Gears</a></li>
 			<li data_category="body"><a>Body Type</a></li>
+			<li data_category="61"><a>Emotes</a></li>
 			<hr>
 			<h4>Development</h4>
 			<li data_category="13"><a>Decals</a></li>
@@ -194,6 +195,7 @@
 			<li data_category="4"><a>Meshes</a></li>
 			<li data_category="10"><a>Models</a></li>
 			<li data_category="24"><a>Animations</a></li>
+			
 			
 			<?php if($user->isAdmin()): ?>
 			<hr>

@@ -4,9 +4,33 @@
 	$page = new Page("Your Stuff", "my/stuff");
 	$page->addStylesheet("/css/new/stuff.css?v=2");
 	$page->addStylesheet("/css/new/forms.css");
-	$page->addScript("/js/stuff.js?t=1776011774");
+	$page->addScript("/js/stuff.js?t=1776537578");
 	$page->loadHeader();
 ?>
+<style>
+	#StuffNavigation ul {
+		background: linear-gradient(#222, #111);
+	}
+
+	#StuffNavigation li:hover a {
+		text-decoration: underline;
+		color: #ffc63f;
+	}
+
+	.RequiredThing {
+		color: red;
+		font-weight: bold;
+		user-select: none;
+	}
+	
+	#StuffContainer h4 {
+		margin: 0px;
+		width: 100%;
+		padding: 5px 0px;
+		margin-bottom: 10px;
+		text-align: center;
+	}
+</style>
 <div class="Asset" template>
 	<a id="NameAndThumbs">
 		<img src="">
@@ -25,21 +49,27 @@
 		</div>
 		
 		<ul>
+			<h4>Accessories</h4>
 			<li data_category="8" ><a>Hats</a></li>
 			<li data_category="18"><a>Faces</a></li>
 			<li data_category="11"><a>Shirts</a></li>
 			<li data_category="2" ><a>T-Shirts</a></li>
 			<li data_category="12"><a>Pants</a></li>
+			<li data_category="19"><a>Gears</a></li>
+			<li data_category="61"><a>Emotes</a></li>
 			<hr>
-			<li data_category="3" ><a>Audio</a></li>
+			<h4>Development</h4>
 			<li data_category="13"><a>Decals</a></li>
+			<li data_category="3"><a>Audio</a></li>
+			<li data_category="4"><a>Meshes</a></li>
 			<li data_category="10"><a>Models</a></li>
+			<li data_category="24"><a>Animations</a></li>
 			<li data_category="9" ><a>Places</a></li>
 			<hr>
-			<li data_category="19"><a>Gears</a></li>
+			<h4>Misc.</h4>
 			<li data_category="21"><a>Badges</a></li>
 			<li data_category="34"><a>Gamepasses</a></li>
-			<li data_category="32"><a>Packages</a></li>
+			<li data_category="32"><a>Outfits</a></li>
 		</ul>
 	</div><div id="AssetsContainer">
 		<div id="FormPanel" style="margin: 5px auto;">

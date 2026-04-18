@@ -21,14 +21,16 @@ var allowedcategories = {
 	"audio": 3,
 	"decals": 13,
 	"models": 10,
-	"places": 9,
 	"hats": 8,
 	"faces": 18,
+	"emotes": 61,
+	"animations": 24,
 }
 
 var shouldnotbeallowedatallcategories = {
 	"badges": 21,
 	"gamepasses": 34,
+	"places": 9,
 }
 
 const regex = /[^A-Za-z0-9 ]/g;
@@ -226,6 +228,8 @@ $(function(){
 			"badges": 21,
 			"gamepasses": 34,
 			"packages": 32,
+			"animations": 24,
+			"emotes": 61,
 		}
 
 		ANORRL.Stuff.GrabAssets(categories[url]);

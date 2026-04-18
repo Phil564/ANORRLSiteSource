@@ -6,6 +6,7 @@
 	use anorrl\Database;
 	use anorrl\Place;
 	use anorrl\enums\AssetType;
+	use anorrl\utilities\AssetTypeUtils;
 	use anorrl\utilities\UtilUtils;
 	use anorrl\utilities\ImageUtils;
 	use anorrl\enums\ANORRLBadge;
@@ -589,8 +590,6 @@
 
 		function wear(Asset|int $asset): array {
 
-			$theabsolutelimit = 5;
-
 			$assetid = $asset;
 			if($asset instanceof Asset) {
 				$assetid = $asset->id;
@@ -625,20 +624,21 @@
 							$stmt_replaceitem->execute();
 						}
 					} else {
-						/*$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `userid` = ? AND `assettype` = ?;");
+						$limit = AssetTypeUtils::WearableLimit($item->type);
+						$stmt_checkinventory = $con->prepare("SELECT * FROM `inventory` WHERE `userid` = ? AND `assettype` = ?;");
 						$stmt_checkinventory->bind_param('ii', $this->id, $assettype);
 						$stmt_checkinventory->execute();
 
-						if($stmt_checkinventory->get_result()->num_rows < $theabsolutelimit) {
-							
+						if($theabsolutelimit == -1 || $stmt_checkinventory->get_result()->num_rows < $theabsolutelimit) {
+							$stmt_additem = $con->prepare("INSERT INTO `inventory`(`userid`, `assetid`, `assettype`) VALUES (?, ?, ?)");
+							$assettype = $item->type->ordinal();
+							$stmt_additem->bind_param('iii', $this->id, $assetid, $assettype);
+							$stmt_additem->execute();
 						} else {
 							return ["error" => true, "reason" => "Too many fucking ".strtolower($item->type->label())."s on"];
-						}*/
+						}
 
-						$stmt_additem = $con->prepare("INSERT INTO `inventory`(`userid`, `assetid`, `assettype`) VALUES (?, ?, ?)");
-						$assettype = $item->type->ordinal();
-						$stmt_additem->bind_param('iii', $this->id, $assetid, $assettype);
-						$stmt_additem->execute();
+						
 					}
 				} else {
 					return ["error" => true, "reason" => "Invalid item"];

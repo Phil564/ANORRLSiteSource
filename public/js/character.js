@@ -632,14 +632,15 @@ $(function(){
 			"shirts" : 2,
 			"pants" : 12,
 			"gears" : 19,
-			"outfits" : "outfits",
+			"outfits" : 32,
 			"packages" : 32,
 			"heads" : 17,
 			"torsos" : 27,
 			"leftarms" : 29,
 			"rightarms": 28,
 			"leftlegs" : 30,
-			"rightlegs" : 31
+			"rightlegs" : 31,
+			"emotes" : 61,
 		}
 
 		ANORRL.Character.LoadWardrobe(categories[url]);

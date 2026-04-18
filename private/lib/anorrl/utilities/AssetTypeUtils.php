@@ -12,6 +12,7 @@
 				AssetType::MODEL => true,
 				AssetType::PLACE => true,
 				AssetType::ANIMATION => true,
+				AssetType::EMOTE => true,
 				default => false,
 			};
 		}
@@ -77,7 +78,15 @@
 				AssetType::HAT => true,
 				AssetType::GEAR => true,
 				AssetType::ANIMATION => true,
+				AssetType::EMOTE => true,
 				default => false,
+			};
+		}
+
+		public static function WearableLimit(AssetType $type): int {
+			return match($type) {
+				AssetType::EMOTE => 8,
+				default => -1
 			};
 		}
 

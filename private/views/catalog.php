@@ -46,6 +46,7 @@
 				<li data_category="2" ><a>T-Shirts</a></li>
 				<li data_category="12"><a>Pants</a></li>
 				<li data_category="19"><a>Gears</a></li>
+				<li data_category="61"><a>Emotes</a></li>
 				<li data_category="17"><a>Heads</a></li>
 				<li data_category="27"><a>Torsos</a></li>
 				<li data_category="28"><a>Left Arms</a></li>
