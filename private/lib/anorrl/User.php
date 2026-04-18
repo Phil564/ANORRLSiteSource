@@ -629,7 +629,7 @@
 						$stmt_checkinventory->bind_param('ii', $this->id, $assettype);
 						$stmt_checkinventory->execute();
 
-						if($theabsolutelimit == -1 || $stmt_checkinventory->get_result()->num_rows < $theabsolutelimit) {
+						if($limit == -1 || $stmt_checkinventory->get_result()->num_rows < $limit) {
 							$stmt_additem = $con->prepare("INSERT INTO `inventory`(`userid`, `assetid`, `assettype`) VALUES (?, ?, ?)");
 							$assettype = $item->type->ordinal();
 							$stmt_additem->bind_param('iii', $this->id, $assetid, $assettype);
