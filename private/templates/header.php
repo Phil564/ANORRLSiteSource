@@ -139,7 +139,7 @@
 		<?php endif ?>
 	</head>
 	<body <?= $this->settings->nightbg_enabled && !$hasBackground ? "night" : "" ?>>
-		<?php if($this->settings->loadingscreens_enabled): ?>
+		<?php if($this->settings->loadingscreens_enabled && !ClientDetector::IsAClient()): ?>
 		<div id="LoadingScreen">
 			<div>
 				<img src="/public/images/splashes/<?= $rand_splash_pic ?>" splash>
@@ -229,6 +229,7 @@
 				<div id="Links"></div>
 				<?php endif ?>
 			</div>
+			<?php if(!ClientDetector::IsAClient()): ?>
 			<div class="DisplayMobileWarning" style="display: none">
 				<div id="MobileWarningText">
 					<h1>HEADS UP!</h1>
@@ -236,6 +237,7 @@
 					<button onclick="ANORRL.HideMobileWarning()">Continue anyways...</button>
 				</div>
 			</div>
+			<?php endif ?>
 			<div id="Body">
 				<div id="BodyContainer">
 					
