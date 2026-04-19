@@ -274,9 +274,9 @@
 			foreach($fetch_users as $obj_user) {
 				User::FromID($obj_user->id)->isOnline();
 			}
-			
+
 			$userids = $db->run(
-				"SELECT `users`.`id` FROM `users`, `activity` WHERE `activity`.`userid` = `users`.`id` WHERE `name` LIKE :query ORDER BY `users`.`online` DESC, `activity`.`action_time` DESC LIMIT :page, :rows",
+				"SELECT `users`.`id` FROM `users`, `activity` WHERE `activity`.`userid` = `users`.`id` AND `name` LIKE :query ORDER BY `users`.`online` DESC, `activity`.`action_time` DESC LIMIT :page, :rows",
 				[
 					":query" => $queryfiltered,
 					":page" => (($page-1)*$count),
