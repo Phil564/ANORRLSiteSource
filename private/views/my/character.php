@@ -2,7 +2,7 @@
 	use anorrl\Page;
 
 	$page = new Page("Your Character", "my/character");
-	$page->addScript("/js/core/jquery-modal.js");
+	
 	
 
 	$page->addStylesheet("/css/new/stuff.css?v=2");
@@ -13,6 +13,8 @@
 	$page->load3DScripts();
 
 	$page->addScript("/js/character.js?t=1776656018");
+
+	$page->addScript("/js/core/jquery-modal.js");
 
 	$page->loadHeader();
 ?>
