@@ -19,7 +19,7 @@ use anorrl\User;
 				imagesavealpha($render_image, true);
 				imagepng($render_image, "$mediadir/$charactermd5.png");
 			} else {
-				file_put_contents("$mediadir/$charactermd5.json", gzcompress($data));
+				file_put_contents("$mediadir/$charactermd5.json", $data);
 			}
 
 			$user->updateOutfitHash();
