@@ -24,7 +24,7 @@ use anorrl\User;
 				$data = str_replace("\"y\":+", "\"y\":", $render);
 				$data = str_replace("\"z\":+", "\"z\":", $render);
 
-				if(str_ends_with($data, "==")) {
+				if(str_ends_with($data, "==\n")) {
 					$data = substr($data, 0, strlen($data)-2);
 				}
 
