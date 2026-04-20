@@ -21,9 +21,12 @@ use anorrl\User;
 				imagepng($render_image, "$mediadir/$charactermd5.png");
 			} else {
 				$data = trim($render);
-				$data = str_replace("\"x\":\+", "\"x\":", $render);
-				$data = str_replace("\"y\":\+", "\"y\":", $render);
-				$data = str_replace("\"z\":\+", "\"z\":", $render);
+				$data = str_replace("\"x\":+", "\"x\":", $render);
+				$data = str_replace("\"y\":+", "\"y\":", $render);
+				$data = str_replace("\"z\":+", "\"z\":", $render);
+
+				
+				$data = preg_replace("/Player([0-9]+)Tex\.png/i", "scene.png", $data);
 
 				if(str_ends_with($data, "==")) {
 					$data = substr($data, 0, strlen($data)-2);

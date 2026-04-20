@@ -51,7 +51,7 @@
 		}
 
 		public static function Get3DTex(string $hash) {
-			return self::GetFileInRender($hash, "Player1Tex.png");
+			return self::GetFileInRender($hash, "scene.png");
 		}
 
 		private static function GetRenderFile(string $hash): mixed {
@@ -60,8 +60,8 @@
 
 			$json = json_decode((file_get_contents(self::GetPath($hash))), true);
 
-			if(!$json)
-				unlink(self::GetPath($hash)); // scary
+			/*if(!$json)
+				unlink(self::GetPath($hash)); // scary*/
 
 			return $json;
 		}
