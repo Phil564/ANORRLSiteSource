@@ -3,10 +3,11 @@
 	
 	header("Content-Type: image/png");
 
-	if(!isset($hash))
+	if(!isset($hash) || !isset($image))
 		die(http_response_code(500));
 
-	$data = Thumbnail::Get3DTex($hash);
+
+	$data = Thumbnail::Get3DTex($hash, $image);
 
 	if(!$data)
 		die(http_response_code(500));

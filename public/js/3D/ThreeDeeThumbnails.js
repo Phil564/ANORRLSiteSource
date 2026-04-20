@@ -121,7 +121,7 @@
 
         function loadObjAndMtl(hash, container, json, callbackAfterLoaderIsDone) {
 
-            var baseUri = "/thumbnail/"+type+"/"; //server should provide
+            var baseUri = "/thumbnail/"+type+"/"+hash+"/"; //server should provide
             var containerHeight = container.width(); //container.height();
             var containerWidth = container.width();
             var camera = new THREE.PerspectiveCamera(fieldOfView, containerWidth / containerHeight, minRenderDistance, maxRenderDistance);
@@ -184,7 +184,7 @@
 
             // ReSharper disable once InconsistentNaming
             var loader = new THREE.OBJMTLLoader();
-            loader.load(baseUri, hash, hash, objAndMtlLoaded, undefined, onError);
+            loader.load(baseUri, objAndMtlLoaded, undefined, onError);
         }
 
         this.each(function () {

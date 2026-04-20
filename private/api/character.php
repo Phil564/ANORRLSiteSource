@@ -25,7 +25,7 @@ use anorrl\User;
 				$data = str_replace("\"y\":+", "\"y\":-", $data);
 				$data = str_replace("\"z\":+", "\"z\":-", $data);
 
-				$data = preg_replace("/Player([0-9]+)Tex\.png/i", "scene.png", $data);
+				//$data = preg_replace("/Player([0-9]+)Tex\.png/i", "scene.png", $data);
 
 				if(str_ends_with($data, "==")) {
 					$data = substr($data, 0, strlen($data)-2);

@@ -26,9 +26,9 @@ THREE.OBJMTLLoader.prototype = {
 
 	constructor: THREE.OBJMTLLoader,
 
-	load: function ( baseUri, objHash, mtlHash, onLoad, onProgress, onError ) {
-	    var objUrl = baseUri +"obj/"+ objHash;
-	    var mtlUri = baseUri +"mtl/"+ mtlHash;
+	load: function ( baseUri, onLoad, onProgress, onError ) {
+	    var objUrl = baseUri + "obj";
+	    var mtlUri = baseUri + "mtl";
 
 	    var scope = this;
 

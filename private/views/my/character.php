@@ -13,10 +13,10 @@
 	$page->loadHeader();
 ?>
 <script src="/public/js/3D/ThumbnailView.js"></script>
-<script src="/public/js/3D/ThreeDeeThumbnails.js?v=2"></script>
+<script src="/public/js/3D/ThreeDeeThumbnails.js?v=3"></script>
 <script src="/public/js/3D/three.min.js"></script>
 <script src="/public/js/3D/MTLLoader.js?v=1"></script>
-<script src="/public/js/3D/OBJMTLLoader.js"></script>
+<script src="/public/js/3D/OBJMTLLoader.js?v=1"></script>
 <script src="/public/js/3D/tween.js"></script>
 <script src="/public/js/3D/PolygonOrbitControls.js"></script>
 <div id="Colours">

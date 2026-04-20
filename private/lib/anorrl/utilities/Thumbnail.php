@@ -45,13 +45,14 @@
 			$mtl = self::GetFileInRender($hash, "scene.mtl");
 
 			if($mtl)
-				return preg_replace("/Player([0-9]+)Tex\.png/i", $hash, $mtl);
+				//return preg_replace("/Player([0-9]+)Tex\.png/i", $hash, $mtl);
+				return $mtl;
 			else
 				return null;
 		}
 
-		public static function Get3DTex(string $hash) {
-			return self::GetFileInRender($hash, "scene.png");
+		public static function Get3DTex(string $hash, string $file) {
+			return self::GetFileInRender($hash, $file);
 		}
 
 		private static function GetRenderFile(string $hash): mixed {
@@ -59,7 +60,7 @@
 				return null;
 
 			$json = json_decode((file_get_contents(self::GetPath($hash))), true, 1024, JSON_THROW_ON_ERROR);
-			
+
 			if(!$json)
 				unlink(self::GetPath($hash)); // scary
 
