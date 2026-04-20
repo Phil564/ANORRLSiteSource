@@ -1,4 +1,6 @@
 <?php
+
+use anorrl\User;
 	header("Content-Type: application/json");
 
 	use anorrl\enums\AssetType;
@@ -6,6 +8,39 @@
 	use anorrl\utilities\Renderer;
 
 	$user = SESSION ? SESSION->user : null;
+
+	function performRender(User $user, string $mediadir, string $charactermd5, bool $headshot = false, bool $is3D = false) {
+		$render = Renderer::RenderUser($user->id, false, $is3D);
+		if($render != null) {
+			
+			$data = "data:image/png;base64,$render";
+			list($type, $data) = explode(';', $data);
+			list(, $data)      = explode(',', $data);
+			$data = base64_decode($data);
+
+			$render_image = imagecreatefromstring($data);
+			imagesavealpha($render_image, true);
+			imagepng($render_image, "$mediadir/$charactermd5.png");
+
+			$user->updateOutfitHash();
+
+			if($headshot && !$is3D) {
+				$render = Renderer::RenderUser($user->id, true);
+
+				if($render != null) {
+					$data = "data:image/png;base64,$render";
+					list($type, $data) = explode(';', $data);
+					list(, $data)      = explode(',', $data);
+					$data = base64_decode($data);
+
+					$render_image = imagecreatefromstring($data);
+					imagesavealpha($render_image, true);
+					imagepng($render_image, "$mediadir/headshot_$charactermd5.png");
+				}
+			}
+			
+		}
+	}
 
 	function sanitizeBodyColourID($rawcolour) {
 		$colour = intval($_POST[$rawcolour]);
@@ -313,34 +348,8 @@
 					die(json_encode(["error" => false]));
 				}
 
-				$render = Renderer::RenderUser($user->id);
-				if($render != null) {
-					
-					$data = "data:image/png;base64,$render";
-					list($type, $data) = explode(';', $data);
-					list(, $data)      = explode(',', $data);
-					$data = base64_decode($data);
-
-					$render_image = imagecreatefromstring($data);
-					imagesavealpha($render_image, true);
-					imagepng($render_image, "$mediadir/$charactermd5.png");
-
-					$user->updateOutfitHash();
-
-					$render = Renderer::RenderUser($user->id, true);
-
-					if($render != null) {
-						$data = "data:image/png;base64,$render";
-						list($type, $data) = explode(';', $data);
-						list(, $data)      = explode(',', $data);
-						$data = base64_decode($data);
-
-						$render_image = imagecreatefromstring($data);
-						imagesavealpha($render_image, true);
-						imagepng($render_image, "$mediadir/headshot_$charactermd5.png");
-					}
-				}
-
+				performRender($user, $mediadir, $charactermd5, true);
+				performRender($user, $mediadir."3d/", $charactermd5, false, false);
 				
 				die(json_encode(["error" => false, "reason" => "Wow we rendered!"]));
 			} else if($request == "rerendercharacter") {
@@ -348,32 +357,8 @@
 
 				$charactermd5 = $user->getCharacterAppearanceHash();
 				
-				$render = Renderer::RenderUser($user->id);
-				if($render != null) {
-					$data = "data:image/png;base64,$render";
-					list($type, $data) = explode(';', $data);
-					list(, $data)      = explode(',', $data);
-					$data = base64_decode($data);
-
-					$render_image = imagecreatefromstring($data);
-					imagesavealpha($render_image, true);
-					imagepng($render_image, "$mediadir/$charactermd5.png");
-
-					$user->updateOutfitHash();
-
-					$render = Renderer::RenderUser($user->id, true);
-
-					if($render != null) {
-						$data = "data:image/png;base64,$render";
-						list($type, $data) = explode(';', $data);
-						list(, $data)      = explode(',', $data);
-						$data = base64_decode($data);
-
-						$render_image = imagecreatefromstring($data);
-						imagesavealpha($render_image, true);
-						imagepng($render_image, "$mediadir/headshot_$charactermd5.png");
-					}
-				}
+				performRender($user, $mediadir, $charactermd5, true);
+				performRender($user, $mediadir."3d/", $charactermd5, false, false);
 
 				
 				die(json_encode(["error" => false, "reason" => "Wow we rendered!"]));

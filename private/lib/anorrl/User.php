@@ -1447,5 +1447,16 @@
 
 			return $places;
 		}
+
+		/* araki, what the fuck am i doing */
+		/* paranoia */
+
+		function has3DRender(): bool {
+			return file_exists($this->getJsonRenderPath());
+		}
+
+		private function getJsonRenderPath(): string {
+			return $_SERVER['DOCUMENT_ROOT']."/../private/renders/3d/{$this->currentoutfitmd5}.json";
+		}
 	}
 ?>

@@ -49,6 +49,16 @@
 			}
 		}
 
+		function load3DScripts() {
+			$this->addScript("/js/3D/ThumbnailView.js");
+			$this->addScript("/js/3D/three.min.js");
+			$this->addScript("/js/3D/MTLLoader.js");
+			$this->addScript("/js/3D/OBJMTLLoader.js");
+			$this->addScript("/js/3D/tween.js");
+			$this->addScript("/js/3D/ThumbnailView.js");
+			$this->addScript("/js/3D/PolygonOrbitControls.js");
+		}
+
 		function clearAll() {
 			$this->clearStylesheets();
 			$this->clearScripts();

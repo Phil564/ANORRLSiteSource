@@ -495,7 +495,8 @@ ANORRL.Character  = {
 		if(ANORRL.Character.IsRendering) {
 			return;
 		}
-		$("#PlayerRender").attr("src","/public/images/ProgressIndicator4White.gif");
+		$("div#PlayerRender .thumbnail-span canvas").remove();
+		$("img#PlayerRender").attr("src","/public/images/ProgressIndicator4White.gif");
 		ANORRL.Character.IsRendering = true;
 
 
@@ -508,7 +509,13 @@ ANORRL.Character  = {
 			//ANORRL.Character.LoadWardrobe();
 			//ANORRL.Character.LoadCurrentlyWearing();
 			
-			$("#PlayerRender").attr("src",ANORRL.Character.PlayerRenderUrl+"&t="+Date.now());
+			$(".thumbnail-span").load3DThumbnail(function(canvas) {
+				console.log("3D: complete!");
+			}, function() {
+				console.log("3D: I dont like you");
+			});
+	
+			$("img#PlayerRender").attr("src",ANORRL.Character.PlayerRenderUrl+"&t="+Date.now());
 			ANORRL.Character.IsRendering = false;
 
 			

@@ -126,6 +126,12 @@
 
 	route('GET', '/badges', '/private/views/badges.php');
 
+	route('GET', '/thumbnail/avatar/mtl/[*:hash]', '/private/api/thumbnail/avatar/getters/mtl.php');
+	route('GET', '/thumbnail/avatar/obj/[*:hash]', '/private/api/thumbnail/avatar/getters/obj.php');
+	route('GET', '/thumbnail/avatar/img/[*:hash]', '/private/api/thumbnail/avatar/getters/img.php');
+	route('GET', '/thumbnail/get', '/private/api/thumbnail/get.php');
+	route('GET', '/thumbnail/avatar/generate', '/private/api/thumbnail/avatar/generate.php');
+	
 	// Apis!
 	route_api('GET|POST', 'catalog');
 	route_api('GET|POST', 'character');

@@ -23,38 +23,40 @@
 		}
 
 
-		public static function RenderClothing(int $id = 0) {
+		public static function RenderClothing(int $id = 0, bool $is3D = false) {
 			return self::DoRender(
 				"avatar",
 				[
 					"UserId" => $id,
 					"IsHeadshot" => false,
-					"IsClothing" => true
+					"IsClothing" => true,
+					"Is3D" => $is3D
 				]
 			);
 		}
 
-		public static function RenderUser(int $id = 0, bool $headshot = false) {
+		public static function RenderUser(int $id, bool $headshot = false, bool $is3D = false) {
 			return User::Exists($id) ? self::DoRender(
 				"avatar",
 				[
 					"UserId" => $id,
 					"IsHeadshot" => $headshot,
-					"IsClothing" => false
+					"IsClothing" => false,
+					"Is3D" => $is3D
 				]
 			) : null;
 		}
 
-		public static function RenderMesh(int $id = 0) {
-			return self::DoRender("mesh", ["MeshId" => $id]);
+		public static function RenderMesh(int $id = 0, bool $is3D = false) {
+			return self::DoRender("mesh", ["MeshId" => $id, "Is3D" => $is3D]);
 		}
 
 		public static function RenderPlace(int $id = 0) {
 			return self::DoRender("place", ["PlaceId" => $id]);
 		}
 
-		public static function RenderModel(int $id = 0) {
-			return self::DoRender("model", ["AssetId" => $id]);
+		public static function RenderModel(int $id = 0, bool $is3D = false) {
+			return self::DoRender("model", ["AssetId" => $id, "Is3D" => $is3D]);
 		}
 	}
 ?>
