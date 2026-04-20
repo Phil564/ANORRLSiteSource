@@ -497,6 +497,10 @@ ANORRL.Character  = {
 		}
 		$("div#PlayerRender .thumbnail-span canvas").remove();
 		$("img#PlayerRender").attr("src","/public/images/ProgressIndicator4White.gif");
+		if($(".thumbnail-span").length != 0) {
+			$("img#PlayerRender").css("display", "block");
+			$("div#PlayerRender").css("display", "none");
+		}
 		ANORRL.Character.IsRendering = true;
 
 
@@ -510,6 +514,8 @@ ANORRL.Character  = {
 			//ANORRL.Character.LoadCurrentlyWearing();
 			
 			if($(".thumbnail-span").length != 0) {
+				$("img#PlayerRender").css("display", "none");
+				$("div#PlayerRender").css("display", "block");
 				$(".thumbnail-span").load3DThumbnail(function(canvas) {
 					console.log("3D: complete!");
 				}, function() {
