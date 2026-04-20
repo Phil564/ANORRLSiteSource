@@ -1456,7 +1456,7 @@
 		}
 
 		private function getJsonRenderPath(): string {
-			return $_SERVER['DOCUMENT_ROOT']."/../private/renders/3d/{$this->currentoutfitmd5}.json";
+			return $_SERVER['DOCUMENT_ROOT']."/../renders/3d/{$this->currentoutfitmd5}.json";
 		}
 	}
 ?>

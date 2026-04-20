@@ -509,11 +509,14 @@ ANORRL.Character  = {
 			//ANORRL.Character.LoadWardrobe();
 			//ANORRL.Character.LoadCurrentlyWearing();
 			
-			$(".thumbnail-span").load3DThumbnail(function(canvas) {
-				console.log("3D: complete!");
-			}, function() {
-				console.log("3D: I dont like you");
-			});
+			if($(".thumbnail-span").length != 0) {
+				$(".thumbnail-span").load3DThumbnail(function(canvas) {
+					console.log("3D: complete!");
+				}, function() {
+					console.log("3D: I dont like you");
+				});
+			}
+			
 	
 			$("img#PlayerRender").attr("src",ANORRL.Character.PlayerRenderUrl+"&t="+Date.now());
 			ANORRL.Character.IsRendering = false;

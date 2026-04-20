@@ -19,7 +19,7 @@
 		}
 
 		public static function GetPath(string $hash, string $service = "renders"): string {
-			return $_SERVER['DOCUMENT_ROOT']."/../private/{$service}/3d/{$hash}.json";
+			return $_SERVER['DOCUMENT_ROOT']."/../{$service}/3d/{$hash}.json";
 		}
 
 		public static function Generate3D(User $user) {
