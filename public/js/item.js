@@ -71,6 +71,33 @@ ANORRL.Item = {
 			}
 
 		}
+	},
+	Has3DEnabled: function() {
+		return $(".thumbnail-span").length != 0;
+	},
+	Load3D: function() {
+		if(!this.Has3DEnabled())
+			return;
+
+		$(".thumbnail-holder > img ").css("display", "none");
+		$(".thumbnail-span").css("display", "block");
+
+		$(".thumbnail-span").load3DThumbnail("asset", function(canvas) {
+			console.log("3D: complete!");
+		}, function() {
+			console.log("3D: I dont like you");
+			$(".thumbnail-holder > img ").css("display", "block");
+			$(".thumbnail-span").css("display", "none");
+		});
+	},
+	Load2D: function() {
+		if(!this.Has3DEnabled())
+			return;
+
+		$(".thumbnail-holder > img ").css("display", "block");
+		$(".thumbnail-span").css("display", "none");
+
+		$(".thumbnail-span canvas").remove();
 	}
 };
 
@@ -86,4 +113,17 @@ $(function() {
 	$("#PurchasePanel").on("click", function() {
 		ANORRL.Item.Purchasing.ClosePurchasePanel();
 	})
+
+	if(ANORRL.Item.Has3DEnabled()) {
+		$("#ThumbnailSwitcher").on("click", function() {
+			if($(this).attr("data-3d") == "true") {
+				$(this).attr("data-3d", false);
+				ANORRL.Item.Load2D();
+			} else {
+				$(this).attr("data-3d", true);
+				ANORRL.Item.Load3D();
+			}
+		})
+	}
+
 })

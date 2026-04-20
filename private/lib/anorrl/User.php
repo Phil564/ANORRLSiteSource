@@ -9,6 +9,7 @@
 	use anorrl\utilities\AssetTypeUtils;
 	use anorrl\utilities\UtilUtils;
 	use anorrl\utilities\ImageUtils;
+	use anorrl\utilities\Renderer;
 	use anorrl\enums\ANORRLBadge;
 
 	/**
@@ -1450,6 +1451,48 @@
 
 		/* araki, what the fuck am i doing */
 		/* paranoia */
+
+		function render(bool $headshot = false, bool $is3D = false) {
+			if($headshot && $is3D) {
+				return;
+			}
+
+			$path = $_SERVER['DOCUMENT_ROOT']."/../renders/";
+			if($is3D) {
+				$path .= "3d/";
+			} else if($headshot) {
+				$path .= "headshots/";
+			}
+
+			$path .= $this->currentoutfitmd5;
+			$path .= $is3D ? ".json" : ".png";
+
+			$render = Renderer::RenderUser($this->id, $headshot, $is3D);
+			if($render != null) {
+				
+				if(!$is3D) {
+					$data = base64_decode($render);
+					$render_image = imagecreatefromstring($data);
+					imagesavealpha($render_image, true);
+					imagepng($render_image, $path);
+				} else {
+					$data = trim($render);
+					$data = str_replace("\"x\":+", "\"x\":-", $data);
+					$data = str_replace("\"y\":+", "\"y\":-", $data);
+					$data = str_replace("\"z\":+", "\"z\":-", $data);
+
+					if(!str_ends_with($data, "}")) {
+						while(!str_ends_with($data, "}")) {
+							$data = substr($data, 0, strlen($data)-1);
+						}
+					}
+
+					file_put_contents($path, $data);
+				}
+
+				$this->updateOutfitHash();
+			}
+		}
 
 		function has3DRender(): bool {
 			return file_exists($this->getJsonRenderPath());

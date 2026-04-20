@@ -28,6 +28,13 @@
 				$hash = $item->currentoutfitmd5;
 			else
 				$hash = $item->getMD5HashCurrent();
+
+			if(!self::Exists($hash, $item instanceof User)) {
+				if($item instanceof Asset)
+					$item->render(true);
+				else
+					$item->render(false, true);
+			}
 			
 			$result_json = self::GetRenderFile($hash, $item instanceof User);
 

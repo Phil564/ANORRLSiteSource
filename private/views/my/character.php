@@ -4,11 +4,12 @@
 	$page = new Page("Your Character", "my/character");
 	
 	$page->addScript("/js/core/jquery-modal.js");
-	$page->addScript("/js/character.js?t=1776691988");
+	$page->addScript("/js/character.js?t=1776709369");
 
 	$page->addStylesheet("/css/new/stuff.css?v=2");
-	$page->addStylesheet("/css/new/my/character.css");
+	$page->addStylesheet("/css/new/my/character.css?v=1");
 	$page->addStylesheet("/css/new/forms.css");
+	$page->addStylesheet("/css/new/thumbnail.css");
 
 	$page->loadHeader();
 ?>
@@ -89,14 +90,13 @@
 		<div id="AvatarRender">
 			<h4>Avatar Render</h4>
 			<div id="RenderContainer">
-				<?php if(SESSION->user->has3DRender()): ?>
-				<div class="thumbnail-holder" id="PlayerRender" style="width: 260px; height: 260px; margin: 0 auto;">
-					<span class="thumbnail-span" data-3d-url="/thumbnail/get?userid=<?= SESSION->user->id ?>" style="width: 260px; height: 260px; display: block;">
-					</span>
+				<div class="thumbnail-holder" style="width: 260px; height: 260px;">
+					<button id="ThumbnailSwitcher" data-3d="false"></button>
+					<span class="thumbnail-span" data-3d-url="/thumbnail/get?userid=<?= SESSION->user->id ?>" style="display: none;"></span>
+					<img src="<?= SESSION->user->getThumbsUrlService("player", 260) ?>" width="260">
 				</div>
-				<?php endif ?>
-				<img id="PlayerRender" src="<?= SESSION->user->getThumbsUrlService("player", 260) ?>" width="260" <?php if(SESSION->user->has3DRender()): ?>style="display: none"<?php endif ?>>
-				<div style="margin-top: -10px;margin-bottom: 5px">
+				
+				<div id="Buttons">
 					<button style="width: 105px;">Create Outfit</button>
 					<button style="width: 90px;" onclick="ANORRL.Character.RenderPlayer(true);">Re-Render</button>
 				</div>

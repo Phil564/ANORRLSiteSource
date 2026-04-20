@@ -104,36 +104,16 @@
 		private static function ExecuteRender(int $id, AssetType $type, string $input_data) {
 			$directory = $_SERVER['DOCUMENT_ROOT'];
 
-			$is3D = $type != AssetType::PLACE;
-			$loc = $is3D ? "3d" : "thumbs";
-			$ext = $is3D ? ".json" : "";
-
 			$md5hashfile = self::GetMD5OfData($input_data);
-			$assetsdir = "$directory/../assets/{$loc}/$md5hashfile$ext";
+			$assetsdir = "$directory/../assets/thumbs/$md5hashfile";
 
 			if(!file_exists($assetsdir)) {
-				$render = self::GetRender($id, $type, $is3D);
+				$render = self::GetRender($id, $type, false);
 				if($render != null) {
-					if($is3D) {
-						$data = trim($render);
-						$data = str_replace("\"x\":+", "\"x\":-", $data);
-						$data = str_replace("\"y\":+", "\"y\":-", $data);
-						$data = str_replace("\"z\":+", "\"z\":-", $data);
-
-						if(!str_ends_with($data, "}")) {
-							while(!str_ends_with($data, "}")) {
-								$data = substr($data, 0, strlen($data)-1);
-							}
-						}
-
-						file_put_contents($assetsdir, $data);
-					} else {
-						$data = base64_decode($render);
-						$render_image = imagecreatefromstring($data);
-						imagesavealpha($render_image, true);
-						imagepng($render_image, $assetsdir);
-					}
-					
+					$data = base64_decode($render);
+					$render_image = imagecreatefromstring($data);
+					imagesavealpha($render_image, true);
+					imagepng($render_image, $assetsdir);
 				}
 			}
 		}
@@ -151,8 +131,8 @@
 				"embeds" => [
 					[
 						"title" => $asset->name,
-						"description" => "Uploaded by: ".$asset->creator->name,
-						"url" => "https://$domain".$asset->getUrl(),
+						"description" => "Uploaded by: {$asset->creator->name}",
+						"url" => "https://$domain{$asset->getUrl()}",
 						"author" => [
 							"name" => "ANORRL",
 							"url" => "https://$domain/",

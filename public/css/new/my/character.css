@@ -46,7 +46,13 @@ h4 {
 	text-align: center;
 }
 
-#CharacterContainer #AvatarRender button {
+#CharacterContainer #AvatarRender #RenderContainer #Buttons {
+	margin-top: -10px;
+	margin-bottom: 5px
+}
+
+
+#CharacterContainer #AvatarRender #RenderContainer #Buttons button {
 	border: 2px solid black;
 	background: #111;
 	color: white;
@@ -54,7 +60,7 @@ h4 {
 	font-size: 12px;
 }
 
-#CharacterContainer #AvatarRender button:hover {
+#CharacterContainer #AvatarRender #RenderContainer #Buttons button:hover {
 	border: 2px solid white;
 	cursor: pointer;
 	font-weight: bold;

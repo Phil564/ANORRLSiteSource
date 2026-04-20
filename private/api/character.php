@@ -9,53 +9,6 @@ use anorrl\User;
 
 	$user = SESSION ? SESSION->user : null;
 
-	function performRender(User $user, string $mediadir, string $charactermd5, bool $headshot = false, bool $is3D = false) {
-		$render = Renderer::RenderUser($user->id, false, $is3D);
-		if($render != null) {
-			
-
-			if(!$is3D) {
-				$data = base64_decode($render);
-				$render_image = imagecreatefromstring($data);
-				imagesavealpha($render_image, true);
-				imagepng($render_image, "$mediadir/$charactermd5.png");
-			} else {
-				$data = trim($render);
-				$data = str_replace("\"x\":+", "\"x\":-", $data);
-				$data = str_replace("\"y\":+", "\"y\":-", $data);
-				$data = str_replace("\"z\":+", "\"z\":-", $data);
-
-				//$data = preg_replace("/Player([0-9]+)Tex\.png/i", "scene.png", $data);
-
-				if(!str_ends_with($data, "}")) {
-					while(!str_ends_with($data, "}")) {
-						$data = substr($data, 0, strlen($data)-1);
-					}
-				}
-
-				file_put_contents("$mediadir/$charactermd5.json", $data);
-			}
-
-			$user->updateOutfitHash();
-
-			if($headshot && !$is3D) {
-				$render = Renderer::RenderUser($user->id, true);
-
-				if($render != null) {
-					$data = "data:image/png;base64,$render";
-					list($type, $data) = explode(';', $data);
-					list(, $data)      = explode(',', $data);
-					$data = base64_decode($data);
-
-					$render_image = imagecreatefromstring($data);
-					imagesavealpha($render_image, true);
-					imagepng($render_image, "$mediadir/headshot_$charactermd5.png");
-				}
-			}
-			
-		}
-	}
-
 	function sanitizeBodyColourID($rawcolour) {
 		$colour = intval($_POST[$rawcolour]);
 
@@ -362,8 +315,8 @@ use anorrl\User;
 					die(json_encode(["error" => false]));
 				}
 
-				performRender($user, $mediadir, $charactermd5, true);
-				performRender($user, $mediadir."3d/", $charactermd5, false, true);
+				$user->render(false);
+				$user->render(true);
 				
 				die(json_encode(["error" => false, "reason" => "Wow we rendered!"]));
 			} else if($request == "rerendercharacter") {
@@ -371,8 +324,8 @@ use anorrl\User;
 
 				$charactermd5 = $user->getCharacterAppearanceHash();
 				
-				performRender($user, $mediadir, $charactermd5, true);
-				performRender($user, $mediadir."3d/", $charactermd5, false, true);
+				$user->render(false);
+				$user->render(true);
 
 				
 				die(json_encode(["error" => false, "reason" => "Wow we rendered!"]));

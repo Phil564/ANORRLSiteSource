@@ -85,8 +85,9 @@
 	$page->addStylesheet("/css/new/item/item.css?v=2");
 	$page->addStylesheet("/css/new/comments.css?v=1");
 	$page->addStylesheet("/css/new/my/home.css?v=2");
+	$page->addStylesheet("/css/new/thumbnail.css");
 
-	$page->addScript("/js/item.js?t=1776186351");
+	$page->addScript("/js/item.js?t=1776708791");
 
 	$page->addMeta("title", htmlspecialchars($asset->name, ENT_QUOTES));
 	$page->addMeta("description", htmlspecialchars(substr($asset->description, 0, 128), ENT_QUOTES));
@@ -114,17 +115,6 @@
 <script src="/public/js/3D/OBJMTLLoader.js?v=1"></script>
 <script src="/public/js/3D/tween.js"></script>
 <script src="/public/js/3D/PolygonOrbitControls.js"></script>
-<script>
-	$(function() {
-		$(".thumbnail-span").load3DThumbnail("asset", function(canvas) {
-			console.log("3D: complete!");
-		}, function() {
-			console.log("3D: I dont like you");
-			$(".thumbnail-holder > img ").css("display", "block");
-			$(".thumbnail-span").css("display", "none");
-		});
-	})
-</script>
 <style>
 	h2, h3, h4 {
 		margin: 0;
@@ -242,11 +232,15 @@
 			<img src="<?= $asset->getThumbsUrl(190) ?>&nocompress">
 			<audio src="/asset/?id=<?= $audio_asset_id ?>" controls>Your browser does not support HTML5 Audio</audio>
 			<?php else: ?>
-			<!--<img src="<?= $asset->getThumbsUrl(240) ?>&nocompress">-->
-			<div class="thumbnail-holder" style="width: 240px; height: 240px; margin: 0 auto;">
-				<span class="thumbnail-span" data-3d-url="/thumbnail/get?assetid=<?= $asset->id ?>" style="width: 240px; height: 240px; display: block;"></span>
-				<img src="<?= $asset->getThumbsUrl(240) ?>&nocompress" style="display: none">
-			</div>
+				<?php if(AssetTypeUtils::IsRenderable($asset->type)): ?>
+					<div class="thumbnail-holder" style="width: 240px; height: 240px;">
+						<button id="ThumbnailSwitcher" data-3d></button>
+						<span class="thumbnail-span" data-3d-url="/thumbnail/get?assetid=<?= $asset->id ?>" style="display: none;"></span>
+						<img src="<?= $asset->getThumbsUrl(240) ?>&nocompress">
+					</div>
+				<?php else: ?>
+					<img src="<?= $asset->getThumbsUrl(240) ?>&nocompress">
+				<?php endif ?>
 			<?php endif ?>
 		</div>
 		<div id="Information">
