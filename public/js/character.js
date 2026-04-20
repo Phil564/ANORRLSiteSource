@@ -635,7 +635,7 @@ ANORRL.Character  = {
 
 		$("#ThumbnailSwitcher").attr("data-3d", true);
 
-		$(".thumbnail-holder > img ").css("display", "none");
+		$(".thumbnail-holder > img").css("display", "none");
 		$(".thumbnail-span").css("display", "block");
 
 		$(".thumbnail-span").load3DThumbnail("avatar", function(canvas) {
@@ -665,7 +665,7 @@ function setBackgroundColour(bodycontainer, bodytype, data, bodycolor) {
 
 $(function(){
 
-	ANORRL.Character.PlayerRenderUrl = $("#PlayerRender").attr("src");
+	ANORRL.Character.PlayerRenderUrl = $(".thumbnail-holder > img").attr("src");
 	
 	$("a[data_category]").on("click",function() {
 		ANORRL.Character.LoadWardrobe($(this).attr("data_category"), ANORRL.Character.CurrentPage);
