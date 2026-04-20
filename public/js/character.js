@@ -638,7 +638,7 @@ ANORRL.Character  = {
 		$(".thumbnail-holder > img ").css("display", "none");
 		$(".thumbnail-span").css("display", "block");
 
-		$(".thumbnail-span").load3DThumbnail("asset", function(canvas) {
+		$(".thumbnail-span").load3DThumbnail("avatar", function(canvas) {
 			console.log("3D: complete!");
 		}, function() {
 			console.log("3D: I dont like you");
