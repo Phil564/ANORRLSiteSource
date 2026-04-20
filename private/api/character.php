@@ -21,7 +21,7 @@ use anorrl\User;
 			$render_image = imagecreatefromstring($data);
 			imagesavealpha($render_image, true);
 
-			$ext = $is3D ? ".png" : ".json";
+			$ext = $is3D ? ".json" : ".png";
 
 			imagepng($render_image, "$mediadir/$charactermd5$ext");
 
