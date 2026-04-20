@@ -57,14 +57,62 @@ ANORRL.User = {
 				window.location.reload();
 			}
 		});
+	},
+	Is3DActive: function() {
+		if(!this.Has3DEnabled())
+			return false;
+
+		return $("#ThumbnailSwitcher").attr("data-3d") == "true";
+	},
+	Has3DEnabled: function() {
+		return $(".thumbnail-span").length != 0;
+	},
+	Load3D: function() {
+		if(!this.Has3DEnabled())
+			return;
+
+		$("#ThumbnailSwitcher").attr("data-3d", true);
+
+		$(".thumbnail-holder > img").css("display", "none");
+		$(".thumbnail-span").css("display", "block");
+
+		$(".thumbnail-span").load3DThumbnail("avatar", function(canvas) {
+			console.log("3D: complete!");
+		}, function() {
+			console.log("3D: I dont like you");
+			
+			ANORRL.User.Load2D();
+		});
+	},
+	Load2D: function() {
+		if(!this.Has3DEnabled())
+			return;
+
+		$("#ThumbnailSwitcher").attr("data-3d", false);
+
+		$(".thumbnail-holder > img").css("display", "block");
+		$(".thumbnail-span").css("display", "none");
+
+		$(".thumbnail-span canvas").remove();
 	}
 }
 
-$(() => {
+$(function() {
 	$("a[data-placeid]").on("click", function() {
 		ANORRL.User.GrabPlaceInfo($(this).attr("data-placeid"));
 	});
 
 	var place = $("a[data-placeid]").first();
 	ANORRL.User.GrabPlaceInfo(place.attr("data-placeid"));
+
+	if(ANORRL.User.Has3DEnabled()) {
+		$("#ThumbnailSwitcher").on("click", function() {
+			if($(this).attr("data-3d") == "true") {
+				ANORRL.User.Load2D();
+			} else {
+				$(this).attr("data-3d", true);
+				ANORRL.User.Load3D();
+			}
+		})
+	}
 });

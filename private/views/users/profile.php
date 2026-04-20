@@ -58,28 +58,36 @@
 
 	$page->addStylesheet("/css/new/stuff.css?v=2");
 	$page->addStylesheet("/css/new/comments.css");
-	$page->addStylesheet("/css/new/my/profile.css?v=14");
+	$page->addStylesheet("/css/new/my/profile.css?v=15");
 	$page->addStylesheet("/users/{$get_user->id}/css?t=".time(), false);
 	$page->addStylesheet("/css/new/window.css");
 	$page->addStylesheet("/css/new/placelauncher.css?");
+	$page->addStylesheet("/css/new/thumbnail.css");
 
 	$page->addScript("/js/placelauncher.js?t=1776506477");
-	$page->addScript("/js/user.js?t=1776011774");
+	$page->addScript("/js/user.js?t=1776712536");
 
 	$page->loadHeader();
 ?>
+<script src="/public/js/3D/ThumbnailView.js"></script>
+<script src="/public/js/3D/ThreeDeeThumbnails.js?v=3"></script>
+<script src="/public/js/3D/three.min.js"></script>
+<script src="/public/js/3D/MTLLoader.js?v=1"></script>
+<script src="/public/js/3D/OBJMTLLoader.js?v=1"></script>
+<script src="/public/js/3D/tween.js"></script>
+<script src="/public/js/3D/PolygonOrbitControls.js"></script>
 <script>
 	$(function(){
 		//ANORRL.User.GrabFeed(<?= $get_user->id ?>);
 	});
-	var render = true;
+	var render = false;
 	function flipRenders() {
 		render = !render;
 
 		if(render) {
-			$("#AvatarRenderYeah").attr("src", "<?= $get_user->getThumbsUrlService("player", 200) ?>");
+			$("#ProfilePictureYeah").attr("src", "<?= $get_user->getThumbsUrlService("headshot", 200) ?>&nocompress");
 		} else {
-			$("#AvatarRenderYeah").attr("src", "<?= $get_user->getThumbsUrlService("headshot", 200) ?>");
+			$("#ProfilePictureYeah").attr("src", "<?= $get_user->getThumbsUrlService("profile", 200) ?>&nocompress");
 		}
 	}
 </script>
@@ -217,6 +225,7 @@ $(function() {
 	<h2 style="margin: 5px 0px; width: 825px;"><?= $get_user->name ?>'s Profile</h2>
 	<div id="ProfileImage">
 		<div id="ImageContainer">
+			<a href="javascript:flipRenders()" style="position: absolute;z-index: 2;bottom: 5px;right: 5px;"><img src="/public/images/icons/switch.png" style="width: 30px;image-rendering: pixelated;"></a>
 			<img id="ProfilePictureYeah" src="<?= $get_user->getThumbsUrlService($get_user->setprofilepicture ? "profile" : "headshot") ?>&nocompress">
 		</div>
 		
@@ -322,9 +331,9 @@ $(function() {
 		
 		<?php endif ?>
 	</ul>
-	<div id="AvatarRender">
-		<a href="javascript:flipRenders()" style="position: absolute;z-index: 2;bottom: 5px;right: 5px;"><img src="/public/images/icons/switch.png" style="width: 30px;image-rendering: pixelated;"></a>
-			
+	<div class="thumbnail-holder" id="AvatarRender">
+		<button id="ThumbnailSwitcher" data-3d="false"></button>
+		<span class="thumbnail-span" data-3d-url="/thumbnail/get?userid=<?= $get_user->id ?>" style="display: none;"></span>
 		<img id="AvatarRenderYeah" src="<?= $get_user->getThumbsUrlService("player") ?>&nocompress">
 	</div>
 	<br id="Clearer">
